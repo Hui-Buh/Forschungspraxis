@@ -1,0 +1,573 @@
+% Bilder: 8 = normal faces, 4 = binaray faces, 2 = binaray upside down faces, 1 = all but faces ==> cummulative
+% durchlauf: 1=nur 1. Frage, 2=nur 2. Frage, 3=alle 2 Fragen
+% Sakk_p_Sakk_grad_mean_max: 1 = Sakkadenamplituden in px, 2 = Sakkadenamplituden in°, 4 = Sakk_max_vel, 8 = Sakk_mean_vel
+% kontroll_kennung = z.B. 032 ==> required
+% patient_kennung = z.B. 031 ==> if = 0 all non kontroll_kennung data is used
+% data_path = absolute or relative path of the folder containing all patient specific data in TUM format
+% image_path = absolute or relative path of the folder containing all images
+
+
+function compare_Sakk(bilder, durchlauf, Sakk_p_Sakk_grad_mean_max , kontroll_kennung, patient_kennung, data_path, image_path)
+    
+    if bilder > 15 && bilder < 1; disp('Enter valid number for "bilder"!'); return; end;
+
+    [faces, faces_m, faces_t, kont] =  Separate_test_images(image_path);
+
+    [control_listing, patient_listing] =  Separate_test_persons(kontroll_kennung, patient_kennung, data_path);
+
+
+    %% Alle Daten der Kontrollen heraussuchen
+
+    Sakk_amplitude_grad_control = 0;
+    Sakk_amplitude_control = 0;
+    Sakk_max_vel_control = 0;
+    Sakk_mean_vel_control = 0;
+    
+    bilder_save = bilder;
+    
+    for b = 2:size(control_listing,1)
+        bilder = bilder_save;
+        
+% normal faces
+        if bilder >= 8 
+            if durchlauf == 1 || durchlauf == 3
+                for c = 2:size(faces,1)
+                    % Open .mat file
+                    if exist(cat(2, data_path, '/', control_listing{b,1}, '/', control_listing{b,1}, '_', faces{c,1} , '_1','.mat' ), 'file') > 0
+                        m = matfile(cat(2, data_path, '/', control_listing{b,1}, '/', control_listing{b,1}, '_', faces{c,1} , '_1','.mat' ));
+                    else
+                        continue
+                    end
+                    clearvars Sakk_parsed pos
+                    Sakk_parsed = m.Sakk_parsed;
+                    if isempty(Sakk_parsed) == 1; continue; end;
+                    pos = center_image(Sakk_parsed(:,2), Sakk_parsed(:,3), m.Sakk_amplitude, m.Sakk_max_vel, m.Sakk_mean_vel, '-', 300, 460);
+                    if mod(Sakk_p_Sakk_grad_mean_max, 2) == 1
+                        Sakk_amplitude_control = [Sakk_amplitude_control ; pos(:,3) ];
+                    else
+                        Sakk_amplitude_grad_control = [Sakk_amplitude_grad_control ; pos(:,3) *450/9.8 ];
+                    end
+                    if Sakk_p_Sakk_grad_mean_max < 8
+                        Sakk_max_vel_control = [Sakk_max_vel_control ; pos(:,4)];
+                    else
+                        Sakk_mean_vel_control = [Sakk_mean_vel_control ; pos(:,5)];
+                    end
+                end
+            end
+            if durchlauf == 2 || durchlauf == 3
+                for c = 2:size(faces,1)
+                    % Open .mat file
+                    if exist(cat(2, data_path, '/', control_listing{b,1}, '/', control_listing{b,1}, '_', faces{c,1} , '_2','.mat' ), 'file') > 0
+                        m = matfile(cat(2, data_path, '/', control_listing{b,1}, '/', control_listing{b,1}, '_', faces{c,1} , '_2','.mat' ));
+                    else
+                        continue
+                    end
+                    clearvars Sakk_parsed pos
+                    Sakk_parsed = m.Sakk_parsed;
+                    if isempty(Sakk_parsed) == 1; continue; end;
+                    pos = center_image(Sakk_parsed(:,2), Sakk_parsed(:,3), m.Sakk_amplitude, m.Sakk_max_vel, m.Sakk_mean_vel, '-', 300, 460);
+                    if mod(Sakk_p_Sakk_grad_mean_max, 2) == 1
+                        Sakk_amplitude_control = [Sakk_amplitude_control ; pos(:,3) ];
+                    else
+                        Sakk_amplitude_grad_control = [Sakk_amplitude_grad_control ; pos(:,3) *450/9.8 ];
+                    end
+                    if Sakk_p_Sakk_grad_mean_max < 8
+                        Sakk_max_vel_control = [Sakk_max_vel_control ; pos(:,4)];
+                    else
+                        Sakk_mean_vel_control = [Sakk_mean_vel_control ; pos(:,5)];
+                    end
+                end
+            end
+            bilder = bilder - 8;
+        end
+% binaray faces
+        if bilder >= 4
+            if durchlauf == 1 || durchlauf == 3
+                for c = 2:size(faces_m,1)
+                    % Open .mat file
+                    if exist(cat(2, data_path, '/', control_listing{b,1}, '/', control_listing{b,1}, '_', faces_m{c,1} , '_1','.mat' ), 'file') > 0
+                        m = matfile(cat(2, data_path, '/', control_listing{b,1}, '/', control_listing{b,1}, '_', faces_m{c,1} , '_1','.mat' ));
+                    else
+                        continue
+                    end
+                    clearvars Sakk_parsed pos
+                    Sakk_parsed = m.Sakk_parsed;
+                    if isempty(Sakk_parsed) == 1; continue; end;
+                    pos = center_image(Sakk_parsed(:,2), Sakk_parsed(:,3), m.Sakk_amplitude, m.Sakk_max_vel, m.Sakk_mean_vel, '-', 300, 460);
+                    if mod(Sakk_p_Sakk_grad_mean_max, 2) == 1
+                        Sakk_amplitude_control = [Sakk_amplitude_control ; pos(:,3) ];
+                    else
+                        Sakk_amplitude_grad_control = [Sakk_amplitude_grad_control ; pos(:,3) *450/9.8 ];
+                    end
+                    if Sakk_p_Sakk_grad_mean_max < 8
+                        Sakk_max_vel_control = [Sakk_max_vel_control ; pos(:,4)];
+                    else
+                        Sakk_mean_vel_control = [Sakk_mean_vel_control ; pos(:,5)];
+                    end
+                end
+            end
+            if durchlauf == 2 || durchlauf == 3
+                for c = 2:size(faces_m,1)
+                    % Open .mat file
+                    if exist(cat(2, data_path, '/', control_listing{b,1}, '/', control_listing{b,1}, '_', faces_m{c,1} , '_2','.mat' ), 'file') > 0
+                        m = matfile(cat(2, data_path, '/', control_listing{b,1}, '/', control_listing{b,1}, '_', faces_m{c,1} , '_2','.mat' ));
+                    else
+                        continue
+                    end
+                    clearvars Sakk_parsed pos
+                    Sakk_parsed = m.Sakk_parsed;
+                    if isempty(Sakk_parsed) == 1; continue; end;
+                    pos = center_image(Sakk_parsed(:,2), Sakk_parsed(:,3), m.Sakk_amplitude, m.Sakk_max_vel, m.Sakk_mean_vel, '-', 300, 460);
+                    if mod(Sakk_p_Sakk_grad_mean_max, 2) == 1
+                        Sakk_amplitude_control = [Sakk_amplitude_control ; pos(:,3) ];
+                    else
+                        Sakk_amplitude_grad_control = [Sakk_amplitude_grad_control ; pos(:,3) *450/9.8 ];
+                    end
+                    if Sakk_p_Sakk_grad_mean_max < 8
+                        Sakk_max_vel_control = [Sakk_max_vel_control ; pos(:,4)];
+                    else
+                        Sakk_mean_vel_control = [Sakk_mean_vel_control ; pos(:,5)];
+                    end
+                end
+            end
+            bilder = bilder - 4;
+        end
+% binaray upside down faces
+        if bilder >= 2
+            if durchlauf == 1 || durchlauf == 3
+                for c = 2:size(faces_t,1)
+                    % Open .mat file
+                    if exist(cat(2, data_path, '/', control_listing{b,1}, '/', control_listing{b,1}, '_', faces_t{c,1} , '_1','.mat' ), 'file') > 0
+                        m = matfile(cat(2, data_path, '/', control_listing{b,1}, '/', control_listing{b,1}, '_', faces_t{c,1} , '_1','.mat' ));
+                    else
+                        continue
+                    end
+                    clearvars Sakk_parsed pos
+                    Sakk_parsed = m.Sakk_parsed;
+                    if isempty(Sakk_parsed) == 1; continue; end;
+                    pos = center_image(Sakk_parsed(:,2), Sakk_parsed(:,3), m.Sakk_amplitude, m.Sakk_max_vel, m.Sakk_mean_vel, '-', 300, 460);
+                    if mod(Sakk_p_Sakk_grad_mean_max, 2) == 1
+                        Sakk_amplitude_control = [Sakk_amplitude_control ; pos(:,3) ];
+                    else
+                        Sakk_amplitude_grad_control = [Sakk_amplitude_grad_control ; pos(:,3) *450/9.8 ];
+                    end
+                    if Sakk_p_Sakk_grad_mean_max < 8
+                        Sakk_max_vel_control = [Sakk_max_vel_control ; pos(:,4)];
+                    else
+                        Sakk_mean_vel_control = [Sakk_mean_vel_control ; pos(:,5)];
+                    end
+                end
+            end
+            if durchlauf == 2 || durchlauf == 3
+                for c = 2:size(faces_t,1)
+                    % Open .mat file
+                    if exist(cat(2, data_path, '/', control_listing{b,1}, '/', control_listing{b,1}, '_', faces_t{c,1} , '_2','.mat' ), 'file') > 0
+                        m = matfile(cat(2, data_path, '/', control_listing{b,1}, '/', control_listing{b,1}, '_', faces_t{c,1} , '_2','.mat' ));
+                    else
+                        continue
+                    end
+                    clearvars Sakk_parsed pos
+                    Sakk_parsed = m.Sakk_parsed;
+                    if isempty(Sakk_parsed) == 1; continue; end;
+                    pos = center_image(Sakk_parsed(:,2), Sakk_parsed(:,3), m.Sakk_amplitude, m.Sakk_max_vel, m.Sakk_mean_vel, '-', 300, 460);
+                    if mod(Sakk_p_Sakk_grad_mean_max, 2) == 1
+                        Sakk_amplitude_control = [Sakk_amplitude_control ; pos(:,3) ];
+                    else
+                        Sakk_amplitude_grad_control = [Sakk_amplitude_grad_control ; pos(:,3) *450/9.8 ];
+                    end
+                    if Sakk_p_Sakk_grad_mean_max < 8
+                        Sakk_max_vel_control = [Sakk_max_vel_control ; pos(:,4)];
+                    else
+                        Sakk_mean_vel_control = [Sakk_mean_vel_control ; pos(:,5)];
+                    end
+                end
+            end
+            bilder = bilder - 2;
+        end
+% all but faces
+        if bilder >= 1
+            if durchlauf == 1 || durchlauf == 3
+                for c = 2:size(kont,1)
+                    % Open .mat file
+                    if exist(cat(2, data_path, '/', control_listing{b,1}, '/', control_listing{b,1}, '_', kont{c,1} , '_1','.mat' ), 'file') > 0
+                        m = matfile(cat(2, data_path, '/', control_listing{b,1}, '/', control_listing{b,1}, '_', kont{c,1} , '_1','.mat' ));
+                    else
+                        continue
+                    end
+                    clearvars Sakk_parsed pos
+                    Sakk_parsed = m.Sakk_parsed;
+                    if isempty(Sakk_parsed) == 1; continue; end;
+                    pos = center_image(Sakk_parsed(:,2), Sakk_parsed(:,3), m.Sakk_amplitude, m.Sakk_max_vel, m.Sakk_mean_vel, '-', 300, 460);
+                    if mod(Sakk_p_Sakk_grad_mean_max, 2) == 1
+                        Sakk_amplitude_control = [Sakk_amplitude_control ; pos(:,3) ];
+                    else
+                        Sakk_amplitude_grad_control = [Sakk_amplitude_grad_control ; pos(:,3) *450/9.8 ];
+                    end
+                    if Sakk_p_Sakk_grad_mean_max < 8
+                        Sakk_max_vel_control = [Sakk_max_vel_control ; pos(:,4)];
+                    else
+                        Sakk_mean_vel_control = [Sakk_mean_vel_control ; pos(:,5)];
+                    end
+                end
+            end
+            if durchlauf == 2 || durchlauf == 3
+                for c = 2:size(kont,1)
+                    % Open .mat file
+                    if exist(cat(2, data_path, '/', control_listing{b,1}, '/', control_listing{b,1}, '_', kont{c,1} , '_2','.mat' ), 'file') > 0
+                        m = matfile(cat(2, data_path, '/', control_listing{b,1}, '/', control_listing{b,1}, '_', kont{c,1} , '_2','.mat' ));
+                    else
+                        continue
+                    end
+                    clearvars Sakk_parsed pos
+                    Sakk_parsed = m.Sakk_parsed;
+                    if isempty(Sakk_parsed) == 1; continue; end;
+                    pos = center_image(Sakk_parsed(:,2), Sakk_parsed(:,3), m.Sakk_amplitude, m.Sakk_max_vel, m.Sakk_mean_vel, '-', 300, 460);
+                    if mod(Sakk_p_Sakk_grad_mean_max, 2) == 1
+                        Sakk_amplitude_control = [Sakk_amplitude_control ; pos(:,3) ];
+                    else
+                        Sakk_amplitude_grad_control = [Sakk_amplitude_grad_control ; pos(:,3) *450/9.8 ];
+                    end
+                    if Sakk_p_Sakk_grad_mean_max < 8
+                        Sakk_max_vel_control = [Sakk_max_vel_control ; pos(:,4)];
+                    else
+                        Sakk_mean_vel_control = [Sakk_mean_vel_control ; pos(:,5)];
+                    end
+                end
+            end
+            bilder = bilder - 1;
+        end
+    end
+    
+    
+%% Alle Daten der Patienten heraussuchen
+
+    Sakk_amplitude_grad_patient = 0;
+    Sakk_amplitude_patient = 0;
+    Sakk_max_vel_patient = 0;
+    Sakk_mean_vel_patient = 0;
+    
+    for b = 2:size(patient_listing,1)
+        bilder = bilder_save;
+        
+% normal faces
+        if bilder >= 8 
+            if durchlauf == 1 || durchlauf == 3
+                for c = 2:size(faces,1)
+                    % Open .mat file
+                    if exist(cat(2, data_path, '/', patient_listing{b,1}, '/', patient_listing{b,1}, '_', faces{c,1} , '_1','.mat' ), 'file') > 0
+                        m = matfile(cat(2, data_path, '/', patient_listing{b,1}, '/', patient_listing{b,1}, '_', faces{c,1} , '_1','.mat' ));
+                    else
+                        continue
+                    end
+                    clearvars Sakk_parsed pos
+                    Sakk_parsed = m.Sakk_parsed;
+                    if isempty(Sakk_parsed) == 1; continue; end;
+                    pos = center_image(Sakk_parsed(:,2), Sakk_parsed(:,3), m.Sakk_amplitude, m.Sakk_max_vel, m.Sakk_mean_vel, '-', 300, 460);
+                    if mod(Sakk_p_Sakk_grad_mean_max, 2) == 1
+                        Sakk_amplitude_patient = [Sakk_amplitude_patient ; pos(:,3) ];
+                    else
+                        Sakk_amplitude_grad_patient = [Sakk_amplitude_grad_patient ; pos(:,3) *450/9.8 ];
+                    end
+                    if Sakk_p_Sakk_grad_mean_max < 8
+                        Sakk_max_vel_patient = [Sakk_max_vel_patient ; pos(:,4)];
+                    else
+                        Sakk_mean_vel_patient = [Sakk_mean_vel_patient ; pos(:,5)];
+                    end
+                end
+            end
+            if durchlauf == 2 || durchlauf == 3
+                for c = 2:size(faces,1)
+                    % Open .mat file
+                    if exist(cat(2, data_path, '/', patient_listing{b,1}, '/', patient_listing{b,1}, '_', faces{c,1} , '_2','.mat' ), 'file') > 0
+                        m = matfile(cat(2, data_path, '/', patient_listing{b,1}, '/', patient_listing{b,1}, '_', faces{c,1} , '_2','.mat' ));
+                    else
+                        continue
+                    end
+                    clearvars Sakk_parsed pos
+                    Sakk_parsed = m.Sakk_parsed;
+                    if isempty(Sakk_parsed) == 1; continue; end;
+                    pos = center_image(Sakk_parsed(:,2), Sakk_parsed(:,3), m.Sakk_amplitude, m.Sakk_max_vel, m.Sakk_mean_vel, '-', 300, 460);
+                    if mod(Sakk_p_Sakk_grad_mean_max, 2) == 1
+                        Sakk_amplitude_patient = [Sakk_amplitude_patient ; pos(:,3) ];
+                    else
+                        Sakk_amplitude_grad_patient = [Sakk_amplitude_grad_patient ; pos(:,3) *450/9.8 ];
+                    end
+                    if Sakk_p_Sakk_grad_mean_max < 8
+                        Sakk_max_vel_patient = [Sakk_max_vel_patient ; pos(:,4)];
+                    else
+                        Sakk_mean_vel_patient = [Sakk_mean_vel_patient ; pos(:,5)];
+                    end
+                end
+            end
+            bilder = bilder - 8;
+        end
+% binaray faces
+        if bilder >= 4
+            if durchlauf == 1 || durchlauf == 3
+                for c = 2:size(faces_m,1)
+                    % Open .mat file
+                    if exist(cat(2, data_path, '/', patient_listing{b,1}, '/', patient_listing{b,1}, '_', faces_m{c,1} , '_1','.mat' ), 'file') > 0
+                        m = matfile(cat(2, data_path, '/', patient_listing{b,1}, '/', patient_listing{b,1}, '_', faces_m{c,1} , '_1','.mat' ));
+                    else
+                        continue
+                    end
+                    clearvars Sakk_parsed pos
+                    Sakk_parsed = m.Sakk_parsed;
+                    if isempty(Sakk_parsed) == 1; continue; end;
+                    pos = center_image(Sakk_parsed(:,2), Sakk_parsed(:,3), m.Sakk_amplitude, m.Sakk_max_vel, m.Sakk_mean_vel, '-', 300, 460);
+                    if mod(Sakk_p_Sakk_grad_mean_max, 2) == 1
+                        Sakk_amplitude_patient = [Sakk_amplitude_patient ; pos(:,3) ];
+                    else
+                        Sakk_amplitude_grad_patient = [Sakk_amplitude_grad_patient ; pos(:,3) *450/9.8 ];
+                    end
+                    if Sakk_p_Sakk_grad_mean_max < 8
+                        Sakk_max_vel_patient = [Sakk_max_vel_patient ; pos(:,4)];
+                    else
+                        Sakk_mean_vel_patient = [Sakk_mean_vel_patient ; pos(:,5)];
+                    end
+                end
+            end
+            if durchlauf == 2 || durchlauf == 3
+                for c = 2:size(faces_m,1)
+                    % Open .mat file
+                    if exist(cat(2, data_path, '/', patient_listing{b,1}, '/', patient_listing{b,1}, '_', faces_m{c,1} , '_2','.mat' ), 'file') > 0
+                        m = matfile(cat(2, data_path, '/', patient_listing{b,1}, '/', patient_listing{b,1}, '_', faces_m{c,1} , '_2','.mat' ));
+                    else
+                        continue
+                    end
+                    clearvars Sakk_parsed pos
+                    Sakk_parsed = m.Sakk_parsed;
+                    if isempty(Sakk_parsed) == 1; continue; end;
+                    pos = center_image(Sakk_parsed(:,2), Sakk_parsed(:,3), m.Sakk_amplitude, m.Sakk_max_vel, m.Sakk_mean_vel, '-', 300, 460);
+                    if mod(Sakk_p_Sakk_grad_mean_max, 2) == 1
+                        Sakk_amplitude_patient = [Sakk_amplitude_patient ; pos(:,3) ];
+                    else
+                        Sakk_amplitude_grad_patient = [Sakk_amplitude_grad_patient ; pos(:,3) *450/9.8 ];
+                    end
+                    if Sakk_p_Sakk_grad_mean_max < 8
+                        Sakk_max_vel_patient = [Sakk_max_vel_patient ; pos(:,4)];
+                    else
+                        Sakk_mean_vel_patient = [Sakk_mean_vel_patient ; pos(:,5)];
+                    end
+                end
+            end
+            bilder = bilder - 4;
+        end
+% binaray upside down faces
+        if bilder >= 2
+            if durchlauf == 1 || durchlauf == 3
+                for c = 2:size(faces_t,1)
+                    % Open .mat file
+                    if exist(cat(2, data_path, '/', patient_listing{b,1}, '/', patient_listing{b,1}, '_', faces_t{c,1} , '_1','.mat' ), 'file') > 0
+                        m = matfile(cat(2, data_path, '/', patient_listing{b,1}, '/', patient_listing{b,1}, '_', faces_t{c,1} , '_1','.mat' ));
+                    else
+                        continue
+                    end
+                    clearvars Sakk_parsed pos
+                    Sakk_parsed = m.Sakk_parsed;
+                    if isempty(Sakk_parsed) == 1; continue; end;
+                    pos = center_image(Sakk_parsed(:,2), Sakk_parsed(:,3), m.Sakk_amplitude, m.Sakk_max_vel, m.Sakk_mean_vel, '-', 300, 460);
+                    if mod(Sakk_p_Sakk_grad_mean_max, 2) == 1
+                        Sakk_amplitude_patient = [Sakk_amplitude_patient ; pos(:,3) ];
+                    else
+                        Sakk_amplitude_grad_patient = [Sakk_amplitude_grad_patient ; pos(:,3) *450/9.8 ];
+                    end
+                    if Sakk_p_Sakk_grad_mean_max < 8
+                        Sakk_max_vel_patient = [Sakk_max_vel_patient ; pos(:,4)];
+                    else
+                        Sakk_mean_vel_patient = [Sakk_mean_vel_patient ; pos(:,5)];
+                    end
+                end
+            end
+            if durchlauf == 2 || durchlauf == 3
+                for c = 2:size(faces_t,1)
+                    % Open .mat file
+                    if exist(cat(2, data_path, '/', patient_listing{b,1}, '/', patient_listing{b,1}, '_', faces_t{c,1} , '_2','.mat' ), 'file') > 0
+                        m = matfile(cat(2, data_path, '/', patient_listing{b,1}, '/', patient_listing{b,1}, '_', faces_t{c,1} , '_2','.mat' ));
+                    else
+                        continue
+                    end
+                    clearvars Sakk_parsed pos
+                    Sakk_parsed = m.Sakk_parsed;
+                    if isempty(Sakk_parsed) == 1; continue; end;
+                    pos = center_image(Sakk_parsed(:,2), Sakk_parsed(:,3), m.Sakk_amplitude, m.Sakk_max_vel, m.Sakk_mean_vel, '-', 300, 460);
+                    if mod(Sakk_p_Sakk_grad_mean_max, 2) == 1
+                        Sakk_amplitude_patient = [Sakk_amplitude_patient ; pos(:,3) ];
+                    else
+                        Sakk_amplitude_grad_patient = [Sakk_amplitude_grad_patient ; pos(:,3) *450/9.8 ];
+                    end
+                    if Sakk_p_Sakk_grad_mean_max < 8
+                        Sakk_max_vel_patient = [Sakk_max_vel_patient ; pos(:,4)];
+                    else
+                        Sakk_mean_vel_patient = [Sakk_mean_vel_patient ; pos(:,5)];
+                    end
+                end
+            end
+            bilder = bilder - 2;
+        end
+% all but faces
+        if bilder >= 1
+            if durchlauf == 1 || durchlauf == 3
+                for c = 2:size(kont,1)
+                    % Open .mat file
+                    if exist(cat(2, data_path, '/', patient_listing{b,1}, '/', patient_listing{b,1}, '_', kont{c,1} , '_1','.mat' ), 'file') > 0
+                        m = matfile(cat(2, data_path, '/', patient_listing{b,1}, '/', patient_listing{b,1}, '_', kont{c,1} , '_1','.mat' ));
+                    else
+                        continue
+                    end
+                    clearvars Sakk_parsed pos
+                    Sakk_parsed = m.Sakk_parsed;
+                    if isempty(Sakk_parsed) == 1; continue; end;
+                    pos = center_image(Sakk_parsed(:,2), Sakk_parsed(:,3), m.Sakk_amplitude, m.Sakk_max_vel, m.Sakk_mean_vel, '-', 300, 460);
+                    if mod(Sakk_p_Sakk_grad_mean_max, 2) == 1
+                        Sakk_amplitude_patient = [Sakk_amplitude_patient ; pos(:,3) ];
+                    else
+                        Sakk_amplitude_grad_patient = [Sakk_amplitude_grad_patient ; pos(:,3) *450/9.8 ];
+                    end
+                    if Sakk_p_Sakk_grad_mean_max < 8
+                        Sakk_max_vel_patient = [Sakk_max_vel_patient ; pos(:,4)];
+                    else
+                        Sakk_mean_vel_patient = [Sakk_mean_vel_patient ; pos(:,5)];
+                    end
+                end
+            end
+            if durchlauf == 2 || durchlauf == 3
+                for c = 2:size(kont,1)
+                    % Open .mat file
+                    if exist(cat(2, data_path, '/', patient_listing{b,1}, '/', patient_listing{b,1}, '_', kont{c,1} , '_2','.mat' ), 'file') > 0
+                        m = matfile(cat(2, data_path, '/', patient_listing{b,1}, '/', patient_listing{b,1}, '_', kont{c,1} , '_2','.mat' ));
+                    else
+                        continue
+                    end
+                    clearvars Sakk_parsed pos
+                    Sakk_parsed = m.Sakk_parsed;
+                    if isempty(Sakk_parsed) == 1; continue; end;
+                    pos = center_image(Sakk_parsed(:,2), Sakk_parsed(:,3), m.Sakk_amplitude, m.Sakk_max_vel, m.Sakk_mean_vel, '-', 300, 460);
+                    if mod(Sakk_p_Sakk_grad_mean_max, 2) == 1
+                        Sakk_amplitude_patient = [Sakk_amplitude_patient ; pos(:,3) ];
+                    else
+                        Sakk_amplitude_grad_patient = [Sakk_amplitude_grad_patient ; pos(:,3) *450/9.8 ];
+                    end
+                    if Sakk_p_Sakk_grad_mean_max < 8
+                        Sakk_max_vel_patient = [Sakk_max_vel_patient ; pos(:,4)];
+                    else
+                        Sakk_mean_vel_patient = [Sakk_mean_vel_patient ; pos(:,5)];
+                    end
+                end
+            end
+            bilder = bilder - 1;
+        end
+    end
+ 
+
+%% Auswertung
+
+    Sakk_amplitude_grad_patient(1) = [];
+    Sakk_amplitude_patient(1) = [];
+    Sakk_max_vel_patient(1) = [];
+    Sakk_mean_vel_patient(1) = [];
+    Sakk_amplitude_grad_control(1) = [];
+    Sakk_amplitude_control(1) = [];
+    Sakk_max_vel_control(1) = [];
+    Sakk_mean_vel_control(1) = [];
+
+    
+
+    if Sakk_p_Sakk_grad_mean_max < 8
+        if mod(Sakk_p_Sakk_grad_mean_max, 2) == 1
+            Sakk_amplitude_control = Sakk_amplitude_control(Sakk_max_vel_control < 50);
+            Sakk_amplitude_patient = Sakk_amplitude_patient(Sakk_max_vel_patient < 50);
+            x1 = Sakk_amplitude_control;
+            x2 = Sakk_amplitude_patient;
+        else
+            Sakk_amplitude_grad_control = Sakk_amplitude_grad_control(Sakk_max_vel_control < 50);
+            Sakk_amplitude_grad_patient = Sakk_amplitude_grad_patient(Sakk_max_vel_patient < 50);
+            x1 = Sakk_amplitude_grad_control;
+            x2 = Sakk_amplitude_grad_patient;
+        end
+        Sakk_max_vel_control = Sakk_max_vel_control(Sakk_max_vel_control < 50);
+        Sakk_max_vel_patient = Sakk_max_vel_patient(Sakk_max_vel_patient < 50);
+        y1 = Sakk_max_vel_control;
+        y2 = Sakk_max_vel_patient;
+    else
+        if mod(Sakk_p_Sakk_grad_mean_max, 2) == 1
+            Sakk_amplitude_control = Sakk_amplitude_control(Sakk_mean_vel_control < 50);
+            Sakk_amplitude_patient = Sakk_amplitude_patient(Sakk_mean_vel_patient < 50);
+            x1 = Sakk_amplitude_control;
+            x2 = Sakk_amplitude_patient;
+        else
+            Sakk_amplitude_grad_control = Sakk_amplitude_grad_control(Sakk_mean_vel_control < 50);
+            Sakk_amplitude_grad_patient = Sakk_amplitude_grad_patient(Sakk_mean_vel_patient < 50);
+            x1 = Sakk_amplitude_grad_control;
+            x2 = Sakk_amplitude_grad_patient;
+        end
+        Sakk_mean_vel_control = Sakk_mean_vel_control(Sakk_mean_vel_control < 50);
+        Sakk_mean_vel_patient = Sakk_mean_vel_patient(Sakk_mean_vel_patient < 50);
+        y1 = Sakk_mean_vel_control;
+        y2 = Sakk_mean_vel_patient;
+    end
+    
+    
+    figure(1)
+    hold on; grid on;
+    z1 = sortrows([x1 y1]);
+%     z1(:,2) = medfilt1(z1(:,2), 11);
+    [~, ia, ~] = unique(z1(:,1));
+    z1 = z1(ia,:);
+    f = fit(z1(:,1), z1(:,2), 'poly2');
+    plot(z1(:,1),z1(:,2), '.b');
+    plot(f, 'k');
+    z2 = sortrows([x2 y2]);
+%     z2(:,2) = medfilt1(z2(:,2), 11);
+    [~, ia, ~] = unique(z2(:,1));
+    z2 = z2(ia,:);    
+    f = fit(z2(:,1), z2(:,2), 'poly2');
+    plot(z2(:,1),z2(:,2), '.r');
+    plot(f, 'g');%,z2(:,1),z2(:,2));
+    legend({'Kontrollen Daten', 'Kontrollen Fit', 'Patienten Daten', 'Patienten Fit'}); 
+    if mod(Sakk_p_Sakk_grad_mean_max, 2) == 1
+        xlabel('Sakkaden Amplitude (px)');
+    else
+        xlabel('Sakkaden Amplitude (°)');
+    end
+    if Sakk_p_Sakk_grad_mean_max < 8
+        ylabel('max. Geschwindigkeit (px/ms)');
+    else
+        ylabel('durchschnittl. Geschwindigkeit (px/ms)');
+    end
+    
+    figure(2);
+    hold on; grid on;
+    scatterhist(x1,y1);
+    if mod(Sakk_p_Sakk_grad_mean_max, 2) == 1
+        xlabel('Sakkaden Amplitude (px)');
+    else
+        xlabel('Sakkaden Amplitude (°)');
+    end
+    if Sakk_p_Sakk_grad_mean_max < 8
+        ylabel('max. Geschwindigkeit (px/ms)');
+    else
+        ylabel('durchschnittl. Geschwindigkeit (px/ms)');
+    end
+    legend('Kontrollen');
+%     fit_control = fit(x1, y1, 'poly2');
+%     plot(fit_control, 'g');
+
+    figure(3)
+    hold on; grid on;
+    scatterhist(x2,y2);
+    if mod(Sakk_p_Sakk_grad_mean_max, 2) == 1
+        xlabel('Sakkaden Amplitude (px)');
+    else
+        xlabel('Sakkaden Amplitude (°)');
+    end
+    if Sakk_p_Sakk_grad_mean_max < 8
+        ylabel('max. Geschwindigkeit (px/ms)');
+    else
+        ylabel('durchschnittl. Geschwindigkeit (px/ms)');
+    end
+    legend('Patienten');
+%     fit_patient = fit(x2, y2, 'poly2');
+%     plot(fit_patient, 'y');
+    
+end
