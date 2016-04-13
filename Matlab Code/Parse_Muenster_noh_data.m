@@ -4,14 +4,14 @@ clearvars -except image_dir mat_dir goal_dir dauer
 
 %% Input 
 
-image_dir = '/mnt/syno8/data/Muenster_noh/Testbilder/';
-mat_dir = '/mnt/syno8/data/Muenster_noh/AugenbewegungsdateienBearbeitet/mat/';
-goal_dir = '/home/ga25xed/Desktop/Christopher Zeiser Forschungspraxis/Patienten Daten/';
+image_path = '/mnt/syno8/data/Muenster_noh/Testbilder/';
+mat_path = '/mnt/syno8/data/Muenster_noh/AugenbewegungsdateienBearbeitet/mat/';
+goal_path = '/home/ga25xed/Desktop/Christopher Zeiser Forschungspraxis/Patienten Daten/';
 % goal_dir = '/home/ga25xed/Desktop/Christopher Zeiser Forschungspraxis/Patienten Daten compressed/';
 
 %% Process data
 % Finde alle Files in dem .mat Ordner
-listing = dir(mat_dir);
+listing = dir(mat_path);
 listing = listing(3:end);
 question = [1 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2]';
 
@@ -27,7 +27,7 @@ for c = 1:size(listing,1)
 % Lade nur '.mat' files
     if listing(c,1).isdir == 0
         if listing(c,1).name(end-3:end) == '.mat'
-            load(cat(2, mat_dir, listing(c,1).name));
+            load(cat(2, mat_path, listing(c,1).name));
             original_filename = listing(c,1).name;
         else
             continue
@@ -49,7 +49,7 @@ for c = 1:size(listing,1)
             bild_nummer = bild_nummer +1;
             
             % Bild zur Bearbeitung einlesen
-            image = imread(cat(2,image_dir,Events{a,3}));
+            image = imread(cat(2,image_path,Events{a,3}));
             image_size = [size(image,1) size(image,2)];
             
             clearvars Sakk_bild Sakk_parsed Sakk_parsed_
@@ -157,8 +157,8 @@ for c = 1:size(listing,1)
             patient_id = original_filename(1:5);
             
             % Ein Ordner für jeden Probanten
-            if exist(cat(2, goal_dir,original_filename(1:5) ), 'dir') == 0
-                mkdir(goal_dir,original_filename(1:5));
+            if exist(cat(2, goal_path,original_filename(1:5) ), 'dir') == 0
+                mkdir(goal_path,original_filename(1:5));
             end
             
             % Default Speicherung mit allen Daten 
@@ -169,13 +169,13 @@ for c = 1:size(listing,1)
             Auge_ = Auge(Data(:,1) >= time_start & Data(:,1) <= time_ende,:);
             
             if question(bild_nummer) == 1 % Erste Frage
-                save(cat(2, goal_dir,original_filename(1:5), '/', original_filename(1:5), '_', image_name(1:end-4), '_1', '.mat' ),...
+                save(cat(2, goal_path,original_filename(1:5), '/', original_filename(1:5), '_', image_name(1:end-4), '_1', '.mat' ),...
                     'Auge_', 'Data_', 'goal_dir', 'image_dir', 'image_size', 'mat_dir', 'Sakk_parsed', 'SamplingRate', 'image_name', 'patient_id', 'Sakk_amplitude', 'original_filename', 'Sakk_bild', 'Fix_dauer', 'Sakk_dauer', 'Sakk_mean_vel', 'Sakk_max_vel', 'monokular', 'Data_README', 'Sakk_parsed_README', 'Auge_README', 'Sakk_bild_README', 'README');
-                file = fopen(cat(2, goal_dir,original_filename(1:5), '/', original_filename(1:5), '_', image_name(1:end-4), '_1', '.scc' ),'w');
+                file = fopen(cat(2, goal_path,original_filename(1:5), '/', original_filename(1:5), '_', image_name(1:end-4), '_1', '.scc' ),'w');
             elseif question(bild_nummer) == 2 % Zweite Frage
-                save(cat(2, goal_dir,original_filename(1:5), '/', original_filename(1:5), '_', image_name(1:end-4), '_2', '.mat' ),...
+                save(cat(2, goal_path,original_filename(1:5), '/', original_filename(1:5), '_', image_name(1:end-4), '_2', '.mat' ),...
                     'Auge_', 'Data_', 'goal_dir', 'image_dir', 'image_size', 'mat_dir', 'Sakk_parsed', 'SamplingRate', 'image_name', 'patient_id', 'Sakk_amplitude', 'original_filename', 'Sakk_bild', 'Fix_dauer', 'Sakk_dauer', 'Sakk_mean_vel', 'Sakk_max_vel', 'monokular', 'Data_README', 'Sakk_parsed_README', 'Auge_README', 'Sakk_bild_README', 'README');
-                file = fopen(cat(2, goal_dir,original_filename(1:5), '/', original_filename(1:5), '_', image_name(1:end-4), '_2', '.scc' ),'w');
+                file = fopen(cat(2, goal_path,original_filename(1:5), '/', original_filename(1:5), '_', image_name(1:end-4), '_2', '.scc' ),'w');
             end
             
             

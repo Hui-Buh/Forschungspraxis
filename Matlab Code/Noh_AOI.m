@@ -295,54 +295,56 @@ function Noh_AOI( bilder, durchlauf, ~, kontroll_kennung, patient_kennung, data_
     
 
 %% Auswertung
+
     clearvars buf
 
     Sakk_pos_control(1,:) = [];
     Sakk_pos_patient(1,:) = [];
 
     % Linkes Auge
-    buf = (Sakk_pos_control(:,1) - 90).^2/45^2 + (Sakk_pos_control(:,2) - (456-200)).^2/25^2;
+    buf = (Sakk_pos_control(:,1) - 90).^2/45^2 + (Sakk_pos_control(:,2) - (456-210)).^2/25^2;
     buf = find(buf < 1);
     Auge_links_control(:,1) = Sakk_pos_control(buf,1);
     Auge_links_control(:,2) = Sakk_pos_control(buf,2);
-    buf = (Sakk_pos_patient(:,1) - 90).^2/45^2 + (Sakk_pos_patient(:,2) - (456-200)).^2/25^2;
+    buf = (Sakk_pos_patient(:,1) - 90).^2/45^2 + (Sakk_pos_patient(:,2) - (456-210)).^2/25^2;
     buf = find(buf < 1);
     Auge_links_patient(:,1) = Sakk_pos_patient(buf,1);
     Auge_links_patient(:,2) = Sakk_pos_patient(buf,2);
     
     % Rechtes Auge
-    buf = (Sakk_pos_control(:,1) - 200).^2/45^2 + (Sakk_pos_control(:,2) - (456-200)).^2/25^2;
+    buf = (Sakk_pos_control(:,1) - 200).^2/45^2 + (Sakk_pos_control(:,2) - (456-210)).^2/25^2;
     buf = find(buf < 1);
     Auge_rechts_control(:,1) = Sakk_pos_control(buf,1);
     Auge_rechts_control(:,2) = Sakk_pos_control(buf,2);
-    buf = (Sakk_pos_patient(:,1) - 200).^2/45^2 + (Sakk_pos_patient(:,2) - (456-200)).^2/25^2;
+    buf = (Sakk_pos_patient(:,1) - 200).^2/45^2 + (Sakk_pos_patient(:,2) - (456-210)).^2/25^2;
     buf = find(buf < 1);
     Auge_rechts_patient(:,1) = Sakk_pos_patient(buf,1);
     Auge_rechts_patient(:,2) = Sakk_pos_patient(buf,2);
     
     % Mund
-    buf = (Sakk_pos_control(:,1) - 145).^2/55^2 + (Sakk_pos_control(:,2) - (456-300)).^2/30^2;
+    buf = (Sakk_pos_control(:,1) - 145).^2/55^2 + (Sakk_pos_control(:,2) - (456-325)).^2/30^2;
     buf = find(buf < 1);
     Mund_control(:,1) = Sakk_pos_control(buf,1);
     Mund_control(:,2) = Sakk_pos_control(buf,2);
-    buf = (Sakk_pos_patient(:,1) - 145).^2/55^2 + (Sakk_pos_patient(:,2) - (456-300)).^2/30^2;
+    buf = (Sakk_pos_patient(:,1) - 145).^2/55^2 + (Sakk_pos_patient(:,2) - (456-325)).^2/30^2;
     buf = find(buf < 1);
     Mund_patient(:,1) = Sakk_pos_patient(buf,1);
     Mund_patient(:,2) = Sakk_pos_patient(buf,2);
 
     figure(1)
     hold on; grid on;
+    
     plot(Sakk_pos_control(:,1), Sakk_pos_control(:,2), '.k');
     plot(Sakk_pos_patient(:,1), Sakk_pos_patient(:,2), '.y');
     
     scatter(Auge_links_control(:,1), Auge_links_control(:,2), 'b');
     scatter(Auge_links_patient(:,1), Auge_links_patient(:,2), 'r');
+    legend('Kontrollen', 'Patienten', 'Kontrollen', 'Patienten');
     scatter(Auge_rechts_control(:,1), Auge_rechts_control(:,2), 'b');
     scatter(Auge_rechts_patient(:,1), Auge_rechts_patient(:,2), 'r');
     scatter(Mund_control(:,1), Mund_control(:,2), 'b');
     scatter(Mund_patient(:,1), Mund_patient(:,2), 'r');
     
-    legend('Kontrollen', 'Patienten', 'Kontrollen', 'Patienten');
     
      u = uitable('Data', [size(Mund_control,1) size(Mund_patient,1); size(Auge_links_control,1) size(Auge_links_patient,1); size(Auge_rechts_control,1) size(Auge_rechts_patient,1) ], ...
     'RowName', {'mouth', 'eye_left', 'eye_right'}, ...

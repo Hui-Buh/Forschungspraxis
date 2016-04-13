@@ -22,7 +22,7 @@ function varargout = test_gui(varargin)
 
 % Edit the above text to modify the response to help test_gui
 
-% Last Modified by GUIDE v2.5 12-Apr-2016 13:50:53
+% Last Modified by GUIDE v2.5 13-Apr-2016 14:35:16
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -75,7 +75,7 @@ varargout{1} = handles.output;
 
 
 function get_parameters(hObject, eventdata, handles)
-global dauer bilder durchlauf kontroll_kennung patient_kennung data_path image_path Sakka_Sakkd_Fix Sakk_p_Sakk_grad_mean_max Sakkpx_Sakkgrad
+global bilder durchlauf kontroll_kennung patient_kennung data_path image_path Sakka_Sakkd_Fix Sakk_p_Sakk_grad_mean_max Sakkpx_Sakkgrad
 bilder = get(handles.checkbox1,'Value')*8 + get(handles.checkbox2,'Value')*4 + get(handles.checkbox3,'Value')*2 + get(handles.checkbox5,'Value');
 durchlauf = get(handles.checkbox7,'Value') + get(handles.checkbox8,'Value')*2;
 kontroll_kennung = get(handles.edit5,'String'); 
@@ -88,72 +88,59 @@ Sakkpx_Sakkgrad = get(handles.radiobutton3,'Value')*2 + get(handles.radiobutton4
 
 % --- Executes on button press in pushbutton1.
 function pushbutton1_Callback(hObject, eventdata, handles)
-global dauer bilder durchlauf kontroll_kennung patient_kennung data_path image_path Sakka_Sakkd_Fix 
+global bilder durchlauf kontroll_kennung patient_kennung data_path image_path Sakka_Sakkd_Fix 
 % hObject    handle to pushbutton1 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 get_parameters(hObject, eventdata, handles)
-set(handles.text9, 'String', cat(2, 'Estimated time: ', num2str(dauer(1))));
-tic
 Compute_ecdf( bilder, durchlauf, Sakka_Sakkd_Fix, kontroll_kennung, patient_kennung, data_path, image_path)
-dauer(1) = toc;
 
 % --- Executes on button press in pushbutton2.
 function pushbutton2_Callback(hObject, eventdata, handles)
-global dauer bilder durchlauf kontroll_kennung patient_kennung data_path image_path
+global bilder durchlauf kontroll_kennung patient_kennung data_path image_path
 % hObject    handle to pushbutton2 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 get_parameters(hObject, eventdata, handles)
-tic
 local_Sakk_distribution(bilder, durchlauf, '' , kontroll_kennung, patient_kennung, data_path, image_path)
-dauer(2) = toc;
 
 % --- Executes on button press in pushbutton3.
 function pushbutton3_Callback(hObject, eventdata, handles)
-global dauer bilder durchlauf kontroll_kennung patient_kennung data_path image_path Sakk_p_Sakk_grad_mean_max
+global bilder durchlauf kontroll_kennung patient_kennung data_path image_path Sakk_p_Sakk_grad_mean_max
 % hObject    handle to pushbutton3 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 get_parameters(hObject, eventdata, handles)
-tic
 compare_Sakk(bilder, durchlauf, Sakk_p_Sakk_grad_mean_max , kontroll_kennung, patient_kennung, data_path, image_path)
-dauer(3) = toc;
 
 % --- Executes on button press in pushbutton4.
 function pushbutton4_Callback(hObject, eventdata, handles)
-global dauer bilder durchlauf kontroll_kennung patient_kennung data_path image_path
+global bilder durchlauf kontroll_kennung patient_kennung data_path image_path
 % hObject    handle to pushbutton4 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 get_parameters(hObject, eventdata, handles)
-tic
 create_Sakk_profile( bilder, durchlauf, '', kontroll_kennung, patient_kennung, data_path, image_path )
-dauer(4) = toc;
 
 
 % --- Executes on button press in pushbutton5.
 function pushbutton5_Callback(hObject, eventdata, handles)
-global dauer bilder durchlauf kontroll_kennung patient_kennung data_path image_path
+global bilder durchlauf kontroll_kennung patient_kennung data_path image_path
 % hObject    handle to pushbutton5 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 get_parameters(hObject, eventdata, handles)
-tic
 Sakk_directions(bilder, durchlauf, '' , kontroll_kennung, patient_kennung, data_path, image_path)
-dauer(5) = toc;
 
 
 % --- Executes on button press in pushbutton6.
 function pushbutton6_Callback(hObject, eventdata, handles)
-global dauer bilder durchlauf kontroll_kennung patient_kennung data_path image_path 
+global bilder durchlauf kontroll_kennung patient_kennung data_path image_path 
 % hObject    handle to pushbutton6 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 get_parameters(hObject, eventdata, handles)
-tic
 Noh_AOI( bilder, durchlauf, '' , kontroll_kennung, patient_kennung, data_path, image_path)
-dauer(6) = toc;
 
 
 

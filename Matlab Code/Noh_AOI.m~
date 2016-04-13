@@ -295,6 +295,7 @@ function Noh_AOI( bilder, durchlauf, ~, kontroll_kennung, patient_kennung, data_
     
 
 %% Auswertung
+
     clearvars buf
 
     Sakk_pos_control(1,:) = [];
@@ -332,6 +333,10 @@ function Noh_AOI( bilder, durchlauf, ~, kontroll_kennung, patient_kennung, data_
 
     figure(1)
     hold on; grid on;
+    
+    image = imread(cat(2,image_dir,Events{a,3}));
+    
+    
     plot(Sakk_pos_control(:,1), Sakk_pos_control(:,2), '.k');
     plot(Sakk_pos_patient(:,1), Sakk_pos_patient(:,2), '.y');
     
@@ -348,10 +353,10 @@ function Noh_AOI( bilder, durchlauf, ~, kontroll_kennung, patient_kennung, data_
     'RowName', {'mouth', 'eye_left', 'eye_right'}, ...
     'ColumnName', {'control' ,'patient'}, 'FontName', 'Arial', 'FontSize', 8);
 
-    u.Position(1) = 180;
-    u.Position(2) = 120;
-    u.Position(3) = 250;
-    u.Position(4) = 90;
+    u.Position(1) = 0;
+    u.Position(2) = 0;
+    u.Position(3) = 252;
+    u.Position(4) = 73;
     
 
 end

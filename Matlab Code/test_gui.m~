@@ -43,7 +43,6 @@ else
 end
 % End initialization code - DO NOT EDIT
 
-end
 
 % --- Executes just before test_gui is made visible.
 function test_gui_OpeningFcn(hObject, eventdata, handles, varargin)
@@ -97,7 +96,6 @@ get_parameters(hObject, eventdata, handles)
 set(handles.text9, 'String', cat(2, 'Estimated time: ', num2str(dauer(1))));
 tic
 Compute_ecdf( bilder, durchlauf, Sakka_Sakkd_Fix, kontroll_kennung, patient_kennung, data_path, image_path)
-dauer(1) = toc;
 
 % --- Executes on button press in pushbutton2.
 function pushbutton2_Callback(hObject, eventdata, handles)
