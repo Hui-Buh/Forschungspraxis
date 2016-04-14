@@ -115,12 +115,12 @@ compare_Sakk(bilder, durchlauf, Sakk_p_Sakk_grad_mean_max , kontroll_kennung, pa
 
 % --- Executes on button press in pushbutton4.
 function pushbutton4_Callback(hObject, eventdata, handles)
-global bilder durchlauf kontroll_kennung patient_kennung data_path image_path
+global bilder durchlauf kontroll_kennung patient_kennung data_path image_path Sakkpx_Sakkgrad
 % hObject    handle to pushbutton4 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 get_parameters(hObject, eventdata, handles)
-create_Sakk_profile( bilder, durchlauf, '', kontroll_kennung, patient_kennung, data_path, image_path )
+create_Sakk_profile( bilder, durchlauf, Sakkpx_Sakkgrad, kontroll_kennung, patient_kennung, data_path, image_path )
 
 
 % --- Executes on button press in pushbutton5.
