@@ -178,7 +178,7 @@ function create_Sakk_profile( bilder, durchlauf, Sakkpx_Sakkgrad, kontroll_kennu
             if isempty(sakk) == 0
                 sakk(:,1) = sakk(:,1) - sakk(1,1) +1;
                 diff_ = (sakk(1:end-1,[2 3]) - sakk(2:end,[2 3])); 
-                if  sakk(end,1) > time_c 
+                if  (sakk(end,1) > time_c) % && (sakk(end,1) < 50)
                     time_c = sakk(1:end-1,1);
                     vel_c = sqrt(sum(diff_ .* diff_, 2))/2 ;
                     if Sakkpx_Sakkgrad == 2
@@ -198,7 +198,7 @@ function create_Sakk_profile( bilder, durchlauf, Sakkpx_Sakkgrad, kontroll_kennu
             if isempty(sakk) == 0
                 sakk(:,1) = sakk(:,1) - sakk(1,1) +1;
                 diff_ = (sakk(1:end-1,[2 3]) - sakk(2:end,[2 3])) ; 
-                if  sakk(end,1) > time_p
+                if  (sakk(end,1) > time_p) % && (sakk(end,1) < 50)
                     time_p = sakk(1:end-1,1);
                     vel_p = sqrt(sum(diff_ .* diff_, 2))/2 ;
                     if Sakkpx_Sakkgrad == 2

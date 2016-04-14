@@ -1,12 +1,13 @@
 % !Achtung! Bestehende Daten werden überschrieben. !Achtung!
 
-clearvars -except image_dir mat_dir goal_dir dauer
+clearvars -except image_dir mat_dir goal_dir
 
 %% Input 
 
 image_path = '/mnt/syno8/data/Muenster_noh/Testbilder/';
 mat_path = '/mnt/syno8/data/Muenster_noh/AugenbewegungsdateienBearbeitet/mat/';
-goal_path = '/home/ga25xed/Desktop/Christopher Zeiser Forschungspraxis/Patienten Daten/';
+goal_path = '/home/ga25xed/Desktop/Christopher Zeiser Forschungspraxis/Test/';
+% goal_path = '/home/ga25xed/Desktop/Christopher Zeiser Forschungspraxis/Patienten Daten/';
 % goal_dir = '/home/ga25xed/Desktop/Christopher Zeiser Forschungspraxis/Patienten Daten compressed/';
 
 %% Process data
@@ -40,8 +41,6 @@ for c = 1:size(listing,1)
 
     Sakk_ = Sakk(Sakk(:,5) > 0,:);
     
-
-    
 %% Parse data
     bild_nummer = 0;
     for a = 1:size(Events,1)
@@ -60,6 +59,7 @@ for c = 1:size(listing,1)
             
             % Alle Zeitstempel der Sakk, die zu diesem einem Bild gehören
             Sakk_bild = Sakk_( (Data(Sakk_(:,2),1) > time_start) & (Data(Sakk_(:,3),1) <= time_ende) ,:);
+            if isempty(Sakk_bild) == 1; continue; end;
             
             % monokular: 1= nur links, 2= nur rechts, 3 = beide Augen
             if min(Sakk_bild(:,1)) == max(Sakk_bild(:,1))
@@ -156,27 +156,27 @@ for c = 1:size(listing,1)
             image_name = char(Events{a,3});
             patient_id = original_filename(1:5);
             
-            % Ein Ordner für jeden Probanten
-            if exist(cat(2, goal_path,original_filename(1:5) ), 'dir') == 0
-                mkdir(goal_path,original_filename(1:5));
-            end
+%             % Ein Ordner für jeden Probanten
+%             if exist(cat(2, goal_path,original_filename(1:5) ), 'dir') == 0
+%                 mkdir(goal_path,original_filename(1:5));
+%             end
             
-            % Default Speicherung mit allen Daten 
-            % ! Daten werden überschrieben !!!
-            % Unterscheidung zwischen erster und zweiter Frage
-
-            Data_ = Data(Data(:,1) >= time_start & Data(:,1) <= time_ende,:);
-            Auge_ = Auge(Data(:,1) >= time_start & Data(:,1) <= time_ende,:);
-            
-            if question(bild_nummer) == 1 % Erste Frage
-                save(cat(2, goal_path,original_filename(1:5), '/', original_filename(1:5), '_', image_name(1:end-4), '_1', '.mat' ),...
-                    'Auge_', 'Data_', 'goal_dir', 'image_dir', 'image_size', 'mat_dir', 'Sakk_parsed', 'SamplingRate', 'image_name', 'patient_id', 'Sakk_amplitude', 'original_filename', 'Sakk_bild', 'Fix_dauer', 'Sakk_dauer', 'Sakk_mean_vel', 'Sakk_max_vel', 'monokular', 'Data_README', 'Sakk_parsed_README', 'Auge_README', 'Sakk_bild_README', 'README');
-                file = fopen(cat(2, goal_path,original_filename(1:5), '/', original_filename(1:5), '_', image_name(1:end-4), '_1', '.scc' ),'w');
-            elseif question(bild_nummer) == 2 % Zweite Frage
-                save(cat(2, goal_path,original_filename(1:5), '/', original_filename(1:5), '_', image_name(1:end-4), '_2', '.mat' ),...
-                    'Auge_', 'Data_', 'goal_dir', 'image_dir', 'image_size', 'mat_dir', 'Sakk_parsed', 'SamplingRate', 'image_name', 'patient_id', 'Sakk_amplitude', 'original_filename', 'Sakk_bild', 'Fix_dauer', 'Sakk_dauer', 'Sakk_mean_vel', 'Sakk_max_vel', 'monokular', 'Data_README', 'Sakk_parsed_README', 'Auge_README', 'Sakk_bild_README', 'README');
-                file = fopen(cat(2, goal_path,original_filename(1:5), '/', original_filename(1:5), '_', image_name(1:end-4), '_2', '.scc' ),'w');
-            end
+%             % Default Speicherung mit allen Daten 
+%             % ! Daten werden überschrieben !!!
+%             % Unterscheidung zwischen erster und zweiter Frage
+% 
+%             Data_ = Data(Data(:,1) >= time_start & Data(:,1) <= time_ende,:);
+%             Auge_ = Auge(Data(:,1) >= time_start & Data(:,1) <= time_ende,:);
+%             
+%             if question(bild_nummer) == 1 % Erste Frage
+%                 save(cat(2, goal_path,original_filename(1:5), '/', original_filename(1:5), '_', image_name(1:end-4), '_1', '.mat' ),...
+%                     'Auge_', 'Data_', 'goal_dir', 'image_dir', 'image_size', 'mat_dir', 'Sakk_parsed', 'SamplingRate', 'image_name', 'patient_id', 'Sakk_amplitude', 'original_filename', 'Sakk_bild', 'Fix_dauer', 'Sakk_dauer', 'Sakk_mean_vel', 'Sakk_max_vel', 'monokular', 'Data_README', 'Sakk_parsed_README', 'Auge_README', 'Sakk_bild_README', 'README');
+%                 file = fopen(cat(2, goal_path,original_filename(1:5), '/', original_filename(1:5), '_', image_name(1:end-4), '_1', '.scc' ),'w');
+%             elseif question(bild_nummer) == 2 % Zweite Frage
+%                 save(cat(2, goal_path,original_filename(1:5), '/', original_filename(1:5), '_', image_name(1:end-4), '_2', '.mat' ),...
+%                     'Auge_', 'Data_', 'goal_dir', 'image_dir', 'image_size', 'mat_dir', 'Sakk_parsed', 'SamplingRate', 'image_name', 'patient_id', 'Sakk_amplitude', 'original_filename', 'Sakk_bild', 'Fix_dauer', 'Sakk_dauer', 'Sakk_mean_vel', 'Sakk_max_vel', 'monokular', 'Data_README', 'Sakk_parsed_README', 'Auge_README', 'Sakk_bild_README', 'README');
+%                 file = fopen(cat(2, goal_path,original_filename(1:5), '/', original_filename(1:5), '_', image_name(1:end-4), '_2', '.scc' ),'w');
+%             end
             
             
 %             % Speicherung mit weniger Daten zur Beschleunigung des Skriptes!
@@ -192,16 +192,16 @@ for c = 1:size(listing,1)
 %                 file = fopen(cat(2, goal_dir,original_filename(1:5), '/', original_filename(1:5), '_', image_name(1:end-4), '_2', '.scc' ),'w');
 %             end
             
-            % Schreibe Daten
-            fprintf(file, cat(2,'saccades ', num2str(image_size(1)), ' ', num2str(image_size(2)), '\n'));
-            fprintf(file, 'Sakk_start_time : x-coord. : y-coord. : Sakk_end_time : x-coord. : y-coord. (mean of both eyes)\n');
-            
-            for b = 1:size(Sakk_parsed,1)
-                fprintf(file , '%d %f %f %d %f %f', Sakk_parsed(b,:));
-                fprintf(file , '\n');
-            end
-            
-            fclose(file);
+%             % Schreibe Daten
+%             fprintf(file, cat(2,'saccades ', num2str(image_size(1)), ' ', num2str(image_size(2)), '\n'));
+%             fprintf(file, 'Sakk_start_time : x-coord. : y-coord. : Sakk_end_time : x-coord. : y-coord. (mean of both eyes)\n');
+%             
+%             for b = 1:size(Sakk_parsed,1)
+%                 fprintf(file , '%d %f %f %d %f %f', Sakk_parsed(b,:));
+%                 fprintf(file , '\n');
+%             end
+%             
+%             fclose(file);
         end
     end
 end

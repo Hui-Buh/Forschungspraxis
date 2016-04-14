@@ -38,10 +38,10 @@ function Sakk_directions(bilder, durchlauf, ~ , kontroll_kennung, patient_kennun
                 % Extrahiere alle notwendigen Daten
                 Sakk_parsed = m.Sakk_parsed;
                 if isempty(Sakk_parsed) == 1; continue; end;
-                clearvars buf pos
-                buf(:,1) = Sakk_parsed(:,5) - Sakk_parsed(:,2);
-                buf(:,2) = Sakk_parsed(:,6) - Sakk_parsed(:,3);
-                pos = center_image(Sakk_parsed(:,2), Sakk_parsed(:,3), buf(:,1), buf(:,2), '-', '-', 300, 460);
+                clearvars difference pos
+                difference(:,1) = Sakk_parsed(:,5) - Sakk_parsed(:,2);
+                difference(:,2) = Sakk_parsed(:,6) - Sakk_parsed(:,3);
+                pos = center_image(Sakk_parsed(:,2), Sakk_parsed(:,3), difference(:,1), difference(:,2), '-', '-', 300, 460);
                 Sakk_pos_control = [Sakk_pos_control ; pos(:, [1 2 3 4])];
             end
         end
@@ -56,10 +56,10 @@ function Sakk_directions(bilder, durchlauf, ~ , kontroll_kennung, patient_kennun
                 % Extrahiere alle notwendigen Daten
                 Sakk_parsed = m.Sakk_parsed;
                 if isempty(Sakk_parsed) == 1; continue; end;
-                clearvars buf pos
-                buf(:,1) = Sakk_parsed(:,5) - Sakk_parsed(:,2);
-                buf(:,2) = Sakk_parsed(:,6) - Sakk_parsed(:,3);
-                pos = center_image(Sakk_parsed(:,2), Sakk_parsed(:,3), buf(:,1), buf(:,2), '-', '-', 300, 460);
+                clearvars difference pos
+                difference(:,1) = Sakk_parsed(:,5) - Sakk_parsed(:,2);
+                difference(:,2) = Sakk_parsed(:,6) - Sakk_parsed(:,3);
+                pos = center_image(Sakk_parsed(:,2), Sakk_parsed(:,3), difference(:,1), difference(:,2), '-', '-', 300, 460);
                 Sakk_pos_control = [Sakk_pos_control ; pos(:, [1 2 3 4])];
             end
         end
@@ -81,10 +81,10 @@ function Sakk_directions(bilder, durchlauf, ~ , kontroll_kennung, patient_kennun
                 % Extrahiere alle notwendigen Daten
                 Sakk_parsed = m.Sakk_parsed;
                 if isempty(Sakk_parsed) == 1; continue; end;
-                clearvars buf pos
-                buf(:,1) = Sakk_parsed(:,5) - Sakk_parsed(:,2);
-                buf(:,2) = Sakk_parsed(:,6) - Sakk_parsed(:,3);
-                pos = center_image(Sakk_parsed(:,2), Sakk_parsed(:,3), buf(:,1), buf(:,2), '-', '-', 300, 460);
+                clearvars difference pos
+                difference(:,1) = Sakk_parsed(:,5) - Sakk_parsed(:,2);
+                difference(:,2) = Sakk_parsed(:,6) - Sakk_parsed(:,3);
+                pos = center_image(Sakk_parsed(:,2), Sakk_parsed(:,3), difference(:,1), difference(:,2), '-', '-', 300, 460);
                 Sakk_pos_patient = [Sakk_pos_patient ; pos(:, [1 2 3 4])];
             end
         end
@@ -99,10 +99,10 @@ function Sakk_directions(bilder, durchlauf, ~ , kontroll_kennung, patient_kennun
                 % Extrahiere alle notwendigen Daten
                 Sakk_parsed = m.Sakk_parsed;
                 if isempty(Sakk_parsed) == 1; continue; end;
-                clearvars buf pos
-                buf(:,1) = Sakk_parsed(:,5) - Sakk_parsed(:,2);
-                buf(:,2) = Sakk_parsed(:,6) - Sakk_parsed(:,3);
-                pos = center_image(Sakk_parsed(:,2), Sakk_parsed(:,3), buf(:,1), buf(:,2), '-', '-', 300, 460);
+                clearvars difference pos
+                difference(:,1) = Sakk_parsed(:,5) - Sakk_parsed(:,2);
+                difference(:,2) = Sakk_parsed(:,6) - Sakk_parsed(:,3);
+                pos = center_image(Sakk_parsed(:,2), Sakk_parsed(:,3), difference(:,1), difference(:,2), '-', '-', 300, 460);
                 Sakk_pos_patient = [Sakk_pos_patient ; pos(:, [1 2 3 4])];
             end
         end
@@ -125,10 +125,9 @@ function Sakk_directions(bilder, durchlauf, ~ , kontroll_kennung, patient_kennun
     quiver([300/2; 300/2], [460/2; 460/2], coeff_patient(:,1)*100, coeff_patient(:,2)*100, 'g');
     legend('Sakkaden Richtungen Kontrollen', 'Sakkaden Richtungen Patienten', 'Hauptkomponenten Kontrollen', 'Hauptkomponenten Patienten');
     
-    
     figure(2)
     hold on; grid on;
-    phi = linspace(0, 2*pi, 50);
+    phi = linspace(0, 2*pi, 53);
     x = sin(phi(1:end-1));
     y = cos(phi(1:end-1));
     kreis = [x' y'];
@@ -138,9 +137,16 @@ function Sakk_directions(bilder, durchlauf, ~ , kontroll_kennung, patient_kennun
         [~, buf1] = max(buf);
         kreis(buf1,:) = kreis(buf1,:) + einheitskreis(buf1,:);
     end
-    kreis = kreis /size(Sakk_pos_control,1);
+
+    kreis = kreis /(size(Sakk_pos_control,1)+1);
     kreis(end,:) = kreis(1,:);
+    probability_control = sqrt(sum(kreis(:,:) .* kreis(:,:), 2));
+    percent_control(1) = probability_control(52) + probability_control(1) + probability_control(2);
+    percent_control(2) = probability_control(13) + probability_control(14) + probability_control(15);
+    percent_control(3) = probability_control(26) + probability_control(27) + probability_control(28);
+    percent_control(4) = probability_control(39) + probability_control(40) + probability_control(41);
     plot(kreis(:,1), kreis(:,2), 'b');
+    
     kreis = [x' y'];
     einheitskreis = kreis;
     for f = 1:size(Sakk_pos_patient,1)
@@ -148,9 +154,26 @@ function Sakk_directions(bilder, durchlauf, ~ , kontroll_kennung, patient_kennun
         [~, buf1] = max(buf);
         kreis(buf1,:) = kreis(buf1,:) + einheitskreis(buf1,:);
     end
-    kreis = kreis /size(Sakk_pos_patient,1);
+    kreis = kreis /(size(Sakk_pos_patient,1)+1);
     kreis(end,:) = kreis(1,:);
+    probability_patient = sqrt(sum(kreis(:,:) .* kreis(:,:), 2));
+    percent_patient(1) = probability_patient(52) + probability_patient(1) + probability_patient(2);
+    percent_patient(2) = probability_patient(13) + probability_patient(14) + probability_patient(15);
+    percent_patient(3) = probability_patient(26) + probability_patient(27) + probability_patient(28);
+    percent_patient(4) = probability_patient(39) + probability_patient(40) + probability_patient(41);
     plot(kreis(:,1), kreis(:,2), 'r');
     legend('Kontrollen', 'Patienten');
+    
+    ratio(1) = (percent_control(2)+percent_control(4))/(percent_control(1)+percent_control(3));
+    ratio(2) = (percent_patient(2)+percent_patient(4))/(percent_patient(1)+percent_patient(3));
+    u = uitable('Data', [[percent_control'*100; ratio(1)] [percent_patient'*100; ratio(2)] ], ...
+    'RowName', {'up +-10%', 'right +-10%', 'down +-10%', 'left +-10%', 'ratio lr/ud'}, ...
+    'ColumnName', {'control' ,'patient'}, 'FontName', 'Arial', 'FontSize', 8);
+
+    u.Position(1) = 0;
+    u.Position(2) = 0;
+    u.Position(3) = 274;
+    u.Position(4) = 107;
+    
     
 end
