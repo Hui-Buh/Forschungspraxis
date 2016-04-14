@@ -14,332 +14,100 @@ function Sakk_directions(bilder, durchlauf, ~ , kontroll_kennung, patient_kennun
 
     [control_listing, patient_listing] =  Separate_test_persons(kontroll_kennung, patient_kennung, data_path);
     
-
+    % Baue eine Liste aller Bilder, die abgearbeitet werden sollen
+    image_list{1,1} = 'List of all images to use.';
+    if bilder >= 8; image_list = vertcat(image_list, faces{2:end}); bilder = bilder -8; end;
+    if bilder >= 4; image_list = vertcat(image_list, faces_m{2:end}); bilder = bilder -4; end;
+    if bilder >= 2; image_list = vertcat(image_list, faces_t{2:end}); bilder = bilder -2; end;
+    if bilder >= 1; image_list = vertcat(image_list, kont{2:end}); bilder = bilder -1; end;
+    
+    
 %% Alle Daten der Kontrollen heraussuchen
 
     Sakk_pos_control = zeros(1,4);
     
-    bilder_save = bilder;
-    
     for b = 2:size(control_listing,1)
-        bilder = bilder_save;
-        
-% normal faces
-        if bilder >= 8 
-            if durchlauf == 1 || durchlauf == 3
-                for c = 2:size(faces,1)
-                    % Open .mat file
-                    if exist(cat(2, data_path, '/', control_listing{b,1}, '/', control_listing{b,1}, '_', faces{c,1} , '_1','.mat' ), 'file') > 0
-                        m = matfile(cat(2, data_path, '/', control_listing{b,1}, '/', control_listing{b,1}, '_', faces{c,1} , '_1','.mat' ));
-                    else
-                        continue
-                    end
-                    Sakk_parsed = m.Sakk_parsed;
-                    if isempty(Sakk_parsed) == 1; continue; end;
-                    clearvars buf pos
-                    buf(:,1) = Sakk_parsed(:,5) - Sakk_parsed(:,2);
-                    buf(:,2) = Sakk_parsed(:,6) - Sakk_parsed(:,3);
-                    pos = center_image(Sakk_parsed(:,2), Sakk_parsed(:,3), buf(:,1), buf(:,2), '-', '-', 300, 460);
-                    Sakk_pos_control = [Sakk_pos_control ; pos(:, [1 2 3 4])];
+        if durchlauf == 1 || durchlauf == 3
+            for c = 2:size(image_list,1)
+                % Open .mat file
+                if exist(cat(2, data_path, '/', control_listing{b,1}, '/', control_listing{b,1}, '_', image_list{c,1} , '_1','.mat' ), 'file') > 0
+                    m = matfile(cat(2, data_path, '/', control_listing{b,1}, '/', control_listing{b,1}, '_', image_list{c,1} , '_1','.mat' ));
+                else
+                    continue
                 end
+                % Extrahiere alle notwendigen Daten
+                Sakk_parsed = m.Sakk_parsed;
+                if isempty(Sakk_parsed) == 1; continue; end;
+                clearvars buf pos
+                buf(:,1) = Sakk_parsed(:,5) - Sakk_parsed(:,2);
+                buf(:,2) = Sakk_parsed(:,6) - Sakk_parsed(:,3);
+                pos = center_image(Sakk_parsed(:,2), Sakk_parsed(:,3), buf(:,1), buf(:,2), '-', '-', 300, 460);
+                Sakk_pos_control = [Sakk_pos_control ; pos(:, [1 2 3 4])];
             end
-            if durchlauf == 2 || durchlauf == 3
-                for c = 2:size(faces,1)
-                    % Open .mat file
-                    if exist(cat(2, data_path, '/', control_listing{b,1}, '/', control_listing{b,1}, '_', faces{c,1} , '_2','.mat' ), 'file') > 0
-                        m = matfile(cat(2, data_path, '/', control_listing{b,1}, '/', control_listing{b,1}, '_', faces{c,1} , '_2','.mat' ));
-                    else
-                        continue
-                    end
-                    Sakk_parsed = m.Sakk_parsed;
-                    if isempty(Sakk_parsed) == 1; continue; end;
-                    clearvars buf pos
-                    buf(:,1) = Sakk_parsed(:,5) - Sakk_parsed(:,2);
-                    buf(:,2) = Sakk_parsed(:,6) - Sakk_parsed(:,3);
-                    pos = center_image(Sakk_parsed(:,2), Sakk_parsed(:,3), buf(:,1), buf(:,2), '-', '-', 300, 460);
-                    Sakk_pos_control = [Sakk_pos_control ; pos(:, [1 2 3 4])];
-                end
-            end
-            bilder = bilder - 8;
         end
-% binaray faces
-        if bilder >= 4
-            if durchlauf == 1 || durchlauf == 3
-                for c = 2:size(faces_m,1)
-                    % Open .mat file
-                    if exist(cat(2, data_path, '/', control_listing{b,1}, '/', control_listing{b,1}, '_', faces_m{c,1} , '_1','.mat' ), 'file') > 0
-                        m = matfile(cat(2, data_path, '/', control_listing{b,1}, '/', control_listing{b,1}, '_', faces_m{c,1} , '_1','.mat' ));
-                    else
-                        continue
-                    end
-                    Sakk_parsed = m.Sakk_parsed;
-                    if isempty(Sakk_parsed) == 1; continue; end;
-                    clearvars buf pos
-                    buf(:,1) = Sakk_parsed(:,5) - Sakk_parsed(:,2);
-                    buf(:,2) = Sakk_parsed(:,6) - Sakk_parsed(:,3);
-                    pos = center_image(Sakk_parsed(:,2), Sakk_parsed(:,3), buf(:,1), buf(:,2), '-', '-', 300, 460);
-                    Sakk_pos_control = [Sakk_pos_control ; pos(:, [1 2 3 4])];
+        if durchlauf == 2 || durchlauf == 3
+            for c = 2:size(image_list,1)
+                % Open .mat file
+                if exist(cat(2, data_path, '/', control_listing{b,1}, '/', control_listing{b,1}, '_', image_list{c,1} , '_2','.mat' ), 'file') > 0
+                    m = matfile(cat(2, data_path, '/', control_listing{b,1}, '/', control_listing{b,1}, '_', image_list{c,1} , '_2','.mat' ));
+                else
+                    continue
                 end
+                % Extrahiere alle notwendigen Daten
+                Sakk_parsed = m.Sakk_parsed;
+                if isempty(Sakk_parsed) == 1; continue; end;
+                clearvars buf pos
+                buf(:,1) = Sakk_parsed(:,5) - Sakk_parsed(:,2);
+                buf(:,2) = Sakk_parsed(:,6) - Sakk_parsed(:,3);
+                pos = center_image(Sakk_parsed(:,2), Sakk_parsed(:,3), buf(:,1), buf(:,2), '-', '-', 300, 460);
+                Sakk_pos_control = [Sakk_pos_control ; pos(:, [1 2 3 4])];
             end
-            if durchlauf == 2 || durchlauf == 3
-                for c = 2:size(faces_m,1)
-                    % Open .mat file
-                    if exist(cat(2, data_path, '/', control_listing{b,1}, '/', control_listing{b,1}, '_', faces_m{c,1} , '_2','.mat' ), 'file') > 0
-                        m = matfile(cat(2, data_path, '/', control_listing{b,1}, '/', control_listing{b,1}, '_', faces_m{c,1} , '_2','.mat' ));
-                    else
-                        continue
-                    end
-                    Sakk_parsed = m.Sakk_parsed;
-                    if isempty(Sakk_parsed) == 1; continue; end;
-                    clearvars buf pos
-                    buf(:,1) = Sakk_parsed(:,5) - Sakk_parsed(:,2);
-                    buf(:,2) = Sakk_parsed(:,6) - Sakk_parsed(:,3);
-                    pos = center_image(Sakk_parsed(:,2), Sakk_parsed(:,3), buf(:,1), buf(:,2), '-', '-', 300, 460);
-                    Sakk_pos_control = [Sakk_pos_control ; pos(:, [1 2 3 4])];
-                end
-            end
-            bilder = bilder - 4;
-        end
-% binaray upside down faces
-        if bilder >= 2
-            if durchlauf == 1 || durchlauf == 3
-                for c = 2:size(faces_t,1)
-                    % Open .mat file
-                    if exist(cat(2, data_path, '/', control_listing{b,1}, '/', control_listing{b,1}, '_', faces_t{c,1} , '_1','.mat' ), 'file') > 0
-                        m = matfile(cat(2, data_path, '/', control_listing{b,1}, '/', control_listing{b,1}, '_', faces_t{c,1} , '_1','.mat' ));
-                    else
-                        continue
-                    end
-                    Sakk_parsed = m.Sakk_parsed;
-                    if isempty(Sakk_parsed) == 1; continue; end;
-                    clearvars buf pos
-                    buf(:,1) = Sakk_parsed(:,5) - Sakk_parsed(:,2);
-                    buf(:,2) = Sakk_parsed(:,6) - Sakk_parsed(:,3);
-                    pos = center_image(Sakk_parsed(:,2), Sakk_parsed(:,3), buf(:,1), buf(:,2), '-', '-', 300, 460);
-                    Sakk_pos_control = [Sakk_pos_control ; pos(:, [1 2 3 4])];
-                end
-            end
-            if durchlauf == 2 || durchlauf == 3
-                for c = 2:size(faces_t,1)
-                    % Open .mat file
-                    if exist(cat(2, data_path, '/', control_listing{b,1}, '/', control_listing{b,1}, '_', faces_t{c,1} , '_2','.mat' ), 'file') > 0
-                        m = matfile(cat(2, data_path, '/', control_listing{b,1}, '/', control_listing{b,1}, '_', faces_t{c,1} , '_2','.mat' ));
-                    else
-                        continue
-                    end
-                    Sakk_parsed = m.Sakk_parsed;
-                    if isempty(Sakk_parsed) == 1; continue; end;
-                    clearvars buf pos
-                    buf(:,1) = Sakk_parsed(:,5) - Sakk_parsed(:,2);
-                    buf(:,2) = Sakk_parsed(:,6) - Sakk_parsed(:,3);
-                    pos = center_image(Sakk_parsed(:,2), Sakk_parsed(:,3), buf(:,1), buf(:,2), '-', '-', 300, 460);
-                    Sakk_pos_control = [Sakk_pos_control ; pos(:, [1 2 3 4])];
-                end
-            end
-            bilder = bilder - 2;
-        end
-% all but faces
-        if bilder >= 1
-            if durchlauf == 1 || durchlauf == 3
-                for c = 2:size(kont,1)
-                    % Open .mat file
-                    if exist(cat(2, data_path, '/', control_listing{b,1}, '/', control_listing{b,1}, '_', kont{c,1} , '_1','.mat' ), 'file') > 0
-                        m = matfile(cat(2, data_path, '/', control_listing{b,1}, '/', control_listing{b,1}, '_', kont{c,1} , '_1','.mat' ));
-                    else
-                        continue
-                    end
-                    Sakk_parsed = m.Sakk_parsed;
-                    if isempty(Sakk_parsed) == 1; continue; end;
-                    clearvars buf pos
-                    buf(:,1) = Sakk_parsed(:,5) - Sakk_parsed(:,2);
-                    buf(:,2) = Sakk_parsed(:,6) - Sakk_parsed(:,3);
-                    pos = center_image(Sakk_parsed(:,2), Sakk_parsed(:,3), buf(:,1), buf(:,2), '-', '-', 300, 460);
-                    Sakk_pos_control = [Sakk_pos_control ; pos(:, [1 2 3 4])];
-                end
-            end
-            if durchlauf == 2 || durchlauf == 3
-                for c = 2:size(kont,1)
-                    % Open .mat file
-                    if exist(cat(2, data_path, '/', control_listing{b,1}, '/', control_listing{b,1}, '_', kont{c,1} , '_2','.mat' ), 'file') > 0
-                        m = matfile(cat(2, data_path, '/', control_listing{b,1}, '/', control_listing{b,1}, '_', kont{c,1} , '_2','.mat' ));
-                    else
-                        continue
-                    end
-                    Sakk_parsed = m.Sakk_parsed;
-                    if isempty(Sakk_parsed) == 1; continue; end;
-                    clearvars buf pos
-                    buf(:,1) = Sakk_parsed(:,5) - Sakk_parsed(:,2);
-                    buf(:,2) = Sakk_parsed(:,6) - Sakk_parsed(:,3);
-                    pos = center_image(Sakk_parsed(:,2), Sakk_parsed(:,3), buf(:,1), buf(:,2), '-', '-', 300, 460);
-                    Sakk_pos_control = [Sakk_pos_control ; pos(:, [1 2 3 4])];
-                end
-            end
-            bilder = bilder - 1;
         end
     end
-    
-    
+
 %% Alle Daten der Patienten heraussuchen
 
     Sakk_pos_patient = zeros(1,4);
     
     for b = 2:size(patient_listing,1)
-        bilder = bilder_save;
-        
-% normal faces
-        if bilder >= 8 
-            if durchlauf == 1 || durchlauf == 3
-                for c = 2:size(faces,1)
-                    % Open .mat file
-                    if exist(cat(2, data_path, '/', patient_listing{b,1}, '/', patient_listing{b,1}, '_', faces{c,1} , '_1','.mat' ), 'file') > 0
-                        m = matfile(cat(2, data_path, '/', patient_listing{b,1}, '/', patient_listing{b,1}, '_', faces{c,1} , '_1','.mat' ));
-                    else
-                        continue
-                    end
-                    Sakk_parsed = m.Sakk_parsed;
-                    if isempty(Sakk_parsed) == 1; continue; end;
-                    clearvars buf pos
-                    buf(:,1) = Sakk_parsed(:,5) - Sakk_parsed(:,2);
-                    buf(:,2) = Sakk_parsed(:,6) - Sakk_parsed(:,3);
-                    pos = center_image(Sakk_parsed(:,2), Sakk_parsed(:,3), buf(:,1), buf(:,2), '-', '-', 300, 460);
-                    Sakk_pos_patient = [Sakk_pos_patient ; pos(:, [1 2 3 4])];
+        if durchlauf == 1 || durchlauf == 3
+            for c = 2:size(image_list,1)
+                % Open .mat file
+                if exist(cat(2, data_path, '/', patient_listing{b,1}, '/', patient_listing{b,1}, '_', image_list{c,1} , '_1','.mat' ), 'file') > 0
+                    m = matfile(cat(2, data_path, '/', patient_listing{b,1}, '/', patient_listing{b,1}, '_', image_list{c,1} , '_1','.mat' ));
+                else
+                    continue
                 end
+                % Extrahiere alle notwendigen Daten
+                Sakk_parsed = m.Sakk_parsed;
+                if isempty(Sakk_parsed) == 1; continue; end;
+                clearvars buf pos
+                buf(:,1) = Sakk_parsed(:,5) - Sakk_parsed(:,2);
+                buf(:,2) = Sakk_parsed(:,6) - Sakk_parsed(:,3);
+                pos = center_image(Sakk_parsed(:,2), Sakk_parsed(:,3), buf(:,1), buf(:,2), '-', '-', 300, 460);
+                Sakk_pos_patient = [Sakk_pos_patient ; pos(:, [1 2 3 4])];
             end
-            if durchlauf == 2 || durchlauf == 3
-                for c = 2:size(faces,1)
-                    % Open .mat file
-                    if exist(cat(2, data_path, '/', patient_listing{b,1}, '/', patient_listing{b,1}, '_', faces{c,1} , '_2','.mat' ), 'file') > 0
-                        m = matfile(cat(2, data_path, '/', patient_listing{b,1}, '/', patient_listing{b,1}, '_', faces{c,1} , '_2','.mat' ));
-                    else
-                        continue
-                    end
-                    Sakk_parsed = m.Sakk_parsed;
-                    if isempty(Sakk_parsed) == 1; continue; end;
-                    clearvars buf pos
-                    buf(:,1) = Sakk_parsed(:,5) - Sakk_parsed(:,2);
-                    buf(:,2) = Sakk_parsed(:,6) - Sakk_parsed(:,3);
-                    pos = center_image(Sakk_parsed(:,2), Sakk_parsed(:,3), buf(:,1), buf(:,2), '-', '-', 300, 460);
-                    Sakk_pos_patient = [Sakk_pos_patient ; pos(:, [1 2 3 4])];
-                end
-            end
-            bilder = bilder - 8;
         end
-% binaray faces
-        if bilder >= 4
-            if durchlauf == 1 || durchlauf == 3
-                for c = 2:size(faces_m,1)
-                    % Open .mat file
-                    if exist(cat(2, data_path, '/', patient_listing{b,1}, '/', patient_listing{b,1}, '_', faces_m{c,1} , '_1','.mat' ), 'file') > 0
-                        m = matfile(cat(2, data_path, '/', patient_listing{b,1}, '/', patient_listing{b,1}, '_', faces_m{c,1} , '_1','.mat' ));
-                    else
-                        continue
-                    end
-                    Sakk_parsed = m.Sakk_parsed;
-                    if isempty(Sakk_parsed) == 1; continue; end;
-                    clearvars buf pos
-                    buf(:,1) = Sakk_parsed(:,5) - Sakk_parsed(:,2);
-                    buf(:,2) = Sakk_parsed(:,6) - Sakk_parsed(:,3);
-                    pos = center_image(Sakk_parsed(:,2), Sakk_parsed(:,3), buf(:,1), buf(:,2), '-', '-', 300, 460);
-                    Sakk_pos_patient = [Sakk_pos_patient ; pos(:, [1 2 3 4])];
+        if durchlauf == 2 || durchlauf == 3
+            for c = 2:size(image_list,1)
+                % Open .mat file
+                if exist(cat(2, data_path, '/', patient_listing{b,1}, '/', patient_listing{b,1}, '_', image_list{c,1} , '_2','.mat' ), 'file') > 0
+                    m = matfile(cat(2, data_path, '/', patient_listing{b,1}, '/', patient_listing{b,1}, '_', image_list{c,1} , '_2','.mat' ));
+                else
+                    continue
                 end
+                % Extrahiere alle notwendigen Daten
+                Sakk_parsed = m.Sakk_parsed;
+                if isempty(Sakk_parsed) == 1; continue; end;
+                clearvars buf pos
+                buf(:,1) = Sakk_parsed(:,5) - Sakk_parsed(:,2);
+                buf(:,2) = Sakk_parsed(:,6) - Sakk_parsed(:,3);
+                pos = center_image(Sakk_parsed(:,2), Sakk_parsed(:,3), buf(:,1), buf(:,2), '-', '-', 300, 460);
+                Sakk_pos_patient = [Sakk_pos_patient ; pos(:, [1 2 3 4])];
             end
-            if durchlauf == 2 || durchlauf == 3
-                for c = 2:size(faces_m,1)
-                    % Open .mat file
-                    if exist(cat(2, data_path, '/', patient_listing{b,1}, '/', patient_listing{b,1}, '_', faces_m{c,1} , '_2','.mat' ), 'file') > 0
-                        m = matfile(cat(2, data_path, '/', patient_listing{b,1}, '/', patient_listing{b,1}, '_', faces_m{c,1} , '_2','.mat' ));
-                    else
-                        continue
-                    end
-                    Sakk_parsed = m.Sakk_parsed;
-                    if isempty(Sakk_parsed) == 1; continue; end;
-                    clearvars buf pos
-                    buf(:,1) = Sakk_parsed(:,5) - Sakk_parsed(:,2);
-                    buf(:,2) = Sakk_parsed(:,6) - Sakk_parsed(:,3);
-                    pos = center_image(Sakk_parsed(:,2), Sakk_parsed(:,3), buf(:,1), buf(:,2), '-', '-', 300, 460);
-                    Sakk_pos_patient = [Sakk_pos_patient ; pos(:, [1 2 3 4])];
-                end
-            end
-            bilder = bilder - 4;
-        end
-% binaray upside down faces
-        if bilder >= 2
-            if durchlauf == 1 || durchlauf == 3
-                for c = 2:size(faces_t,1)
-                    % Open .mat file
-                    if exist(cat(2, data_path, '/', patient_listing{b,1}, '/', patient_listing{b,1}, '_', faces_t{c,1} , '_1','.mat' ), 'file') > 0
-                        m = matfile(cat(2, data_path, '/', patient_listing{b,1}, '/', patient_listing{b,1}, '_', faces_t{c,1} , '_1','.mat' ));
-                    else
-                        continue
-                    end
-                    Sakk_parsed = m.Sakk_parsed;
-                    if isempty(Sakk_parsed) == 1; continue; end;
-                    clearvars buf pos
-                    buf(:,1) = Sakk_parsed(:,5) - Sakk_parsed(:,2);
-                    buf(:,2) = Sakk_parsed(:,6) - Sakk_parsed(:,3);
-                    pos = center_image(Sakk_parsed(:,2), Sakk_parsed(:,3), buf(:,1), buf(:,2), '-', '-', 300, 460);
-                    Sakk_pos_patient = [Sakk_pos_patient ; pos(:, [1 2 3 4])];
-                end
-            end
-            if durchlauf == 2 || durchlauf == 3
-                for c = 2:size(faces_t,1)
-                    % Open .mat file
-                    if exist(cat(2, data_path, '/', patient_listing{b,1}, '/', patient_listing{b,1}, '_', faces_t{c,1} , '_2','.mat' ), 'file') > 0
-                        m = matfile(cat(2, data_path, '/', patient_listing{b,1}, '/', patient_listing{b,1}, '_', faces_t{c,1} , '_2','.mat' ));
-                    else
-                        continue
-                    end
-                    Sakk_parsed = m.Sakk_parsed;
-                    if isempty(Sakk_parsed) == 1; continue; end;
-                    clearvars buf pos
-                    buf(:,1) = Sakk_parsed(:,5) - Sakk_parsed(:,2);
-                    buf(:,2) = Sakk_parsed(:,6) - Sakk_parsed(:,3);
-                    pos = center_image(Sakk_parsed(:,2), Sakk_parsed(:,3), buf(:,1), buf(:,2), '-', '-', 300, 460);
-                    Sakk_pos_patient = [Sakk_pos_patient ; pos(:, [1 2 3 4])];
-                end
-            end
-            bilder = bilder - 2;
-        end
-% all but faces
-        if bilder >= 1
-            if durchlauf == 1 || durchlauf == 3
-                for c = 2:size(kont,1)
-                    % Open .mat file
-                    if exist(cat(2, data_path, '/', patient_listing{b,1}, '/', patient_listing{b,1}, '_', kont{c,1} , '_1','.mat' ), 'file') > 0
-                        m = matfile(cat(2, data_path, '/', patient_listing{b,1}, '/', patient_listing{b,1}, '_', kont{c,1} , '_1','.mat' ));
-                    else
-                        continue
-                    end
-                    Sakk_parsed = m.Sakk_parsed;
-                    if isempty(Sakk_parsed) == 1; continue; end;
-                    clearvars buf pos
-                    buf(:,1) = Sakk_parsed(:,5) - Sakk_parsed(:,2);
-                    buf(:,2) = Sakk_parsed(:,6) - Sakk_parsed(:,3);
-                    pos = center_image(Sakk_parsed(:,2), Sakk_parsed(:,3), buf(:,1), buf(:,2), '-', '-', 300, 460);
-                    Sakk_pos_patient = [Sakk_pos_patient ; pos(:, [1 2 3 4])];
-                end
-            end
-            if durchlauf == 2 || durchlauf == 3
-                for c = 2:size(kont,1)
-                    % Open .mat file
-                    if exist(cat(2, data_path, '/', patient_listing{b,1}, '/', patient_listing{b,1}, '_', kont{c,1} , '_2','.mat' ), 'file') > 0
-                        m = matfile(cat(2, data_path, '/', patient_listing{b,1}, '/', patient_listing{b,1}, '_', kont{c,1} , '_2','.mat' ));
-                    else
-                        continue
-                    end
-                    Sakk_parsed = m.Sakk_parsed;
-                    if isempty(Sakk_parsed) == 1; continue; end;
-                    clearvars buf pos
-                    buf(:,1) = Sakk_parsed(:,5) - Sakk_parsed(:,2);
-                    buf(:,2) = Sakk_parsed(:,6) - Sakk_parsed(:,3);
-                    pos = center_image(Sakk_parsed(:,2), Sakk_parsed(:,3), buf(:,1), buf(:,2), '-', '-', 300, 460);
-                    Sakk_pos_patient = [Sakk_pos_patient ; pos(:, [1 2 3 4])];
-                end
-            end
-            bilder = bilder - 1;
         end
     end
-    
+ 
 %% Auswertung
     Sakk_pos_control(1,:) = [];
     Sakk_pos_patient(1,:) = [];

@@ -13,286 +13,86 @@ function Noh_AOI( bilder, durchlauf, ~, kontroll_kennung, patient_kennung, data_
 
     [control_listing, patient_listing] =  Separate_test_persons(kontroll_kennung, patient_kennung, data_path);
     
-
+    % Baue eine Liste aller Bilder, die abgearbeitet werden sollen
+    image_list{1,1} = 'List of all images to use.';
+    if bilder >= 8; image_list = vertcat(image_list, faces{2:end}); bilder = bilder -8; end;
+    if bilder >= 4; image_list = vertcat(image_list, faces_m{2:end}); bilder = bilder -4; end;
+    if bilder >= 2; image_list = vertcat(image_list, faces_t{2:end}); bilder = bilder -2; end;
+    if bilder >= 1; image_list = vertcat(image_list, kont{2:end}); bilder = bilder -1; end;
 
 %% Alle Daten der Kontrollen heraussuchen
 
     Sakk_pos_control = zeros(1,2);
     
-    bilder_save = bilder;
-    
     for b = 2:size(control_listing,1)
-        bilder = bilder_save;
-        
-% normal faces
-        if bilder >= 8 
-            if durchlauf == 1 || durchlauf == 3
-                for c = 2:size(faces,1)
-                    % Open .mat file
-                    if exist(cat(2, data_path, '/', control_listing{b,1}, '/', control_listing{b,1}, '_', faces{c,1} , '_1','.mat' ), 'file') > 0
-                        m = matfile(cat(2, data_path, '/', control_listing{b,1}, '/', control_listing{b,1}, '_', faces{c,1} , '_1','.mat' ));
-                    else
-                        continue
-                    end
-                    clearvars Sakk_parsed Sakk_pos
-                    Sakk_parsed = m.Sakk_parsed;
-                    Sakk_pos = center_image(mean([Sakk_parsed(2:end,2) Sakk_parsed(1:end-1,5)],2), mean([Sakk_parsed(2:end,3) Sakk_parsed(1:end-1,6)],2), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), 300, 460);
-                    Sakk_pos_control = [Sakk_pos_control;  Sakk_pos(:,1:2)];
+        if durchlauf == 1 || durchlauf == 3
+            for c = 2:size(image_list,1)
+                % Open .mat file
+                if exist(cat(2, data_path, '/', control_listing{b,1}, '/', control_listing{b,1}, '_', image_list{c,1} , '_1','.mat' ), 'file') > 0
+                    m = matfile(cat(2, data_path, '/', control_listing{b,1}, '/', control_listing{b,1}, '_', image_list{c,1} , '_1','.mat' ));
+                else
+                    continue
                 end
+                % Extrahiere alle notwendigen Daten
+                clearvars Sakk_parsed Sakk_pos
+                Sakk_parsed = m.Sakk_parsed;
+                Sakk_pos = center_image(mean([Sakk_parsed(2:end,2) Sakk_parsed(1:end-1,5)],2), mean([Sakk_parsed(2:end,3) Sakk_parsed(1:end-1,6)],2), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), 300, 460);
+                Sakk_pos_control = [Sakk_pos_control;  Sakk_pos(:,1:2)];
             end
-            if durchlauf == 2 || durchlauf == 3
-                for c = 2:size(faces,1)
-                    % Open .mat file
-                    if exist(cat(2, data_path, '/', control_listing{b,1}, '/', control_listing{b,1}, '_', faces{c,1} , '_2','.mat' ), 'file') > 0
-                        m = matfile(cat(2, data_path, '/', control_listing{b,1}, '/', control_listing{b,1}, '_', faces{c,1} , '_2','.mat' ));
-                    else
-                        continue
-                    end
-                    clearvars Sakk_parsed Sakk_pos
-                    Sakk_parsed = m.Sakk_parsed;
-                    Sakk_pos = center_image(mean([Sakk_parsed(2:end,2) Sakk_parsed(1:end-1,5)],2), mean([Sakk_parsed(2:end,3) Sakk_parsed(1:end-1,6)],2), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), 300, 460);
-                    Sakk_pos_control = [Sakk_pos_control;  Sakk_pos(:,1:2)];
-                end
-            end
-            bilder = bilder - 8;
         end
-% binaray faces
-        if bilder >= 4
-            if durchlauf == 1 || durchlauf == 3
-                for c = 2:size(faces_m,1)
-                    % Open .mat file
-                    if exist(cat(2, data_path, '/', control_listing{b,1}, '/', control_listing{b,1}, '_', faces_m{c,1} , '_1','.mat' ), 'file') > 0
-                        m = matfile(cat(2, data_path, '/', control_listing{b,1}, '/', control_listing{b,1}, '_', faces_m{c,1} , '_1','.mat' ));
-                    else
-                        continue
-                    end
-                    clearvars Sakk_parsed Sakk_pos
-                    Sakk_parsed = m.Sakk_parsed;
-                    Sakk_pos = center_image(mean([Sakk_parsed(2:end,2) Sakk_parsed(1:end-1,5)],2), mean([Sakk_parsed(2:end,3) Sakk_parsed(1:end-1,6)],2), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), 300, 460);
-                    Sakk_pos_control = [Sakk_pos_control;  Sakk_pos(:,1:2)];
+        if durchlauf == 2 || durchlauf == 3
+            for c = 2:size(image_list,1)
+                % Open .mat file
+                if exist(cat(2, data_path, '/', control_listing{b,1}, '/', control_listing{b,1}, '_', image_list{c,1} , '_2','.mat' ), 'file') > 0
+                    m = matfile(cat(2, data_path, '/', control_listing{b,1}, '/', control_listing{b,1}, '_', image_list{c,1} , '_2','.mat' ));
+                else
+                    continue
                 end
+                % Extrahiere alle notwendigen Daten
+                clearvars Sakk_parsed Sakk_pos
+                Sakk_parsed = m.Sakk_parsed;
+                Sakk_pos = center_image(mean([Sakk_parsed(2:end,2) Sakk_parsed(1:end-1,5)],2), mean([Sakk_parsed(2:end,3) Sakk_parsed(1:end-1,6)],2), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), 300, 460);
+                Sakk_pos_control = [Sakk_pos_control;  Sakk_pos(:,1:2)];
             end
-            if durchlauf == 2 || durchlauf == 3
-                for c = 2:size(faces_m,1)
-                    % Open .mat file
-                    if exist(cat(2, data_path, '/', control_listing{b,1}, '/', control_listing{b,1}, '_', faces_m{c,1} , '_2','.mat' ), 'file') > 0
-                        m = matfile(cat(2, data_path, '/', control_listing{b,1}, '/', control_listing{b,1}, '_', faces_m{c,1} , '_2','.mat' ));
-                    else
-                        continue
-                    end
-                    clearvars Sakk_parsed Sakk_pos
-                    Sakk_parsed = m.Sakk_parsed;
-                    Sakk_pos = center_image(mean([Sakk_parsed(2:end,2) Sakk_parsed(1:end-1,5)],2), mean([Sakk_parsed(2:end,3) Sakk_parsed(1:end-1,6)],2), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), 300, 460);
-                    Sakk_pos_control = [Sakk_pos_control;  Sakk_pos(:,1:2)];
-                end
-            end
-            bilder = bilder - 4;
-        end
-% binaray upside down faces
-        if bilder >= 2
-            if durchlauf == 1 || durchlauf == 3
-                for c = 2:size(faces_t,1)
-                    % Open .mat file
-                    if exist(cat(2, data_path, '/', control_listing{b,1}, '/', control_listing{b,1}, '_', faces_t{c,1} , '_1','.mat' ), 'file') > 0
-                        m = matfile(cat(2, data_path, '/', control_listing{b,1}, '/', control_listing{b,1}, '_', faces_t{c,1} , '_1','.mat' ));
-                    else
-                        continue
-                    end
-                    clearvars Sakk_parsed Sakk_pos
-                    Sakk_parsed = m.Sakk_parsed;
-                    Sakk_pos = center_image(mean([Sakk_parsed(2:end,2) Sakk_parsed(1:end-1,5)],2), mean([Sakk_parsed(2:end,3) Sakk_parsed(1:end-1,6)],2), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), 300, 460);
-                    Sakk_pos_control = [Sakk_pos_control;  Sakk_pos(:,1:2)];
-                end
-            end
-            if durchlauf == 2 || durchlauf == 3
-                for c = 2:size(faces_t,1)
-                    % Open .mat file
-                    if exist(cat(2, data_path, '/', control_listing{b,1}, '/', control_listing{b,1}, '_', faces_t{c,1} , '_2','.mat' ), 'file') > 0
-                        m = matfile(cat(2, data_path, '/', control_listing{b,1}, '/', control_listing{b,1}, '_', faces_t{c,1} , '_2','.mat' ));
-                    else
-                        continue
-                    end
-                    clearvars Sakk_parsed Sakk_pos
-                    Sakk_parsed = m.Sakk_parsed;
-                    Sakk_pos = center_image(mean([Sakk_parsed(2:end,2) Sakk_parsed(1:end-1,5)],2), mean([Sakk_parsed(2:end,3) Sakk_parsed(1:end-1,6)],2), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), 300, 460);
-                    Sakk_pos_control = [Sakk_pos_control;  Sakk_pos(:,1:2)];
-                end
-            end
-            bilder = bilder - 2;
-        end
-% all but faces
-        if bilder >= 1
-            if durchlauf == 1 || durchlauf == 3
-                for c = 2:size(kont,1)
-                    % Open .mat file
-                    if exist(cat(2, data_path, '/', control_listing{b,1}, '/', control_listing{b,1}, '_', kont{c,1} , '_1','.mat' ), 'file') > 0
-                        m = matfile(cat(2, data_path, '/', control_listing{b,1}, '/', control_listing{b,1}, '_', kont{c,1} , '_1','.mat' ));
-                    else
-                        continue
-                    end
-                    clearvars Sakk_parsed Sakk_pos
-                    Sakk_parsed = m.Sakk_parsed;
-                    Sakk_pos = center_image(mean([Sakk_parsed(2:end,2) Sakk_parsed(1:end-1,5)],2), mean([Sakk_parsed(2:end,3) Sakk_parsed(1:end-1,6)],2), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), 300, 460);
-                    Sakk_pos_control = [Sakk_pos_control;  Sakk_pos(:,1:2)];
-                end
-            end
-            if durchlauf == 2 || durchlauf == 3
-                for c = 2:size(kont,1)
-                    % Open .mat file
-                    if exist(cat(2, data_path, '/', control_listing{b,1}, '/', control_listing{b,1}, '_', kont{c,1} , '_2','.mat' ), 'file') > 0
-                        m = matfile(cat(2, data_path, '/', control_listing{b,1}, '/', control_listing{b,1}, '_', kont{c,1} , '_2','.mat' ));
-                    else
-                        continue
-                    end
-                    clearvars Sakk_parsed Sakk_pos
-                    Sakk_parsed = m.Sakk_parsed;
-                    Sakk_pos = center_image(mean([Sakk_parsed(2:end,2) Sakk_parsed(1:end-1,5)],2), mean([Sakk_parsed(2:end,3) Sakk_parsed(1:end-1,6)],2), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), 300, 460);
-                    Sakk_pos_control = [Sakk_pos_control;  Sakk_pos(:,1:2)];
-                end
-            end
-            bilder = bilder - 1;
         end
     end
-    
-    
-%% Alle Daten der Patienten heraussuchen
 
+%% Alle Daten der Patienten heraussuchen
 
     Sakk_pos_patient = zeros(1,2);
     
     for b = 2:size(patient_listing,1)
-        bilder = bilder_save;
-        
-% normal faces
-        if bilder >= 8 
-            if durchlauf == 1 || durchlauf == 3
-                for c = 2:size(faces,1)
-                    % Open .mat file
-                    if exist(cat(2, data_path, '/', patient_listing{b,1}, '/', patient_listing{b,1}, '_', faces{c,1} , '_1','.mat' ), 'file') > 0
-                        m = matfile(cat(2, data_path, '/', patient_listing{b,1}, '/', patient_listing{b,1}, '_', faces{c,1} , '_1','.mat' ));
-                    else
-                        continue
-                    end
-                    clearvars Sakk_parsed Sakk_pos
-                    Sakk_parsed = m.Sakk_parsed;
-                    Sakk_pos = center_image(mean([Sakk_parsed(2:end,2) Sakk_parsed(1:end-1,5)],2), mean([Sakk_parsed(2:end,3) Sakk_parsed(1:end-1,6)],2), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), 300, 460);
-                    Sakk_pos_patient = [Sakk_pos_patient;  Sakk_pos(:,1:2)];
+        if durchlauf == 1 || durchlauf == 3
+            for c = 2:size(image_list,1)
+                % Open .mat file
+                if exist(cat(2, data_path, '/', patient_listing{b,1}, '/', patient_listing{b,1}, '_', image_list{c,1} , '_1','.mat' ), 'file') > 0
+                    m = matfile(cat(2, data_path, '/', patient_listing{b,1}, '/', patient_listing{b,1}, '_', image_list{c,1} , '_1','.mat' ));
+                else
+                    continue
                 end
+                % Extrahiere alle notwendigen Daten
+                clearvars Sakk_parsed Sakk_pos
+                Sakk_parsed = m.Sakk_parsed;
+                Sakk_pos = center_image(mean([Sakk_parsed(2:end,2) Sakk_parsed(1:end-1,5)],2), mean([Sakk_parsed(2:end,3) Sakk_parsed(1:end-1,6)],2), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), 300, 460);
+                Sakk_pos_patient = [Sakk_pos_patient;  Sakk_pos(:,1:2)];
             end
-            if durchlauf == 2 || durchlauf == 3
-                for c = 2:size(faces,1)
-                    % Open .mat file
-                    if exist(cat(2, data_path, '/', patient_listing{b,1}, '/', patient_listing{b,1}, '_', faces{c,1} , '_2','.mat' ), 'file') > 0
-                        m = matfile(cat(2, data_path, '/', patient_listing{b,1}, '/', patient_listing{b,1}, '_', faces{c,1} , '_2','.mat' ));
-                    else
-                        continue
-                    end
-                    clearvars Sakk_parsed Sakk_pos
-                    Sakk_parsed = m.Sakk_parsed;
-                    Sakk_pos = center_image(mean([Sakk_parsed(2:end,2) Sakk_parsed(1:end-1,5)],2), mean([Sakk_parsed(2:end,3) Sakk_parsed(1:end-1,6)],2), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), 300, 460);
-                    Sakk_pos_patient = [Sakk_pos_patient;  Sakk_pos(:,1:2)];
-                end
-            end
-            bilder = bilder - 8;
         end
-% binaray faces
-        if bilder >= 4
-            if durchlauf == 1 || durchlauf == 3
-                for c = 2:size(faces_m,1)
-                    % Open .mat file
-                    if exist(cat(2, data_path, '/', patient_listing{b,1}, '/', patient_listing{b,1}, '_', faces_m{c,1} , '_1','.mat' ), 'file') > 0
-                        m = matfile(cat(2, data_path, '/', patient_listing{b,1}, '/', patient_listing{b,1}, '_', faces_m{c,1} , '_1','.mat' ));
-                    else
-                        continue
-                    end
-                    clearvars Sakk_parsed Sakk_pos
-                    Sakk_parsed = m.Sakk_parsed;
-                    Sakk_pos = center_image(mean([Sakk_parsed(2:end,2) Sakk_parsed(1:end-1,5)],2), mean([Sakk_parsed(2:end,3) Sakk_parsed(1:end-1,6)],2), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), 300, 460);
-                    Sakk_pos_patient = [Sakk_pos_patient;  Sakk_pos(:,1:2)];
+        if durchlauf == 2 || durchlauf == 3
+            for c = 2:size(image_list,1)
+                % Open .mat file
+                if exist(cat(2, data_path, '/', patient_listing{b,1}, '/', patient_listing{b,1}, '_', image_list{c,1} , '_2','.mat' ), 'file') > 0
+                    m = matfile(cat(2, data_path, '/', patient_listing{b,1}, '/', patient_listing{b,1}, '_', image_list{c,1} , '_2','.mat' ));
+                else
+                    continue
                 end
+                % Extrahiere alle notwendigen Daten
+                clearvars Sakk_parsed Sakk_pos
+                Sakk_parsed = m.Sakk_parsed;
+                Sakk_pos = center_image(mean([Sakk_parsed(2:end,2) Sakk_parsed(1:end-1,5)],2), mean([Sakk_parsed(2:end,3) Sakk_parsed(1:end-1,6)],2), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), 300, 460);
+                Sakk_pos_patient = [Sakk_pos_patient;  Sakk_pos(:,1:2)];
             end
-            if durchlauf == 2 || durchlauf == 3
-                for c = 2:size(faces_m,1)
-                    % Open .mat file
-                    if exist(cat(2, data_path, '/', patient_listing{b,1}, '/', patient_listing{b,1}, '_', faces_m{c,1} , '_2','.mat' ), 'file') > 0
-                        m = matfile(cat(2, data_path, '/', patient_listing{b,1}, '/', patient_listing{b,1}, '_', faces_m{c,1} , '_2','.mat' ));
-                    else
-                        continue
-                    end
-                    clearvars Sakk_parsed Sakk_pos
-                    Sakk_parsed = m.Sakk_parsed;
-                    Sakk_pos = center_image(mean([Sakk_parsed(2:end,2) Sakk_parsed(1:end-1,5)],2), mean([Sakk_parsed(2:end,3) Sakk_parsed(1:end-1,6)],2), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), 300, 460);
-                    Sakk_pos_patient = [Sakk_pos_patient;  Sakk_pos(:,1:2)];
-                end
-            end
-            bilder = bilder - 4;
-        end
-% binaray upside down faces
-        if bilder >= 2
-            if durchlauf == 1 || durchlauf == 3
-                for c = 2:size(faces_t,1)
-                    % Open .mat file
-                    if exist(cat(2, data_path, '/', patient_listing{b,1}, '/', patient_listing{b,1}, '_', faces_t{c,1} , '_1','.mat' ), 'file') > 0
-                        m = matfile(cat(2, data_path, '/', patient_listing{b,1}, '/', patient_listing{b,1}, '_', faces_t{c,1} , '_1','.mat' ));
-                    else
-                        continue
-                    end
-                    clearvars Sakk_parsed Sakk_pos
-                    Sakk_parsed = m.Sakk_parsed;
-                    Sakk_pos = center_image(mean([Sakk_parsed(2:end,2) Sakk_parsed(1:end-1,5)],2), mean([Sakk_parsed(2:end,3) Sakk_parsed(1:end-1,6)],2), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), 300, 460);
-                    Sakk_pos_patient = [Sakk_pos_patient;  Sakk_pos(:,1:2)];
-                end
-            end
-            if durchlauf == 2 || durchlauf == 3
-                for c = 2:size(faces_t,1)
-                    % Open .mat file
-                    if exist(cat(2, data_path, '/', patient_listing{b,1}, '/', patient_listing{b,1}, '_', faces_t{c,1} , '_2','.mat' ), 'file') > 0
-                        m = matfile(cat(2, data_path, '/', patient_listing{b,1}, '/', patient_listing{b,1}, '_', faces_t{c,1} , '_2','.mat' ));
-                    else
-                        continue
-                    end
-                    clearvars Sakk_parsed Sakk_pos
-                    Sakk_parsed = m.Sakk_parsed;
-                    Sakk_pos = center_image(mean([Sakk_parsed(2:end,2) Sakk_parsed(1:end-1,5)],2), mean([Sakk_parsed(2:end,3) Sakk_parsed(1:end-1,6)],2), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), 300, 460);
-                    Sakk_pos_patient = [Sakk_pos_patient;  Sakk_pos(:,1:2)];
-                end
-            end
-            bilder = bilder - 2;
-        end
-% all but faces
-        if bilder >= 1
-            if durchlauf == 1 || durchlauf == 3
-                for c = 2:size(kont,1)
-                    % Open .mat file
-                    if exist(cat(2, data_path, '/', patient_listing{b,1}, '/', patient_listing{b,1}, '_', kont{c,1} , '_1','.mat' ), 'file') > 0
-                        m = matfile(cat(2, data_path, '/', patient_listing{b,1}, '/', patient_listing{b,1}, '_', kont{c,1} , '_1','.mat' ));
-                    else
-                        continue
-                    end
-                    clearvars Sakk_parsed Sakk_pos
-                    Sakk_parsed = m.Sakk_parsed;
-                    Sakk_pos = center_image(mean([Sakk_parsed(2:end,2) Sakk_parsed(1:end-1,5)],2), mean([Sakk_parsed(2:end,3) Sakk_parsed(1:end-1,6)],2), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), 300, 460);
-                    Sakk_pos_patient = [Sakk_pos_patient;  Sakk_pos(:,1:2)];
-                end
-            end
-            if durchlauf == 2 || durchlauf == 3
-                for c = 2:size(kont,1)
-                    % Open .mat file
-                    if exist(cat(2, data_path, '/', patient_listing{b,1}, '/', patient_listing{b,1}, '_', kont{c,1} , '_2','.mat' ), 'file') > 0
-                        m = matfile(cat(2, data_path, '/', patient_listing{b,1}, '/', patient_listing{b,1}, '_', kont{c,1} , '_2','.mat' ));
-                    else
-                        continue
-                    end
-                    clearvars Sakk_parsed Sakk_pos
-                    Sakk_parsed = m.Sakk_parsed;
-                    Sakk_pos = center_image(mean([Sakk_parsed(2:end,2) Sakk_parsed(1:end-1,5)],2), mean([Sakk_parsed(2:end,3) Sakk_parsed(1:end-1,6)],2), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), 300, 460);
-                    Sakk_pos_patient = [Sakk_pos_patient;  Sakk_pos(:,1:2)];
-                end
-            end
-            bilder = bilder - 1;
         end
     end
-    
 
 %% Auswertung
 
@@ -345,8 +145,7 @@ function Noh_AOI( bilder, durchlauf, ~, kontroll_kennung, patient_kennung, data_
     scatter(Mund_control(:,1), Mund_control(:,2), 'b');
     scatter(Mund_patient(:,1), Mund_patient(:,2), 'r');
     
-    
-     u = uitable('Data', [size(Mund_control,1) size(Mund_patient,1); size(Auge_links_control,1) size(Auge_links_patient,1); size(Auge_rechts_control,1) size(Auge_rechts_patient,1) ], ...
+    u = uitable('Data', [size(Mund_control,1) size(Mund_patient,1); size(Auge_links_control,1) size(Auge_links_patient,1); size(Auge_rechts_control,1) size(Auge_rechts_patient,1) ], ...
     'RowName', {'mouth', 'eye_left', 'eye_right'}, ...
     'ColumnName', {'control' ,'patient'}, 'FontName', 'Arial', 'FontSize', 8);
 
@@ -355,5 +154,4 @@ function Noh_AOI( bilder, durchlauf, ~, kontroll_kennung, patient_kennung, data_
     u.Position(3) = 252;
     u.Position(4) = 73;
     
-
 end

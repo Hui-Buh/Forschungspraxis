@@ -5,10 +5,11 @@
 % data_path = absolute or relative path of the folder containing all patient specific data in TUM format
 % image_path = absolute or relative path of the folder containing all images
 
-function Noh_AOI( bilder, durchlauf, ~, kontroll_kennung, patient_kennung, data_path, image_path)
+
+function Sakk_directions(bilder, durchlauf, ~ , kontroll_kennung, patient_kennung, data_path, image_path)
 
     if bilder > 15 && bilder < 1; disp('Enter valid number for "bilder"!'); return; end;
-
+    
     [faces, faces_m, faces_t, kont] =  Separate_test_images(image_path);
 
     [control_listing, patient_listing] =  Separate_test_persons(kontroll_kennung, patient_kennung, data_path);
@@ -19,10 +20,11 @@ function Noh_AOI( bilder, durchlauf, ~, kontroll_kennung, patient_kennung, data_
     if bilder >= 4; image_list = vertcat(image_list, faces_m{2:end}); bilder = bilder -4; end;
     if bilder >= 2; image_list = vertcat(image_list, faces_t{2:end}); bilder = bilder -2; end;
     if bilder >= 1; image_list = vertcat(image_list, kont{2:end}); bilder = bilder -1; end;
+    
+    
+%% Alle Daten der Kontrollen heraussuchen
 
-        %% Alle Daten der Kontrollen heraussuchen
-
-    Data_control = 0;
+    Sakk_pos_control = zeros(1,4);
     
     for b = 2:size(control_listing,1)
         if durchlauf == 1 || durchlauf == 3
@@ -34,15 +36,13 @@ function Noh_AOI( bilder, durchlauf, ~, kontroll_kennung, patient_kennung, data_
                     continue
                 end
                 % Extrahiere alle notwendigen Daten
-                if Sakka_Sakkd_Fix == 0
-                    Data_control = [Data_control; m.Sakk_amplitude]; % Fasse alle Sakkadenamplituden zusammen in px;
-                elseif Sakka_Sakkd_Fix == 1
-                    Data_control = [Data_control; m.Sakk_amplitude*9.8/450]; % Fasse alle Sakkadenamplituden zusammen in ° in °
-                elseif Sakka_Sakkd_Fix == 2
-                    Data_control = [Data_control; m.Sakk_dauer]; % Fasse alle Sakkadendauern zusammen
-                elseif Sakka_Sakkd_Fix == 3
-                    Data_control = [Data_control; m.Fix_dauer]; % Fasse alle Fixationsdauern zusammen
-                end
+                Sakk_parsed = m.Sakk_parsed;
+                if isempty(Sakk_parsed) == 1; continue; end;
+                clearvars buf pos
+                buf(:,1) = Sakk_parsed(:,5) - Sakk_parsed(:,2);
+                buf(:,2) = Sakk_parsed(:,6) - Sakk_parsed(:,3);
+                pos = center_image(Sakk_parsed(:,2), Sakk_parsed(:,3), buf(:,1), buf(:,2), '-', '-', 300, 460);
+                Sakk_pos_control = [Sakk_pos_control ; pos(:, [1 2 3 4])];
             end
         end
         if durchlauf == 2 || durchlauf == 3
@@ -54,22 +54,20 @@ function Noh_AOI( bilder, durchlauf, ~, kontroll_kennung, patient_kennung, data_
                     continue
                 end
                 % Extrahiere alle notwendigen Daten
-                if Sakka_Sakkd_Fix == 0
-                    Data_control = [Data_control; m.Sakk_amplitude]; % Fasse alle Sakkadenamplituden zusammen in px;
-                elseif Sakka_Sakkd_Fix == 1
-                    Data_control = [Data_control; m.Sakk_amplitude*9.8/450]; % Fasse alle Sakkadenamplituden zusammen in ° in °
-                elseif Sakka_Sakkd_Fix == 2
-                    Data_control = [Data_control; m.Sakk_dauer]; % Fasse alle Sakkadendauern zusammen
-                elseif Sakka_Sakkd_Fix == 3
-                    Data_control = [Data_control; m.Fix_dauer]; % Fasse alle Fixationsdauern zusammen
-                end
+                Sakk_parsed = m.Sakk_parsed;
+                if isempty(Sakk_parsed) == 1; continue; end;
+                clearvars buf pos
+                buf(:,1) = Sakk_parsed(:,5) - Sakk_parsed(:,2);
+                buf(:,2) = Sakk_parsed(:,6) - Sakk_parsed(:,3);
+                pos = center_image(Sakk_parsed(:,2), Sakk_parsed(:,3), buf(:,1), buf(:,2), '-', '-', 300, 460);
+                Sakk_pos_control = [Sakk_pos_control ; pos(:, [1 2 3 4])];
             end
         end
     end
 
 %% Alle Daten der Patienten heraussuchen
 
-    Data_patient = 0;
+    Sakk_pos_patient = zeros(1,4);
     
     for b = 2:size(patient_listing,1)
         if durchlauf == 1 || durchlauf == 3
@@ -81,15 +79,13 @@ function Noh_AOI( bilder, durchlauf, ~, kontroll_kennung, patient_kennung, data_
                     continue
                 end
                 % Extrahiere alle notwendigen Daten
-                if Sakka_Sakkd_Fix == 0
-                    Data_patient = [Data_patient; m.Sakk_amplitude]; % Fasse alle Sakkadenamplituden zusammen in px;
-                elseif Sakka_Sakkd_Fix == 1
-                    Data_patient = [Data_patient; m.Sakk_amplitude*9.8/450]; % Fasse alle Sakkadenamplituden zusammen in ° in °
-                elseif Sakka_Sakkd_Fix == 2
-                    Data_patient = [Data_patient; m.Sakk_dauer]; % Fasse alle Sakkadendauern zusammen
-                elseif Sakka_Sakkd_Fix == 3
-                    Data_patient = [Data_patient; m.Fix_dauer]; % Fasse alle Fixationsdauern zusammen
-                end
+                Sakk_parsed = m.Sakk_parsed;
+                if isempty(Sakk_parsed) == 1; continue; end;
+                clearvars buf pos
+                buf(:,1) = Sakk_parsed(:,5) - Sakk_parsed(:,2);
+                buf(:,2) = Sakk_parsed(:,6) - Sakk_parsed(:,3);
+                pos = center_image(Sakk_parsed(:,2), Sakk_parsed(:,3), buf(:,1), buf(:,2), '-', '-', 300, 460);
+                Sakk_pos_patient = [Sakk_pos_patient ; pos(:, [1 2 3 4])];
             end
         end
         if durchlauf == 2 || durchlauf == 3
@@ -101,24 +97,23 @@ function Noh_AOI( bilder, durchlauf, ~, kontroll_kennung, patient_kennung, data_
                     continue
                 end
                 % Extrahiere alle notwendigen Daten
-                if Sakka_Sakkd_Fix == 0
-                    Data_patient = [Data_patient; m.Sakk_amplitude]; % Fasse alle Sakkadenamplituden zusammen in px;
-                elseif Sakka_Sakkd_Fix == 1
-                    Data_patient = [Data_patient; m.Sakk_amplitude*9.8/450]; % Fasse alle Sakkadenamplituden zusammen in ° in °
-                elseif Sakka_Sakkd_Fix == 2
-                    Data_patient = [Data_patient; m.Sakk_dauer]; % Fasse alle Sakkadendauern zusammen
-                elseif Sakka_Sakkd_Fix == 3
-                    Data_patient = [Data_patient; m.Fix_dauer]; % Fasse alle Fixationsdauern zusammen
-                end
+                Sakk_parsed = m.Sakk_parsed;
+                if isempty(Sakk_parsed) == 1; continue; end;
+                clearvars buf pos
+                buf(:,1) = Sakk_parsed(:,5) - Sakk_parsed(:,2);
+                buf(:,2) = Sakk_parsed(:,6) - Sakk_parsed(:,3);
+                pos = center_image(Sakk_parsed(:,2), Sakk_parsed(:,3), buf(:,1), buf(:,2), '-', '-', 300, 460);
+                Sakk_pos_patient = [Sakk_pos_patient ; pos(:, [1 2 3 4])];
             end
         end
     end
 
     
     
+
 %% Alle Daten der Kontrollen heraussuchen
 
-    Sakk_pos_control = zeros(1,2);
+    Sakk_pos_control = zeros(1,4);
     
     bilder_save = bilder;
     
@@ -135,10 +130,13 @@ function Noh_AOI( bilder, durchlauf, ~, kontroll_kennung, patient_kennung, data_
                     else
                         continue
                     end
-                    clearvars Sakk_parsed Sakk_pos
                     Sakk_parsed = m.Sakk_parsed;
-                    Sakk_pos = center_image(mean([Sakk_parsed(2:end,2) Sakk_parsed(1:end-1,5)],2), mean([Sakk_parsed(2:end,3) Sakk_parsed(1:end-1,6)],2), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), 300, 460);
-                    Sakk_pos_control = [Sakk_pos_control;  Sakk_pos(:,1:2)];
+                    if isempty(Sakk_parsed) == 1; continue; end;
+                    clearvars buf pos
+                    buf(:,1) = Sakk_parsed(:,5) - Sakk_parsed(:,2);
+                    buf(:,2) = Sakk_parsed(:,6) - Sakk_parsed(:,3);
+                    pos = center_image(Sakk_parsed(:,2), Sakk_parsed(:,3), buf(:,1), buf(:,2), '-', '-', 300, 460);
+                    Sakk_pos_control = [Sakk_pos_control ; pos(:, [1 2 3 4])];
                 end
             end
             if durchlauf == 2 || durchlauf == 3
@@ -149,10 +147,13 @@ function Noh_AOI( bilder, durchlauf, ~, kontroll_kennung, patient_kennung, data_
                     else
                         continue
                     end
-                    clearvars Sakk_parsed Sakk_pos
                     Sakk_parsed = m.Sakk_parsed;
-                    Sakk_pos = center_image(mean([Sakk_parsed(2:end,2) Sakk_parsed(1:end-1,5)],2), mean([Sakk_parsed(2:end,3) Sakk_parsed(1:end-1,6)],2), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), 300, 460);
-                    Sakk_pos_control = [Sakk_pos_control;  Sakk_pos(:,1:2)];
+                    if isempty(Sakk_parsed) == 1; continue; end;
+                    clearvars buf pos
+                    buf(:,1) = Sakk_parsed(:,5) - Sakk_parsed(:,2);
+                    buf(:,2) = Sakk_parsed(:,6) - Sakk_parsed(:,3);
+                    pos = center_image(Sakk_parsed(:,2), Sakk_parsed(:,3), buf(:,1), buf(:,2), '-', '-', 300, 460);
+                    Sakk_pos_control = [Sakk_pos_control ; pos(:, [1 2 3 4])];
                 end
             end
             bilder = bilder - 8;
@@ -167,10 +168,13 @@ function Noh_AOI( bilder, durchlauf, ~, kontroll_kennung, patient_kennung, data_
                     else
                         continue
                     end
-                    clearvars Sakk_parsed Sakk_pos
                     Sakk_parsed = m.Sakk_parsed;
-                    Sakk_pos = center_image(mean([Sakk_parsed(2:end,2) Sakk_parsed(1:end-1,5)],2), mean([Sakk_parsed(2:end,3) Sakk_parsed(1:end-1,6)],2), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), 300, 460);
-                    Sakk_pos_control = [Sakk_pos_control;  Sakk_pos(:,1:2)];
+                    if isempty(Sakk_parsed) == 1; continue; end;
+                    clearvars buf pos
+                    buf(:,1) = Sakk_parsed(:,5) - Sakk_parsed(:,2);
+                    buf(:,2) = Sakk_parsed(:,6) - Sakk_parsed(:,3);
+                    pos = center_image(Sakk_parsed(:,2), Sakk_parsed(:,3), buf(:,1), buf(:,2), '-', '-', 300, 460);
+                    Sakk_pos_control = [Sakk_pos_control ; pos(:, [1 2 3 4])];
                 end
             end
             if durchlauf == 2 || durchlauf == 3
@@ -181,10 +185,13 @@ function Noh_AOI( bilder, durchlauf, ~, kontroll_kennung, patient_kennung, data_
                     else
                         continue
                     end
-                    clearvars Sakk_parsed Sakk_pos
                     Sakk_parsed = m.Sakk_parsed;
-                    Sakk_pos = center_image(mean([Sakk_parsed(2:end,2) Sakk_parsed(1:end-1,5)],2), mean([Sakk_parsed(2:end,3) Sakk_parsed(1:end-1,6)],2), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), 300, 460);
-                    Sakk_pos_control = [Sakk_pos_control;  Sakk_pos(:,1:2)];
+                    if isempty(Sakk_parsed) == 1; continue; end;
+                    clearvars buf pos
+                    buf(:,1) = Sakk_parsed(:,5) - Sakk_parsed(:,2);
+                    buf(:,2) = Sakk_parsed(:,6) - Sakk_parsed(:,3);
+                    pos = center_image(Sakk_parsed(:,2), Sakk_parsed(:,3), buf(:,1), buf(:,2), '-', '-', 300, 460);
+                    Sakk_pos_control = [Sakk_pos_control ; pos(:, [1 2 3 4])];
                 end
             end
             bilder = bilder - 4;
@@ -199,10 +206,13 @@ function Noh_AOI( bilder, durchlauf, ~, kontroll_kennung, patient_kennung, data_
                     else
                         continue
                     end
-                    clearvars Sakk_parsed Sakk_pos
                     Sakk_parsed = m.Sakk_parsed;
-                    Sakk_pos = center_image(mean([Sakk_parsed(2:end,2) Sakk_parsed(1:end-1,5)],2), mean([Sakk_parsed(2:end,3) Sakk_parsed(1:end-1,6)],2), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), 300, 460);
-                    Sakk_pos_control = [Sakk_pos_control;  Sakk_pos(:,1:2)];
+                    if isempty(Sakk_parsed) == 1; continue; end;
+                    clearvars buf pos
+                    buf(:,1) = Sakk_parsed(:,5) - Sakk_parsed(:,2);
+                    buf(:,2) = Sakk_parsed(:,6) - Sakk_parsed(:,3);
+                    pos = center_image(Sakk_parsed(:,2), Sakk_parsed(:,3), buf(:,1), buf(:,2), '-', '-', 300, 460);
+                    Sakk_pos_control = [Sakk_pos_control ; pos(:, [1 2 3 4])];
                 end
             end
             if durchlauf == 2 || durchlauf == 3
@@ -213,10 +223,13 @@ function Noh_AOI( bilder, durchlauf, ~, kontroll_kennung, patient_kennung, data_
                     else
                         continue
                     end
-                    clearvars Sakk_parsed Sakk_pos
                     Sakk_parsed = m.Sakk_parsed;
-                    Sakk_pos = center_image(mean([Sakk_parsed(2:end,2) Sakk_parsed(1:end-1,5)],2), mean([Sakk_parsed(2:end,3) Sakk_parsed(1:end-1,6)],2), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), 300, 460);
-                    Sakk_pos_control = [Sakk_pos_control;  Sakk_pos(:,1:2)];
+                    if isempty(Sakk_parsed) == 1; continue; end;
+                    clearvars buf pos
+                    buf(:,1) = Sakk_parsed(:,5) - Sakk_parsed(:,2);
+                    buf(:,2) = Sakk_parsed(:,6) - Sakk_parsed(:,3);
+                    pos = center_image(Sakk_parsed(:,2), Sakk_parsed(:,3), buf(:,1), buf(:,2), '-', '-', 300, 460);
+                    Sakk_pos_control = [Sakk_pos_control ; pos(:, [1 2 3 4])];
                 end
             end
             bilder = bilder - 2;
@@ -231,10 +244,13 @@ function Noh_AOI( bilder, durchlauf, ~, kontroll_kennung, patient_kennung, data_
                     else
                         continue
                     end
-                    clearvars Sakk_parsed Sakk_pos
                     Sakk_parsed = m.Sakk_parsed;
-                    Sakk_pos = center_image(mean([Sakk_parsed(2:end,2) Sakk_parsed(1:end-1,5)],2), mean([Sakk_parsed(2:end,3) Sakk_parsed(1:end-1,6)],2), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), 300, 460);
-                    Sakk_pos_control = [Sakk_pos_control;  Sakk_pos(:,1:2)];
+                    if isempty(Sakk_parsed) == 1; continue; end;
+                    clearvars buf pos
+                    buf(:,1) = Sakk_parsed(:,5) - Sakk_parsed(:,2);
+                    buf(:,2) = Sakk_parsed(:,6) - Sakk_parsed(:,3);
+                    pos = center_image(Sakk_parsed(:,2), Sakk_parsed(:,3), buf(:,1), buf(:,2), '-', '-', 300, 460);
+                    Sakk_pos_control = [Sakk_pos_control ; pos(:, [1 2 3 4])];
                 end
             end
             if durchlauf == 2 || durchlauf == 3
@@ -245,10 +261,13 @@ function Noh_AOI( bilder, durchlauf, ~, kontroll_kennung, patient_kennung, data_
                     else
                         continue
                     end
-                    clearvars Sakk_parsed Sakk_pos
                     Sakk_parsed = m.Sakk_parsed;
-                    Sakk_pos = center_image(mean([Sakk_parsed(2:end,2) Sakk_parsed(1:end-1,5)],2), mean([Sakk_parsed(2:end,3) Sakk_parsed(1:end-1,6)],2), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), 300, 460);
-                    Sakk_pos_control = [Sakk_pos_control;  Sakk_pos(:,1:2)];
+                    if isempty(Sakk_parsed) == 1; continue; end;
+                    clearvars buf pos
+                    buf(:,1) = Sakk_parsed(:,5) - Sakk_parsed(:,2);
+                    buf(:,2) = Sakk_parsed(:,6) - Sakk_parsed(:,3);
+                    pos = center_image(Sakk_parsed(:,2), Sakk_parsed(:,3), buf(:,1), buf(:,2), '-', '-', 300, 460);
+                    Sakk_pos_control = [Sakk_pos_control ; pos(:, [1 2 3 4])];
                 end
             end
             bilder = bilder - 1;
@@ -258,8 +277,7 @@ function Noh_AOI( bilder, durchlauf, ~, kontroll_kennung, patient_kennung, data_
     
 %% Alle Daten der Patienten heraussuchen
 
-
-    Sakk_pos_patient = zeros(1,2);
+    Sakk_pos_patient = zeros(1,4);
     
     for b = 2:size(patient_listing,1)
         bilder = bilder_save;
@@ -274,10 +292,13 @@ function Noh_AOI( bilder, durchlauf, ~, kontroll_kennung, patient_kennung, data_
                     else
                         continue
                     end
-                    clearvars Sakk_parsed Sakk_pos
                     Sakk_parsed = m.Sakk_parsed;
-                    Sakk_pos = center_image(mean([Sakk_parsed(2:end,2) Sakk_parsed(1:end-1,5)],2), mean([Sakk_parsed(2:end,3) Sakk_parsed(1:end-1,6)],2), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), 300, 460);
-                    Sakk_pos_patient = [Sakk_pos_patient;  Sakk_pos(:,1:2)];
+                    if isempty(Sakk_parsed) == 1; continue; end;
+                    clearvars buf pos
+                    buf(:,1) = Sakk_parsed(:,5) - Sakk_parsed(:,2);
+                    buf(:,2) = Sakk_parsed(:,6) - Sakk_parsed(:,3);
+                    pos = center_image(Sakk_parsed(:,2), Sakk_parsed(:,3), buf(:,1), buf(:,2), '-', '-', 300, 460);
+                    Sakk_pos_patient = [Sakk_pos_patient ; pos(:, [1 2 3 4])];
                 end
             end
             if durchlauf == 2 || durchlauf == 3
@@ -288,10 +309,13 @@ function Noh_AOI( bilder, durchlauf, ~, kontroll_kennung, patient_kennung, data_
                     else
                         continue
                     end
-                    clearvars Sakk_parsed Sakk_pos
                     Sakk_parsed = m.Sakk_parsed;
-                    Sakk_pos = center_image(mean([Sakk_parsed(2:end,2) Sakk_parsed(1:end-1,5)],2), mean([Sakk_parsed(2:end,3) Sakk_parsed(1:end-1,6)],2), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), 300, 460);
-                    Sakk_pos_patient = [Sakk_pos_patient;  Sakk_pos(:,1:2)];
+                    if isempty(Sakk_parsed) == 1; continue; end;
+                    clearvars buf pos
+                    buf(:,1) = Sakk_parsed(:,5) - Sakk_parsed(:,2);
+                    buf(:,2) = Sakk_parsed(:,6) - Sakk_parsed(:,3);
+                    pos = center_image(Sakk_parsed(:,2), Sakk_parsed(:,3), buf(:,1), buf(:,2), '-', '-', 300, 460);
+                    Sakk_pos_patient = [Sakk_pos_patient ; pos(:, [1 2 3 4])];
                 end
             end
             bilder = bilder - 8;
@@ -306,10 +330,13 @@ function Noh_AOI( bilder, durchlauf, ~, kontroll_kennung, patient_kennung, data_
                     else
                         continue
                     end
-                    clearvars Sakk_parsed Sakk_pos
                     Sakk_parsed = m.Sakk_parsed;
-                    Sakk_pos = center_image(mean([Sakk_parsed(2:end,2) Sakk_parsed(1:end-1,5)],2), mean([Sakk_parsed(2:end,3) Sakk_parsed(1:end-1,6)],2), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), 300, 460);
-                    Sakk_pos_patient = [Sakk_pos_patient;  Sakk_pos(:,1:2)];
+                    if isempty(Sakk_parsed) == 1; continue; end;
+                    clearvars buf pos
+                    buf(:,1) = Sakk_parsed(:,5) - Sakk_parsed(:,2);
+                    buf(:,2) = Sakk_parsed(:,6) - Sakk_parsed(:,3);
+                    pos = center_image(Sakk_parsed(:,2), Sakk_parsed(:,3), buf(:,1), buf(:,2), '-', '-', 300, 460);
+                    Sakk_pos_patient = [Sakk_pos_patient ; pos(:, [1 2 3 4])];
                 end
             end
             if durchlauf == 2 || durchlauf == 3
@@ -320,10 +347,13 @@ function Noh_AOI( bilder, durchlauf, ~, kontroll_kennung, patient_kennung, data_
                     else
                         continue
                     end
-                    clearvars Sakk_parsed Sakk_pos
                     Sakk_parsed = m.Sakk_parsed;
-                    Sakk_pos = center_image(mean([Sakk_parsed(2:end,2) Sakk_parsed(1:end-1,5)],2), mean([Sakk_parsed(2:end,3) Sakk_parsed(1:end-1,6)],2), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), 300, 460);
-                    Sakk_pos_patient = [Sakk_pos_patient;  Sakk_pos(:,1:2)];
+                    if isempty(Sakk_parsed) == 1; continue; end;
+                    clearvars buf pos
+                    buf(:,1) = Sakk_parsed(:,5) - Sakk_parsed(:,2);
+                    buf(:,2) = Sakk_parsed(:,6) - Sakk_parsed(:,3);
+                    pos = center_image(Sakk_parsed(:,2), Sakk_parsed(:,3), buf(:,1), buf(:,2), '-', '-', 300, 460);
+                    Sakk_pos_patient = [Sakk_pos_patient ; pos(:, [1 2 3 4])];
                 end
             end
             bilder = bilder - 4;
@@ -338,10 +368,13 @@ function Noh_AOI( bilder, durchlauf, ~, kontroll_kennung, patient_kennung, data_
                     else
                         continue
                     end
-                    clearvars Sakk_parsed Sakk_pos
                     Sakk_parsed = m.Sakk_parsed;
-                    Sakk_pos = center_image(mean([Sakk_parsed(2:end,2) Sakk_parsed(1:end-1,5)],2), mean([Sakk_parsed(2:end,3) Sakk_parsed(1:end-1,6)],2), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), 300, 460);
-                    Sakk_pos_patient = [Sakk_pos_patient;  Sakk_pos(:,1:2)];
+                    if isempty(Sakk_parsed) == 1; continue; end;
+                    clearvars buf pos
+                    buf(:,1) = Sakk_parsed(:,5) - Sakk_parsed(:,2);
+                    buf(:,2) = Sakk_parsed(:,6) - Sakk_parsed(:,3);
+                    pos = center_image(Sakk_parsed(:,2), Sakk_parsed(:,3), buf(:,1), buf(:,2), '-', '-', 300, 460);
+                    Sakk_pos_patient = [Sakk_pos_patient ; pos(:, [1 2 3 4])];
                 end
             end
             if durchlauf == 2 || durchlauf == 3
@@ -352,10 +385,13 @@ function Noh_AOI( bilder, durchlauf, ~, kontroll_kennung, patient_kennung, data_
                     else
                         continue
                     end
-                    clearvars Sakk_parsed Sakk_pos
                     Sakk_parsed = m.Sakk_parsed;
-                    Sakk_pos = center_image(mean([Sakk_parsed(2:end,2) Sakk_parsed(1:end-1,5)],2), mean([Sakk_parsed(2:end,3) Sakk_parsed(1:end-1,6)],2), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), 300, 460);
-                    Sakk_pos_patient = [Sakk_pos_patient;  Sakk_pos(:,1:2)];
+                    if isempty(Sakk_parsed) == 1; continue; end;
+                    clearvars buf pos
+                    buf(:,1) = Sakk_parsed(:,5) - Sakk_parsed(:,2);
+                    buf(:,2) = Sakk_parsed(:,6) - Sakk_parsed(:,3);
+                    pos = center_image(Sakk_parsed(:,2), Sakk_parsed(:,3), buf(:,1), buf(:,2), '-', '-', 300, 460);
+                    Sakk_pos_patient = [Sakk_pos_patient ; pos(:, [1 2 3 4])];
                 end
             end
             bilder = bilder - 2;
@@ -370,10 +406,13 @@ function Noh_AOI( bilder, durchlauf, ~, kontroll_kennung, patient_kennung, data_
                     else
                         continue
                     end
-                    clearvars Sakk_parsed Sakk_pos
                     Sakk_parsed = m.Sakk_parsed;
-                    Sakk_pos = center_image(mean([Sakk_parsed(2:end,2) Sakk_parsed(1:end-1,5)],2), mean([Sakk_parsed(2:end,3) Sakk_parsed(1:end-1,6)],2), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), 300, 460);
-                    Sakk_pos_patient = [Sakk_pos_patient;  Sakk_pos(:,1:2)];
+                    if isempty(Sakk_parsed) == 1; continue; end;
+                    clearvars buf pos
+                    buf(:,1) = Sakk_parsed(:,5) - Sakk_parsed(:,2);
+                    buf(:,2) = Sakk_parsed(:,6) - Sakk_parsed(:,3);
+                    pos = center_image(Sakk_parsed(:,2), Sakk_parsed(:,3), buf(:,1), buf(:,2), '-', '-', 300, 460);
+                    Sakk_pos_patient = [Sakk_pos_patient ; pos(:, [1 2 3 4])];
                 end
             end
             if durchlauf == 2 || durchlauf == 3
@@ -384,77 +423,62 @@ function Noh_AOI( bilder, durchlauf, ~, kontroll_kennung, patient_kennung, data_
                     else
                         continue
                     end
-                    clearvars Sakk_parsed Sakk_pos
                     Sakk_parsed = m.Sakk_parsed;
-                    Sakk_pos = center_image(mean([Sakk_parsed(2:end,2) Sakk_parsed(1:end-1,5)],2), mean([Sakk_parsed(2:end,3) Sakk_parsed(1:end-1,6)],2), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), zeros(size(Sakk_parsed,1)-1,1), 300, 460);
-                    Sakk_pos_patient = [Sakk_pos_patient;  Sakk_pos(:,1:2)];
+                    if isempty(Sakk_parsed) == 1; continue; end;
+                    clearvars buf pos
+                    buf(:,1) = Sakk_parsed(:,5) - Sakk_parsed(:,2);
+                    buf(:,2) = Sakk_parsed(:,6) - Sakk_parsed(:,3);
+                    pos = center_image(Sakk_parsed(:,2), Sakk_parsed(:,3), buf(:,1), buf(:,2), '-', '-', 300, 460);
+                    Sakk_pos_patient = [Sakk_pos_patient ; pos(:, [1 2 3 4])];
                 end
             end
             bilder = bilder - 1;
         end
     end
     
-
 %% Auswertung
-
-    clearvars buf
-
     Sakk_pos_control(1,:) = [];
     Sakk_pos_patient(1,:) = [];
 
-    % Linkes Auge
-    buf = (Sakk_pos_control(:,1) - 90).^2/45^2 + (Sakk_pos_control(:,2) - (456-210)).^2/25^2;
-    buf = find(buf < 1);
-    Auge_links_control(:,1) = Sakk_pos_control(buf,1);
-    Auge_links_control(:,2) = Sakk_pos_control(buf,2);
-    buf = (Sakk_pos_patient(:,1) - 90).^2/45^2 + (Sakk_pos_patient(:,2) - (456-210)).^2/25^2;
-    buf = find(buf < 1);
-    Auge_links_patient(:,1) = Sakk_pos_patient(buf,1);
-    Auge_links_patient(:,2) = Sakk_pos_patient(buf,2);
-    
-    % Rechtes Auge
-    buf = (Sakk_pos_control(:,1) - 200).^2/45^2 + (Sakk_pos_control(:,2) - (456-210)).^2/25^2;
-    buf = find(buf < 1);
-    Auge_rechts_control(:,1) = Sakk_pos_control(buf,1);
-    Auge_rechts_control(:,2) = Sakk_pos_control(buf,2);
-    buf = (Sakk_pos_patient(:,1) - 200).^2/45^2 + (Sakk_pos_patient(:,2) - (456-210)).^2/25^2;
-    buf = find(buf < 1);
-    Auge_rechts_patient(:,1) = Sakk_pos_patient(buf,1);
-    Auge_rechts_patient(:,2) = Sakk_pos_patient(buf,2);
-    
-    % Mund
-    buf = (Sakk_pos_control(:,1) - 145).^2/55^2 + (Sakk_pos_control(:,2) - (456-325)).^2/30^2;
-    buf = find(buf < 1);
-    Mund_control(:,1) = Sakk_pos_control(buf,1);
-    Mund_control(:,2) = Sakk_pos_control(buf,2);
-    buf = (Sakk_pos_patient(:,1) - 145).^2/55^2 + (Sakk_pos_patient(:,2) - (456-325)).^2/30^2;
-    buf = find(buf < 1);
-    Mund_patient(:,1) = Sakk_pos_patient(buf,1);
-    Mund_patient(:,2) = Sakk_pos_patient(buf,2);
-
-    figure(1)
+    h = figure(1);
+    h.Position = [100 100 300*1.5 460*1.5];
     hold on; grid on;
-    
-    plot(Sakk_pos_control(:,1), Sakk_pos_control(:,2), '.k');
-    plot(Sakk_pos_patient(:,1), Sakk_pos_patient(:,2), '.y');
-    
-    scatter(Auge_links_control(:,1), Auge_links_control(:,2), 'b');
-    scatter(Auge_links_patient(:,1), Auge_links_patient(:,2), 'r');
-    legend('Kontrollen', 'Patienten', 'Kontrollen', 'Patienten');
-    scatter(Auge_rechts_control(:,1), Auge_rechts_control(:,2), 'b');
-    scatter(Auge_rechts_patient(:,1), Auge_rechts_patient(:,2), 'r');
-    scatter(Mund_control(:,1), Mund_control(:,2), 'b');
-    scatter(Mund_patient(:,1), Mund_patient(:,2), 'r');
-    
-    
-     u = uitable('Data', [size(Mund_control,1) size(Mund_patient,1); size(Auge_links_control,1) size(Auge_links_patient,1); size(Auge_rechts_control,1) size(Auge_rechts_patient,1) ], ...
-    'RowName', {'mouth', 'eye_left', 'eye_right'}, ...
-    'ColumnName', {'control' ,'patient'}, 'FontName', 'Arial', 'FontSize', 8);
 
-    u.Position(1) = 0;
-    u.Position(2) = 0;
-    u.Position(3) = 252;
-    u.Position(4) = 73;
+    coeff_control = pca([Sakk_pos_control(:,3) Sakk_pos_control(:,4)]);
+    coeff_patient = pca([Sakk_pos_patient(:,3) Sakk_pos_patient(:,4)]);
     
-
+    quiver(Sakk_pos_control(:,1), Sakk_pos_control(:,2), Sakk_pos_control(:,3)*2, Sakk_pos_control(:,4)*2 );
+    quiver(Sakk_pos_patient(:,1), Sakk_pos_patient(:,2), Sakk_pos_patient(:,3)*2, Sakk_pos_patient(:,4)*2 );
+    quiver([300/2; 300/2], [460/2; 460/2], coeff_control(:,1)*100, coeff_control(:,2)*100, 'k');
+    quiver([300/2; 300/2], [460/2; 460/2], coeff_patient(:,1)*100, coeff_patient(:,2)*100, 'g');
+    legend('Sakkaden Richtungen Kontrollen', 'Sakkaden Richtungen Patienten', 'Hauptkomponenten Kontrollen', 'Hauptkomponenten Patienten');
+    
+    
+    figure(2)
+    hold on; grid on;
+    phi = linspace(0, 2*pi, 50);
+    x = sin(phi(1:end-1));
+    y = cos(phi(1:end-1));
+    kreis = [x' y'];
+    einheitskreis = kreis;
+    for f = 1:size(Sakk_pos_control,1)
+        buf = (x + Sakk_pos_control(f,3)).^2  + (y + Sakk_pos_control(f,4)).^2;
+        [~, buf1] = max(buf);
+        kreis(buf1,:) = kreis(buf1,:) + einheitskreis(buf1,:);
+    end
+    kreis = kreis /size(Sakk_pos_control,1);
+    kreis(end,:) = kreis(1,:);
+    plot(kreis(:,1), kreis(:,2), 'b');
+    kreis = [x' y'];
+    einheitskreis = kreis;
+    for f = 1:size(Sakk_pos_patient,1)
+        buf = (x + Sakk_pos_patient(f,3)).^2  + (y + Sakk_pos_patient(f,4)).^2;
+        [~, buf1] = max(buf);
+        kreis(buf1,:) = kreis(buf1,:) + einheitskreis(buf1,:);
+    end
+    kreis = kreis /size(Sakk_pos_patient,1);
+    kreis(end,:) = kreis(1,:);
+    plot(kreis(:,1), kreis(:,2), 'r');
+    legend('Kontrollen', 'Patienten');
+    
 end

@@ -5,7 +5,7 @@ function [faces, faces_m, faces_t, kont] =  Separate_test_images(image_path)
 %% Aufteilen der Bilder in faces, faces_m, faces_t und sonstige
 
     image_listing = dir(image_path);
-    image_listing = image_listing(3:end);
+    image_listing = image_listing([image_listing.isdir] == 0,:);
     faces{1,1} = 'only normal faces';
     faces_m{1,1} = 'binary faces';
     faces_t{1,1} = 'binary upside down faces';

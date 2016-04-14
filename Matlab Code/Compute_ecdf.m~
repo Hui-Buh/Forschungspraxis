@@ -22,15 +22,16 @@ function Compute_ecdf( bilder, durchlauf, Sakka_Sakkd_Fix, kontroll_kennung, pat
     if bilder >= 1; image_list = vertcat(image_list, kont{2:end}); bilder = bilder -1; end;
     
 
-%% Alle Daten der Kontrollen heraussuchen
+    %% Alle Daten der Kontrollen heraussuchen
 
     Data_control = 0;
+   
     
     for b = 2:size(control_listing,1)
         if durchlauf == 1 || durchlauf == 3
             for c = 2:size(image_list,1)
                 % Open .mat file
-                if exist(cat(2, data_path, '/', control_listing{b,1}, '/', control_listing{b,1}, '_', image_list{c,1} , '_1','.mat' ), 'file') > 0
+                t
                     m = matfile(cat(2, data_path, '/', control_listing{b,1}, '/', control_listing{b,1}, '_', image_list{c,1} , '_1','.mat' ));
                 else
                     continue
@@ -69,7 +70,7 @@ function Compute_ecdf( bilder, durchlauf, Sakka_Sakkd_Fix, kontroll_kennung, pat
         end
     end
 
-%% Alle Daten der Patienten heraussuchen
+    %% Alle Daten der Patienten heraussuchen
 
     Data_patient = 0;
     
@@ -77,9 +78,9 @@ function Compute_ecdf( bilder, durchlauf, Sakka_Sakkd_Fix, kontroll_kennung, pat
         if durchlauf == 1 || durchlauf == 3
             for c = 2:size(image_list,1)
                 % Open .mat file
-                if exist(cat(2, data_path, '/', patient_listing{b,1}, '/', patient_listing{b,1}, '_', image_list{c,1} , '_1','.mat' ), 'file') > 0
+                try
                     m = matfile(cat(2, data_path, '/', patient_listing{b,1}, '/', patient_listing{b,1}, '_', image_list{c,1} , '_1','.mat' ));
-                else
+                catch 
                     continue
                 end
                 % Extrahiere alle notwendigen Daten
@@ -97,9 +98,9 @@ function Compute_ecdf( bilder, durchlauf, Sakka_Sakkd_Fix, kontroll_kennung, pat
         if durchlauf == 2 || durchlauf == 3
             for c = 2:size(image_list,1)
                 % Open .mat file
-                if exist(cat(2, data_path, '/', patient_listing{b,1}, '/', patient_listing{b,1}, '_', image_list{c,1} , '_2','.mat' ), 'file') > 0
+                try
                     m = matfile(cat(2, data_path, '/', patient_listing{b,1}, '/', patient_listing{b,1}, '_', image_list{c,1} , '_2','.mat' ));
-                else
+                catch
                     continue
                 end
                 % Extrahiere alle notwendigen Daten
@@ -118,8 +119,14 @@ function Compute_ecdf( bilder, durchlauf, Sakka_Sakkd_Fix, kontroll_kennung, pat
 
 %% Auswertung
     
-    Data_control(1) = [];
-    Data_patient(1) = [];
+    Sakk_amplitude_control(1) = [];
+    Sakk_amplitude_patient(1) = [];
+    Sakk_amplitude_control_grad(1) = [];
+    Sakk_amplitude_patient_grad(1) = [];
+    Sakk_dauer_control(1) = [];
+    Sakk_dauer_patient(1) = [];
+    Fix_dauer_control(1) = [];
+    Fix_dauer_patient(1) = [];
     
     h = figure (1);
     h.Position = [200 200 900 450];
@@ -129,37 +136,79 @@ function Compute_ecdf( bilder, durchlauf, Sakka_Sakkd_Fix, kontroll_kennung, pat
     title('ecdf', 'FontSize', 12);
     subplot(1,2,2)
     title('ecdf Ausschnitt', 'FontSize', 12);
-    subplot(1,2,1)
-    hold on; grid on;
-    ecdf(Data_control); % Kontrollen
-    ecdf(Data_patient); % Patienten
-    subplot(1,2,2)
-    hold on; grid on;
-    ecdf(Data_control); % Kontrollen
-    ecdf(Data_patient); % Patienten 
-    % kstest_reject: Die Sakkadenamplituden von Patienten und Kontrollen resultieren aus 1=unterschiedliche Verteilungen, 0=gleiche Verteilungen
-    [kstest_reject, p, max_vert_abstand] = kstest2(Data_control, Data_patient);
-    data_mean(1) = mean(Data_control);
-    data_mean(2) = mean(Data_patient);
-    data_median(1) = median(Data_control);
-    data_median(2) = median(Data_patient);
     
     if Sakka_Sakkd_Fix == 0 
+        subplot(1,2,1)
+        hold on; grid on;
+        ecdf(Sakk_amplitude_control); % Kontrollen
+        ecdf(Sakk_amplitude_patient); % Patienten
         legend('Sakk. Amp. Kontrollen (px)', 'Sakk. Amp. Patienten (px)', 'location', 'southeast');
+        subplot(1,2,2)
+        hold on; grid on;
+        ecdf(Sakk_amplitude_control); % Kontrollen
+        ecdf(Sakk_amplitude_patient); % Patienten  
         legend('Sakk. Amp. Kontrollen (px)', 'Sakk. Amp. Patienten (px)', 'location', 'southeast');
         xlim([0 200]);
+        % kstest_reject: Die Sakkadenamplituden von Patienten und Kontrollen resultieren aus 1=unterschiedliche Verteilungen, 0=gleiche Verteilungen
+        [kstest_reject, p, max_vert_abstand] = kstest2(Sakk_amplitude_control, Sakk_amplitude_patient);
+        data_mean(1) = mean(Sakk_amplitude_control);
+        data_mean(2) = mean(Sakk_amplitude_patient);
+        data_median(1) = median(Sakk_amplitude_control);
+        data_median(2) = median(Sakk_amplitude_patient);
     elseif Sakka_Sakkd_Fix == 1
+        subplot(1,2,1)
+        hold on; grid on;
+        ecdf(Sakk_amplitude_control_grad); % Kontrollen
+        ecdf(Sakk_amplitude_patient_grad); % Patienten  
         legend('Sakk. Amp. Kontrollen (°)', 'Sakk. Amp. Patienten (°)', 'location', 'southeast');
+        subplot(1,2,2)
+        hold on; grid on;
+        ecdf(Sakk_amplitude_control_grad); % Kontrollen
+        ecdf(Sakk_amplitude_patient_grad); % Patienten  
         legend('Sakk. Amp. Kontrollen (°)', 'Sakk. Amp. Patienten (°)', 'location', 'southeast');
         xlim([0 5]);
+        % kstest_reject: Die Sakkadenamplituden von Patienten und Kontrollen resultieren aus 1=unterschiedliche Verteilungen, 0=gleiche Verteilungen
+        [kstest_reject, p, max_vert_abstand] = kstest2(Sakk_amplitude_control_grad, Sakk_amplitude_patient_grad);
+        data_mean(1) = mean(Sakk_amplitude_control_grad);
+        data_mean(2) = mean(Sakk_amplitude_patient_grad);
+        data_median(1) = median(Sakk_amplitude_control_grad);
+        data_median(2) = median(Sakk_amplitude_patient_grad);
     elseif Sakka_Sakkd_Fix == 2
+        subplot(1,2,1)
+        hold on; grid on;
+        ecdf(Sakk_dauer_control); % Kontrollen
+        ecdf(Sakk_dauer_patient); % Patienten  
         legend('Sakk. Dauer Kontrollen (ms)', 'Sakk. Dauer Patienten (ms)', 'location', 'southeast');
+        subplot(1,2,2)
+        hold on; grid on;
+        ecdf(Sakk_dauer_control); % Kontrollen
+        ecdf(Sakk_dauer_patient); % Patienten  
         legend('Sakk. Dauer Kontrollen (ms)', 'Sakk. Dauer Patienten (ms)', 'location', 'southeast');
         xlim([0 100]);
+        % kstest_reject: Die Sakkadenamplituden von Patienten und Kontrollen resultieren aus 1=unterschiedliche Verteilungen, 0=gleiche Verteilungen
+        [kstest_reject, p, max_vert_abstand] = kstest2(Sakk_dauer_control, Sakk_dauer_patient);
+        data_mean(1) = mean(Sakk_dauer_control);
+        data_mean(2) = mean(Sakk_dauer_patient);
+        data_median(1) = median(Sakk_dauer_control);
+        data_median(2) = median(Sakk_dauer_patient);
     elseif Sakka_Sakkd_Fix == 3
+        subplot(1,2,1)
+        hold on; grid on;
+        ecdf(Fix_dauer_control); % Kontrollen
+        ecdf(Fix_dauer_patient); % Patienten
         legend('Fix. Dauer Kontrollen (ms)', 'Fix. Dauer Patienten (ms)', 'location', 'southeast');
+        subplot(1,2,2)
+        hold on; grid on;
+        ecdf(Fix_dauer_control); % Kontrollen
+        ecdf(Fix_dauer_patient); % Patienten
         legend('Fix. Dauer Kontrollen (ms)', 'Fix. Dauer Patienten (ms)', 'location', 'southeast');
         xlim([0 1000]);
+        % kstest_reject: Die Fixationsdauern von Patienten und Kontrollen resultieren aus 1=unterschiedliche Verteilungen, 0=gleiche Verteilungen
+        [kstest_reject, p, max_vert_abstand] = kstest2(Fix_dauer_control, Fix_dauer_patient);
+        data_mean(1) = mean(Fix_dauer_control);
+        data_mean(2) = mean(Fix_dauer_patient);
+        data_median(1) = median(Fix_dauer_control);
+        data_median(2) = median(Fix_dauer_patient);
     end
     
     u = uitable('Data', [kstest_reject; p; max_vert_abstand; data_mean(1); data_mean(2); data_median(1); data_median(2)], ...
