@@ -22,7 +22,7 @@ function varargout = test_gui(varargin)
 
 % Edit the above text to modify the response to help test_gui
 
-% Last Modified by GUIDE v2.5 14-Apr-2016 12:46:38
+% Last Modified by GUIDE v2.5 18-Apr-2016 10:04:17
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -75,7 +75,7 @@ varargout{1} = handles.output;
 
 
 function get_parameters(hObject, eventdata, handles)
-global bilder durchlauf kontroll_kennung patient_kennung data_path image_path Sakka_Sakkd_Fix Sakk_p_Sakk_grad_mean_max Sakkpx_Sakkgrad closeall
+global bilder durchlauf kontroll_kennung patient_kennung data_path image_path Sakka_Sakkd_Fix Sakk_p_Sakk_grad_mean_max Sakkpx_Sakkgrad closeall sakkaden_laenge saliancy
 bilder = get(handles.checkbox1,'Value')*8 + get(handles.checkbox2,'Value')*4 + get(handles.checkbox3,'Value')*2 + get(handles.checkbox5,'Value');
 durchlauf = get(handles.checkbox7,'Value') + get(handles.checkbox8,'Value')*2;
 kontroll_kennung = get(handles.edit5,'String'); 
@@ -86,6 +86,9 @@ Sakka_Sakkd_Fix = get(handles.radiobutton3,'Value') + get(handles.radiobutton4,'
 Sakk_p_Sakk_grad_mean_max = get(handles.radiobutton3,'Value')*2 + get(handles.radiobutton4,'Value')*1 + get(handles.radiobutton1,'Value')*8 + get(handles.radiobutton2,'Value')*4;
 Sakkpx_Sakkgrad = get(handles.radiobutton3,'Value')*2 + get(handles.radiobutton4,'Value')*1;
 closeall = get(handles.checkbox9,'Value');
+sakkaden_laenge = get(handles.edit7, 'String');
+saliancy = cellstr(get(handles.popupmenu1,'String'));
+saliancy = saliancy{get(handles.popupmenu1,'Value')};
 
 % --- Executes on button press in pushbutton1.
 function pushbutton1_Callback(hObject, eventdata, handles)
@@ -119,13 +122,13 @@ compare_Sakk(bilder, durchlauf, Sakk_p_Sakk_grad_mean_max , kontroll_kennung, pa
 
 % --- Executes on button press in pushbutton4.
 function pushbutton4_Callback(hObject, eventdata, handles)
-global bilder durchlauf kontroll_kennung patient_kennung data_path image_path Sakkpx_Sakkgrad closeall
+global bilder durchlauf kontroll_kennung patient_kennung data_path image_path Sakkpx_Sakkgrad closeall sakkaden_laenge
 % hObject    handle to pushbutton4 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 get_parameters(hObject, eventdata, handles)
 if closeall == 1; try close Figure 1; close Figure 2; close Figure 3; catch; end; end;
-create_Sakk_profile( bilder, durchlauf, Sakkpx_Sakkgrad, kontroll_kennung, patient_kennung, data_path, image_path )
+create_Sakk_profile( bilder, durchlauf, Sakkpx_Sakkgrad, kontroll_kennung, patient_kennung, data_path, image_path, sakkaden_laenge )
 
 
 % --- Executes on button press in pushbutton5.
@@ -148,6 +151,20 @@ global bilder durchlauf kontroll_kennung patient_kennung data_path image_path cl
 get_parameters(hObject, eventdata, handles)
 if closeall == 1; try close Figure 1; close Figure 2; close Figure 3; catch; end; end;
 Noh_AOI( bilder, durchlauf, '' , kontroll_kennung, patient_kennung, data_path, image_path)
+
+
+% --- Executes on button press in pushbutton7.
+function pushbutton7_Callback(hObject, eventdata, handles)
+global bilder durchlauf kontroll_kennung patient_kennung data_path image_path closeall saliancy
+% hObject    handle to pushbutton7 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+get_parameters(hObject, eventdata, handles)
+if closeall == 1; try close Figure 1; close Figure 2; close Figure 3; catch; end; end;
+evaluate_saliancy( bilder, durchlauf, saliancy , kontroll_kennung, patient_kennung, data_path, image_path)
+
+
+
 
 
 function edit3_Callback(hObject, eventdata, handles)
@@ -347,3 +364,49 @@ function checkbox9_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 % Hint: get(hObject,'Value') returns toggle state of checkbox9
+
+
+
+function edit7_Callback(hObject, eventdata, handles)
+% hObject    handle to edit7 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of edit7 as text
+%        str2double(get(hObject,'String')) returns contents of edit7 as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function edit7_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to edit7 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes on selection change in popupmenu1.
+function popupmenu1_Callback(hObject, eventdata, handles)
+% hObject    handle to popupmenu1 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: contents = cellstr(get(hObject,'String')) returns popupmenu1 contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from popupmenu1
+
+
+% --- Executes during object creation, after setting all properties.
+function popupmenu1_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to popupmenu1 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: popupmenu controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end

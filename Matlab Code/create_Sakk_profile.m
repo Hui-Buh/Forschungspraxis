@@ -7,9 +7,10 @@
 % image_path = absolute or relative path of the folder containing all images
 
 
-function create_Sakk_profile( bilder, durchlauf, Sakkpx_Sakkgrad, kontroll_kennung, patient_kennung, data_path, image_path )
+function create_Sakk_profile( bilder, durchlauf, Sakkpx_Sakkgrad, kontroll_kennung, patient_kennung, data_path, image_path, sakkaden_laenge )
 
     if bilder > 15 && bilder < 1; disp('Enter valid number for "bilder"!'); return; end;
+    sakkaden_laenge = str2num(sakkaden_laenge);
 
     [faces, faces_m, faces_t, kont] =  Separate_test_images(image_path);
 
@@ -167,50 +168,80 @@ function create_Sakk_profile( bilder, durchlauf, Sakkpx_Sakkgrad, kontroll_kennu
 
 %% Auswertung
 
+%     sakkaden_laenge = 52;
+    
     figure(1)
     hold on; grid on;
-    time_c = 0;
+    
+    time_c = (0:2:(sakkaden_laenge-4))';
+    vel_c = zeros((sakkaden_laenge-2)/2,1);
+    acc_c = zeros((sakkaden_laenge-2)/2,1);
+    
     for a = 1:size(sakkade_control,2) % alle Bilder aller Patienten durchlaufen     - Kontrollen
         for b = 1:size(sakkade_control,1) % Alle Sakkaden in einem Bild durchlaufen - Kontrollen
-            clearvars sakk diff_ amplitude
+            clearvars sakk diff_ vel
             sakk = sakkade_control(b,a);
-            sakk = cell2mat(sakk); % Daten einer Sakkade
-            if isempty(sakk) == 0
-                sakk(:,1) = sakk(:,1) - sakk(1,1) +1;
+            sakk = cell2mat(sakk); % Positionen einer einzelnen Sakkade
+            
+            if isempty(sakk) == 1
+                continue;
+            else
+                sakk(:,1) = sakk(:,1) - sakk(1,1);
                 diff_ = (sakk(1:end-1,[2 3]) - sakk(2:end,[2 3])); 
-                if  (sakk(end,1) > time_c) % && (sakk(end,1) < 50)
-                    time_c = sakk(1:end-1,1);
-                    vel_c = sqrt(sum(diff_ .* diff_, 2))/2 ;
+                
+                if  (sakk(end,1) > sakkaden_laenge -1) && (sakk(end,1) < sakkaden_laenge +1)
+                    vel = sqrt(sum(diff_ .* diff_, 2))/2;
                     if Sakkpx_Sakkgrad == 2
-                        vel_c = vel_c *450/9.8 /1000;
+                        vel = vel *450/9.8 /1000;
                     end
-                    acc_c = diff(vel_c);
+                    vel_c = [vel_c vel(1:end-1)];
+                    acc_c = [acc_c diff(vel)/2];
                 end
             end
         end
     end
-    time_p = 0;
+    
+    time_p = (0:2:(sakkaden_laenge-4))';
+    vel_p = zeros((sakkaden_laenge-2)/2,1);
+    acc_p = zeros((sakkaden_laenge-2)/2,1);
+    
     for a = 1:size(sakkade_patient,2) % alle Bilder aller Patienten durchlaufen     - Patienten
         for b = 1:size(sakkade_patient,1) % Alle Sakkaden in einem Bild durchlaufen - Patienten
-            clearvars sakk diff_ amplitude
+            clearvars sakk diff_ vel
             sakk = sakkade_patient(b,a);
-            sakk = cell2mat(sakk); % Daten einer Sakkade
-            if isempty(sakk) == 0
-                sakk(:,1) = sakk(:,1) - sakk(1,1) +1;
-                diff_ = (sakk(1:end-1,[2 3]) - sakk(2:end,[2 3])) ; 
-                if  (sakk(end,1) > time_p) % && (sakk(end,1) < 50)
-                    time_p = sakk(1:end-1,1);
-                    vel_p = sqrt(sum(diff_ .* diff_, 2))/2 ;
+            sakk = cell2mat(sakk); % Positionen einer einzelnen Sakkade
+            
+            if isempty(sakk) == 1
+                continue;
+            else
+                sakk(:,1) = sakk(:,1) - sakk(1,1);
+                diff_ = (sakk(1:end-1,[2 3]) - sakk(2:end,[2 3])); 
+                
+                if  (sakk(end,1) > sakkaden_laenge -1) && (sakk(end,1) < sakkaden_laenge +1)
+                    vel = sqrt(sum(diff_ .* diff_, 2))/2;
                     if Sakkpx_Sakkgrad == 2
-                        vel_p = vel_p *450/9.8 /1000;
+                        vel = vel *450/9.8 /1000;
                     end
-                    acc_p = diff(vel_p);
+                    vel_p = [vel_p vel(1:end-1)];
+                    acc_p = [acc_p diff(vel)/2];
                 end
             end
         end
     end
+    
+    vel_c(:,1) = [];
+    acc_c(:,1) = [];
+    vel_p(:,1) = [];
+    acc_p(:,1) = [];
+    
+    vel_c = mean(vel_c,2);
+    acc_c = mean(acc_c,2);
+    vel_p = mean(vel_p,2);
+    acc_p = mean(acc_p,2);
+    
+    
     subplot(1,2,1)
-    [x,y,z] = plotyy(time_c, vel_c, time_c(2:end) - 0.5, acc_c);
+    [x,y,z] = plotyy(time_c, vel_c, time_c, acc_c);
     xlabel('Time (ms)');
     ylabel(x(1), 'velocity (px/ms)');
     ylabel(x(2), 'acceleration (px/ms^2)');
@@ -220,7 +251,7 @@ function create_Sakk_profile( bilder, durchlauf, Sakkpx_Sakkgrad, kontroll_kennu
     end
     legend('Geschwindigkeit Kontrolle', 'Beschleunigung Kontrolle')
     subplot(1,2,2)
-    [x,y,z] = plotyy(time_p, vel_p, time_p(2:end) - 0.5, acc_p);
+    [x,y,z] = plotyy(time_p, vel_p, time_p, acc_p);
     xlabel('Time (ms)');
     ylabel(x(1), 'velocity (px/ms)');
     ylabel(x(2), 'acceleration (px/ms^2)');
