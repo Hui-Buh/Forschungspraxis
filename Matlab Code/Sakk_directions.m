@@ -8,7 +8,7 @@
 
 function Sakk_directions(bilder, durchlauf, ~ , kontroll_kennung, patient_kennung, data_path, image_path)
 
-    if bilder > 15 && bilder < 1; disp('Enter valid number for "bilder"!'); return; end;
+    if bilder > 15 || bilder < 1; disp('Enter valid number for "bilder"!'); return; end;
     
     [faces, faces_m, faces_t, kont] =  Separate_test_images(image_path);
 

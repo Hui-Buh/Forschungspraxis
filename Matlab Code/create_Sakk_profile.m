@@ -1,15 +1,16 @@
 % Bilder: 8 = normal faces, 4 = binaray faces, 2 = binaray upside down faces, 1 = all but faces ==> cummulative
 % durchlauf: 1=nur 1. Frage, 2=nur 2. Frage, 3=alle 2 Fragen
 % Sakkpx_Sakkgrad: 1 = Sakkadenamplituden in px, 2 = Sakkadenamplituden in°,
+% vel_acc: What should be plotted? 1 = vel, 2 = acc, 3 = vel+acc
 % kontroll_kennung = z.B. 032 ==> required
 % patient_kennung = z.B. 031 ==> if = 0 all non kontroll_kennung data is used
 % data_path = absolute or relative path of the folder containing all patient specific data in TUM format
 % image_path = absolute or relative path of the folder containing all images
 
 
-function create_Sakk_profile( bilder, durchlauf, Sakkpx_Sakkgrad, kontroll_kennung, patient_kennung, data_path, image_path, sakkaden_laenge )
+function create_Sakk_profile( bilder, durchlauf, Sakkpx_Sakkgrad, vel_acc, kontroll_kennung, patient_kennung, data_path, image_path, sakkaden_laenge )
 
-    if bilder > 15 && bilder < 1; disp('Enter valid number for "bilder"!'); return; end;
+    if bilder > 15 || bilder < 1; disp('Enter valid number for "bilder"!'); return; end;
     sakkaden_laenge = str2num(sakkaden_laenge);
 
     [faces, faces_m, faces_t, kont] =  Separate_test_images(image_path);
@@ -241,24 +242,51 @@ function create_Sakk_profile( bilder, durchlauf, Sakkpx_Sakkgrad, kontroll_kennu
     
     
     subplot(1,2,1)
-    [x,y,z] = plotyy(time_c, vel_c, time_c, acc_c);
-    xlabel('Time (ms)');
-    ylabel(x(1), 'velocity (px/ms)');
-    ylabel(x(2), 'acceleration (px/ms^2)');
-    if Sakkpx_Sakkgrad == 2
-        ylabel(x(1), 'velocity (°/s)');
-        ylabel(x(2), 'acceleration (°/s^2)');
+    if vel_acc == 1 
+        plot(time_c, vel_c);
+        xlabel('Time (ms)');
+        ylabel('velocity (px/ms)');
+        if Sakkpx_Sakkgrad == 2; ylabel('velocity (°/s)'); end;
+        legend('Geschwindigkeit Kontrolle')
+    elseif vel_acc == 2
+        plot(time_c, acc_c);
+        xlabel('Time (ms)');
+        ylabel('acceleration (px/ms^2)');
+        if Sakkpx_Sakkgrad == 2; ylabel('acceleration (°/s^2)'); end;
+        legend('Beschleunigung Kontrolle')
+    elseif vel_acc == 3
+        [x,y,z] = plotyy(time_c, vel_c, time_c, acc_c);
+        xlabel('Time (ms)');
+        ylabel(x(1), 'velocity (px/ms)');
+        ylabel(x(2), 'acceleration (px/ms^2)');
+        if Sakkpx_Sakkgrad == 2
+            ylabel(x(1), 'velocity (°/s)');
+            ylabel(x(2), 'acceleration (°/s^2)');
+        end
+        legend('Geschwindigkeit Kontrolle', 'Beschleunigung Kontrolle')
     end
-    legend('Geschwindigkeit Kontrolle', 'Beschleunigung Kontrolle')
     subplot(1,2,2)
-    [x,y,z] = plotyy(time_p, vel_p, time_p, acc_p);
-    xlabel('Time (ms)');
-    ylabel(x(1), 'velocity (px/ms)');
-    ylabel(x(2), 'acceleration (px/ms^2)');
-    if Sakkpx_Sakkgrad == 2
-        ylabel(x(1), 'velocity (°/s)');
-        ylabel(x(2), 'acceleration (°/s^2)');
+    if vel_acc == 1 
+        plot(time_p, vel_p);
+        xlabel('Time (ms)');
+        ylabel('velocity (px/ms)');
+        if Sakkpx_Sakkgrad == 2; ylabel('velocity (°/s)'); end;
+        legend('Geschwindigkeit Patient')
+    elseif vel_acc == 2
+        plot(time_p, acc_p);
+        xlabel('Time (ms)');
+        ylabel('acceleration (px/ms^2)');
+        if Sakkpx_Sakkgrad == 2; ylabel(x(2), 'acceleration (°/s^2)'); end;
+        legend('Beschleunigung Patient')
+    elseif vel_acc == 3
+        [x,y,z] = plotyy(time_p, vel_p, time_p, acc_p);
+        xlabel('Time (ms)');
+        ylabel(x(1), 'velocity (px/ms)');
+        ylabel(x(2), 'acceleration (px/ms^2)');
+        if Sakkpx_Sakkgrad == 2
+            ylabel(x(1), 'velocity (°/s)');
+            ylabel(x(2), 'acceleration (°/s^2)');
+        end
+        legend('Geschwindigkeit Patient', 'Beschleunigung Patient')
     end
-    legend('Geschwindigkeit Patient', 'Beschleunigung Patient')
-
 end

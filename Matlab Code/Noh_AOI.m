@@ -7,9 +7,9 @@
 
 function Noh_AOI( bilder, durchlauf, ~, kontroll_kennung, patient_kennung, data_path, image_path)
 
-    if bilder > 15 && bilder < 1; disp('Enter valid number for "bilder"!'); return; end;
+    if bilder > 15 || bilder < 2; disp('Enter valid number for "bilder"!'); return; end;
 
-    [faces, faces_m, faces_t, kont] =  Separate_test_images(image_path);
+    [faces, faces_m, faces_t, ~] =  Separate_test_images(image_path);
 
     [control_listing, patient_listing] =  Separate_test_persons(kontroll_kennung, patient_kennung, data_path);
     
@@ -19,7 +19,7 @@ function Noh_AOI( bilder, durchlauf, ~, kontroll_kennung, patient_kennung, data_
     if bilder >= 8; image_list = vertcat(image_list, faces{2:end}); bilder = bilder -8; end;
     if bilder >= 4; image_list = vertcat(image_list, faces_m{2:end}); bilder = bilder -4; end;
     if bilder >= 2; image_list = vertcat(image_list, faces_t{2:end}); bilder = bilder -2; end;
-    if bilder >= 1; image_list = vertcat(image_list, kont{2:end}); bilder = bilder -1; end;
+%     if bilder >= 1; image_list = vertcat(image_list, kont{2:end}); bilder = bilder -1; end;
 
     disp('Extract Data');
 %% Alle Daten der Kontrollen heraussuchen
@@ -109,18 +109,17 @@ function Noh_AOI( bilder, durchlauf, ~, kontroll_kennung, patient_kennung, data_
     if bilder >= 8; image_list_AOI = vertcat(image_list_AOI, faces{2:end}); bilder = bilder -8; end;
     if bilder >= 4; image_list_AOI = vertcat(image_list_AOI, faces_m{2:end}); bilder = bilder -4; end;
     if bilder >= 2; image_list_AOI = vertcat(image_list_AOI, faces_t{2:end}); bilder = bilder -2; end;
-    if bilder >= 1; image_list_AOI = vertcat(image_list_AOI, kont{2:end}); bilder = bilder -1; end;
+%     if bilder >= 1; image_list_AOI = vertcat(image_list_AOI, kont{2:end}); bilder = bilder -1; end;
     
     figure (1)
     
     anzahl_control = zeros(4,size(image_list ,1)-1);
     for a = 1:size(image_list ,1)-1
-        if find( strcmp( image_list_AOI, cat(2,image_list{a+1}, '_AOI')) == 1) > 0
-            buf = cell2mat(Sakk_pos_control(a,1));
-            buf = round(buf);
-            if size(buf,1) == 0; continue; end;
-            buf(:,2) = -1 * buf(:,2) + 460;
-        end
+        if find( strcmp( image_list_AOI, cat(2,image_list{a+1}, '_AOI')) == 1) == 0; continue; end;
+        buf = cell2mat(Sakk_pos_control(a,1));
+        buf = round(buf);
+        if size(buf,1) == 0; continue; end;
+        buf(:,2) = -1 * buf(:,2) + 460;
         subplot(1,2,1)
         image = imread(cat(2, image_path, '/', cat(2,image_list{a+1}, '_AOI.jpg') ));
         image = double(image);
@@ -144,12 +143,11 @@ function Noh_AOI( bilder, durchlauf, ~, kontroll_kennung, patient_kennung, data_
     
     anzahl_patient = zeros(4,size(image_list ,1)-1);
     for a = 1:size(image_list ,1)-1
-        if find( strcmp( image_list_AOI, cat(2,image_list{a+1}, '_AOI')) == 1) > 0
-            buf = cell2mat(Sakk_pos_patient(a,1));
-            buf = round(buf);
-            if size(buf,1) == 0; continue; end;
-            buf(:,2) = -1 * buf(:,2) + 460;
-        end
+        if find( strcmp( image_list_AOI, cat(2,image_list{a+1}, '_AOI')) == 1) == 0; continue; end;
+        buf = cell2mat(Sakk_pos_patient(a,1));
+        buf = round(buf);
+        if size(buf,1) == 0; continue; end;
+        buf(:,2) = -1 * buf(:,2) + 460;
         subplot(1,2,2)
         image = imread(cat(2, image_path, '/', cat(2,image_list{a+1}, '_AOI.jpg') ));
         image = double(image);
