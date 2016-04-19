@@ -23,7 +23,7 @@ function create_Sakk_profile( bilder, durchlauf, Sakkpx_Sakkgrad, kontroll_kennu
     if bilder >= 2; image_list = vertcat(image_list, faces_t{2:end}); bilder = bilder -2; end;
     if bilder >= 1; image_list = vertcat(image_list, kont{2:end}); bilder = bilder -1; end;
     
-    
+    disp('Extract Data');
 %% Alle Daten der Kontrollen heraussuchen
 
     counter = 1;
@@ -168,7 +168,7 @@ function create_Sakk_profile( bilder, durchlauf, Sakkpx_Sakkgrad, kontroll_kennu
 
 %% Auswertung
 
-%     sakkaden_laenge = 52;
+    disp('Evaluate Data');
     
     figure(1)
     hold on; grid on;

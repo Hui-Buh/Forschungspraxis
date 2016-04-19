@@ -96,9 +96,12 @@ global bilder durchlauf kontroll_kennung patient_kennung data_path image_path Sa
 % hObject    handle to pushbutton1 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+disp('get Parameters');
 get_parameters(hObject, eventdata, handles)
 if closeall == 1; try close Figure 1; close Figure 2; close Figure 3; catch; end; end;
+disp('start Function');
 Compute_ecdf( bilder, durchlauf, Sakka_Sakkd_Fix, kontroll_kennung, patient_kennung, data_path, image_path)
+disp('Finished');
 
 % --- Executes on button press in pushbutton2.
 function pushbutton2_Callback(hObject, eventdata, handles)
@@ -106,9 +109,12 @@ global bilder durchlauf kontroll_kennung patient_kennung data_path image_path cl
 % hObject    handle to pushbutton2 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+disp('get Parameters');
 get_parameters(hObject, eventdata, handles)
 if closeall == 1; try close Figure 1; close Figure 2; close Figure 3; catch; end; end;
+disp('start Function');
 local_Sakk_distribution(bilder, durchlauf, '' , kontroll_kennung, patient_kennung, data_path, image_path)
+disp('Finished');
 
 % --- Executes on button press in pushbutton3.
 function pushbutton3_Callback(hObject, eventdata, handles)
@@ -116,9 +122,12 @@ global bilder durchlauf kontroll_kennung patient_kennung data_path image_path Sa
 % hObject    handle to pushbutton3 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+disp('get Parameters');
 get_parameters(hObject, eventdata, handles)
 if closeall == 1; try close Figure 1; close Figure 2; close Figure 3; catch; end; end;
+disp('start Function');
 compare_Sakk(bilder, durchlauf, Sakk_p_Sakk_grad_mean_max , kontroll_kennung, patient_kennung, data_path, image_path)
+disp('Finished');
 
 % --- Executes on button press in pushbutton4.
 function pushbutton4_Callback(hObject, eventdata, handles)
@@ -126,9 +135,12 @@ global bilder durchlauf kontroll_kennung patient_kennung data_path image_path Sa
 % hObject    handle to pushbutton4 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+disp('get Parameters');
 get_parameters(hObject, eventdata, handles)
 if closeall == 1; try close Figure 1; close Figure 2; close Figure 3; catch; end; end;
+disp('start Function');
 create_Sakk_profile( bilder, durchlauf, Sakkpx_Sakkgrad, kontroll_kennung, patient_kennung, data_path, image_path, sakkaden_laenge )
+disp('Finished');
 
 
 % --- Executes on button press in pushbutton5.
@@ -137,9 +149,12 @@ global bilder durchlauf kontroll_kennung patient_kennung data_path image_path cl
 % hObject    handle to pushbutton5 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+disp('get Parameters');
 get_parameters(hObject, eventdata, handles)
 if closeall == 1; try close Figure 1; close Figure 2; close Figure 3; catch; end; end;
+disp('start Function');
 Sakk_directions(bilder, durchlauf, '' , kontroll_kennung, patient_kennung, data_path, image_path)
+disp('Finished');
 
 
 % --- Executes on button press in pushbutton6.
@@ -148,9 +163,12 @@ global bilder durchlauf kontroll_kennung patient_kennung data_path image_path cl
 % hObject    handle to pushbutton6 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+disp('get Parameters');
 get_parameters(hObject, eventdata, handles)
 if closeall == 1; try close Figure 1; close Figure 2; close Figure 3; catch; end; end;
+disp('start Function');
 Noh_AOI( bilder, durchlauf, '' , kontroll_kennung, patient_kennung, data_path, image_path)
+disp('Finished');
 
 
 % --- Executes on button press in pushbutton7.
@@ -159,9 +177,12 @@ global bilder durchlauf kontroll_kennung patient_kennung data_path image_path cl
 % hObject    handle to pushbutton7 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+disp('get Parameters');
 get_parameters(hObject, eventdata, handles)
 if closeall == 1; try close Figure 1; close Figure 2; close Figure 3; catch; end; end;
+disp('start Function');
 evaluate_saliancy( bilder, durchlauf, saliancy , kontroll_kennung, patient_kennung, data_path, image_path)
+disp('Finished');
 
 
 
@@ -397,8 +418,13 @@ function popupmenu1_Callback(hObject, eventdata, handles)
 
 % Hints: contents = cellstr(get(hObject,'String')) returns popupmenu1 contents as cell array
 %        contents{get(hObject,'Value')} returns selected item from popupmenu1
+saliancy = cellstr(get(handles.popupmenu1,'String'));
+saliancy = saliancy{get(handles.popupmenu1,'Value')};
 
-
+if strcmp(saliancy, 'Gray scale at saccade end point'); hObject.TooltipString = 'Gray scale at saccade end point';
+elseif strcmp(saliancy, 'Squared Distance to nearest Harris features at sacc end point'); hObject.TooltipString = 'Squared Distance to nearest Harris features at sacc end point';
+end 
+    
 % --- Executes during object creation, after setting all properties.
 function popupmenu1_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to popupmenu1 (see GCBO)

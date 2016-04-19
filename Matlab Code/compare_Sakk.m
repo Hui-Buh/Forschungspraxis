@@ -22,9 +22,8 @@ function compare_Sakk(bilder, durchlauf, Sakk_p_Sakk_grad_max_mean , kontroll_ke
     if bilder >= 2; image_list = vertcat(image_list, faces_t{2:end}); bilder = bilder -2; end;
     if bilder >= 1; image_list = vertcat(image_list, kont{2:end}); bilder = bilder -1; end;
   
-
-    
-    %% Alle Daten der Kontrollen heraussuchen
+    disp('Extract Data');
+%% Alle Daten der Kontrollen heraussuchen
     
     Sakk_amplitude_control = 0;
     Sakk_vel_control = 0;
@@ -142,6 +141,8 @@ function compare_Sakk(bilder, durchlauf, Sakk_p_Sakk_grad_max_mean , kontroll_ke
 
 %% Auswertung
 
+    disp('Evaluate Data');
+    
     Sakk_amplitude_patient(1) = [];
     Sakk_vel_patient(1) = [];
     Sakk_amplitude_control(1) = [];

@@ -21,7 +21,7 @@ function Compute_ecdf( bilder, durchlauf, Sakka_Sakkd_Fix, kontroll_kennung, pat
     if bilder >= 2; image_list = vertcat(image_list, faces_t{2:end}); bilder = bilder -2; end;
     if bilder >= 1; image_list = vertcat(image_list, kont{2:end}); bilder = bilder -1; end;
     
-
+    disp('Extract Data');
 %% Alle Daten der Kontrollen heraussuchen
 
     Data_control = 0;
@@ -117,6 +117,8 @@ function Compute_ecdf( bilder, durchlauf, Sakka_Sakkd_Fix, kontroll_kennung, pat
     end
 
 %% Auswertung
+    
+    disp('Evaluate Data');
     
     Data_control(1) = [];
     Data_patient(1) = [];

@@ -21,7 +21,7 @@ function Sakk_directions(bilder, durchlauf, ~ , kontroll_kennung, patient_kennun
     if bilder >= 2; image_list = vertcat(image_list, faces_t{2:end}); bilder = bilder -2; end;
     if bilder >= 1; image_list = vertcat(image_list, kont{2:end}); bilder = bilder -1; end;
     
-    
+    disp('Extract Data');
 %% Alle Daten der Kontrollen heraussuchen
 
     Sakk_pos_control = zeros(1,4);
@@ -109,6 +109,9 @@ function Sakk_directions(bilder, durchlauf, ~ , kontroll_kennung, patient_kennun
     end
  
 %% Auswertung
+
+    disp('Evaluate Data');
+    
     Sakk_pos_control(1,:) = [];
     Sakk_pos_patient(1,:) = [];
 

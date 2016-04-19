@@ -21,6 +21,7 @@ function local_Sakk_distribution(bilder, durchlauf, ~ , kontroll_kennung, patien
     if bilder >= 2; image_list = vertcat(image_list, faces_t{2:end}); bilder = bilder -2; end;
     if bilder >= 1; image_list = vertcat(image_list, kont{2:end}); bilder = bilder -1; end;
      
+    disp('Extract Data');
 %% Fixation map parameters
     Fixation_map_control = zeros(1024/8, 1280/8);
     Fixation_map_patient = zeros(1024/8, 1280/8);
@@ -105,6 +106,8 @@ function local_Sakk_distribution(bilder, durchlauf, ~ , kontroll_kennung, patien
     end
 
 %% Auswertung
+
+    disp('Evaluate Data');
 
     pos_patient(1,:) = [];
     pos_control(1,:) = [];

@@ -25,7 +25,7 @@ README = 'Sakk_dauer (ms); Fix_dauer (ms); Sakk_amplitude (px bez. auf image_siz
 for c = 1:size(listing,1) 
     c
 %% Load data
-% Lade nur '.mat' files
+Lade nur '.mat' files
     if listing(c,1).isdir == 0
         if listing(c,1).name(end-3:end) == '.mat'
             load(cat(2, mat_path, listing(c,1).name));
@@ -148,13 +148,14 @@ for c = 1:size(listing,1)
             Fix_dauer = Sakk_parsed(2:end,1) - Sakk_parsed(1:end-1,4);
             
             % Mittlere Sakkadengeschwindigkeit
+
             clearvars Sakk_mean_vel 
             Sakk_mean_vel = Sakk_amplitude./Sakk_dauer;
-
+            
             
 %% Write data
-            image_name = char(Events{a,3});
-            patient_id = original_filename(1:5);
+%             image_name = char(Events{a,3});
+%             patient_id = original_filename(1:5);
             
 %             % Ein Ordner für jeden Probanten
 %             if exist(cat(2, goal_path,original_filename(1:5) ), 'dir') == 0

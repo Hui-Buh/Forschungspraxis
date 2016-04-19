@@ -21,6 +21,7 @@ function Noh_AOI( bilder, durchlauf, ~, kontroll_kennung, patient_kennung, data_
     if bilder >= 2; image_list = vertcat(image_list, faces_t{2:end}); bilder = bilder -2; end;
     if bilder >= 1; image_list = vertcat(image_list, kont{2:end}); bilder = bilder -1; end;
 
+    disp('Extract Data');
 %% Alle Daten der Kontrollen heraussuchen
 
     Sakk_pos_control = cell(size(image_list,1)-1,1);
@@ -96,6 +97,8 @@ function Noh_AOI( bilder, durchlauf, ~, kontroll_kennung, patient_kennung, data_
     end
 
 %% Auswertung
+
+    disp('Evaluate Data');
 
     clearvars buf
 
