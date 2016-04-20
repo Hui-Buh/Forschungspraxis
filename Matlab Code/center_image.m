@@ -24,5 +24,8 @@ function Sakk_pos = center_image(x_pos, y_pos, param1, param2, param3, param4, x
     % Shift image to supposed position
     Sakk_pos(:,1) = Sakk_pos(:,1) + x_image/2;
     Sakk_pos(:,2) = Sakk_pos(:,2) + y_image/2;
+    
+    % Round to get pixel
+    Sakk_pos = round(Sakk_pos);
 
 end
