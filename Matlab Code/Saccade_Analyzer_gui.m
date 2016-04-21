@@ -22,7 +22,7 @@ function varargout = Saccade_Analyzer_gui(varargin)
 
 % Edit the above text to modify the response to help test_gui
 
-% Last Modified by GUIDE v2.5 20-Apr-2016 15:55:01
+% Last Modified by GUIDE v2.5 21-Apr-2016 14:23:56
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -62,6 +62,9 @@ guidata(hObject, handles);
 % UIWAIT makes test_gui wait for user response (see UIRESUME)
 % uiwait(handles.figure1);
 
+% Delete messages in gui
+my_message('',1)
+
 
 % --- Outputs from this function are returned to the command line.
 function varargout = test_gui_OutputFcn(hObject, eventdata, handles)
@@ -75,6 +78,7 @@ varargout{1} = handles.output;
 
 
 function get_parameters(hObject, eventdata, handles)
+my_message('Get parameters',0)
 global bilder durchlauf kontroll_kennung patient_kennung data_path image_path Sakka_Sakkd_Fix Sakk_p_Sakk_grad_mean_max Sakkpx_Sakkgrad closeall sakkaden_laenge saliency vel_acc
 bilder = get(handles.checkbox1,'Value')*8 + get(handles.checkbox2,'Value')*4 + get(handles.checkbox3,'Value')*2 + get(handles.checkbox4,'Value');
 durchlauf = get(handles.checkbox5,'Value') + get(handles.checkbox6,'Value')*2;
@@ -98,7 +102,6 @@ saliency(8) = get(handles.slider8, 'Value');
 saliency(9) = get(handles.slider9, 'Value');
 saliency(10) = get(handles.slider10, 'Value');
 saliency(11) = get(handles.slider11, 'Value');
-saliency(12) = get(handles.slider12, 'Value');
 vel_acc = get(handles.checkbox8,'Value') + get(handles.checkbox9,'Value')*2;
 
 % --- Executes on button press in pushbutton1.
@@ -107,12 +110,12 @@ global bilder durchlauf kontroll_kennung patient_kennung data_path image_path Sa
 % hObject    handle to pushbutton1 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-disp('get Parameters');
+my_message('',1)
 get_parameters(hObject, eventdata, handles)
 if closeall == 1; try close Figure 1; close Figure 2; close Figure 3; catch; end; end;
-disp('start Function');
 Compute_ecdf( bilder, durchlauf, Sakka_Sakkd_Fix, kontroll_kennung, patient_kennung, data_path, image_path)
-disp('Finished');
+my_message('Finished creating ECDFs',0)
+
 
 % --- Executes on button press in pushbutton2.
 function pushbutton2_Callback(hObject, eventdata, handles)
@@ -120,12 +123,11 @@ global bilder durchlauf kontroll_kennung patient_kennung data_path image_path cl
 % hObject    handle to pushbutton2 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-disp('get Parameters');
+my_message('',1)
 get_parameters(hObject, eventdata, handles)
 if closeall == 1; try close Figure 1; close Figure 2; close Figure 3; catch; end; end;
-disp('start Function');
 local_Sakk_distribution(bilder, durchlauf, '' , kontroll_kennung, patient_kennung, data_path, image_path)
-disp('Finished');
+my_message('Finished creating fixation maps',0)
 
 % --- Executes on button press in pushbutton3.
 function pushbutton3_Callback(hObject, eventdata, handles)
@@ -133,12 +135,11 @@ global bilder durchlauf kontroll_kennung patient_kennung data_path image_path Sa
 % hObject    handle to pushbutton3 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-disp('get Parameters');
+my_message('',1)
 get_parameters(hObject, eventdata, handles)
 if closeall == 1; try close Figure 1; close Figure 2; close Figure 3; catch; end; end;
-disp('start Function');
 compare_Sakk(bilder, durchlauf, Sakk_p_Sakk_grad_mean_max , kontroll_kennung, patient_kennung, data_path, image_path)
-disp('Finished');
+my_message('Finished comparing saccades',0)
 
 % --- Executes on button press in pushbutton4.
 function pushbutton4_Callback(hObject, eventdata, handles)
@@ -146,12 +147,11 @@ global bilder durchlauf kontroll_kennung patient_kennung data_path image_path Sa
 % hObject    handle to pushbutton4 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-disp('get Parameters');
+my_message('',1)
 get_parameters(hObject, eventdata, handles)
 if closeall == 1; try close Figure 1; close Figure 2; close Figure 3; catch; end; end;
-disp('start Function');
 create_Sakk_profile( bilder, durchlauf, Sakkpx_Sakkgrad, vel_acc, kontroll_kennung, patient_kennung, data_path, image_path, sakkaden_laenge )
-disp('Finished');
+my_message('Finished creating saccade profiles',0)
 
 
 % --- Executes on button press in pushbutton5.
@@ -160,12 +160,11 @@ global bilder durchlauf kontroll_kennung patient_kennung data_path image_path cl
 % hObject    handle to pushbutton5 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-disp('get Parameters');
+my_message('',1)
 get_parameters(hObject, eventdata, handles)
 if closeall == 1; try close Figure 1; close Figure 2; close Figure 3; catch; end; end;
-disp('start Function');
 Sakk_directions(bilder, durchlauf, '' , kontroll_kennung, patient_kennung, data_path, image_path)
-disp('Finished');
+my_message('Finished evaluating saccade directions',0)
 
 
 % --- Executes on button press in pushbutton6.
@@ -174,12 +173,11 @@ global bilder durchlauf kontroll_kennung patient_kennung data_path image_path cl
 % hObject    handle to pushbutton6 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-disp('get Parameters');
+my_message('',1)
 get_parameters(hObject, eventdata, handles)
 if closeall == 1; try close Figure 1; close Figure 2; close Figure 3; catch; end; end;
-disp('start Function');
 Noh_AOI( bilder, durchlauf, '' , kontroll_kennung, patient_kennung, data_path, image_path)
-disp('Finished');
+my_message('Finished interpreting AOI regions',0)
 
 
 % --- Executes on button press in pushbutton7.
@@ -188,18 +186,22 @@ global bilder durchlauf kontroll_kennung patient_kennung data_path image_path cl
 % hObject    handle to pushbutton7 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+my_message('',1)
 if closeall == 1; try close Figure 1; close Figure 2; close Figure 3; catch; end; end;
-disp('get Parameters');
 get_parameters(hObject, eventdata, handles)
+run('./my_gbvs/gbvs_install.m');
 params =  makeGBVSParams;
 if get(handles.checkbox12, 'Value') == 1
-    [~, index] = max(saliency(1:3));
-    if index == 1
+    
+    if get(handles.radiobutton7, 'Value') == 1
         params.useIttiKochInsteadOfGBVS = 1;
-    elseif index == 2
+    end
+    if get(handles.radiobutton8, 'Value') == 1
         params.useIttiKochInsteadOfGBVS = 0;
-    elseif index == 3
-        disp('not yet implemented.')
+    end
+    if get(handles.radiobutton9, 'Value') == 1
+        my_message('Not yet implemented',0); 
+        my_message('Ended badly',0); 
         return
     end
 elseif get(handles.checkbox13, 'Value') == 1
@@ -208,45 +210,51 @@ elseif get(handles.checkbox13, 'Value') == 1
         params.contrastWeight = saliency(4);
         params.channels = cat(2, params.channels, 'R');
     end
-    
     if get(handles.checkbox15, 'Value') == 1
         params.colorWeight = saliency(5);
         params.channels = cat(2, params.channels, 'C');
     end
-    
     if get(handles.checkbox16, 'Value') == 1
         params.dklcolorWeight = saliency(6);
         params.channels = cat(2, params.channels, 'D');
     end
-    
     if get(handles.checkbox17, 'Value') == 1
         params.intensityWeight = saliency(7);
         params.channels = cat(2, params.channels, 'I');
     end
-    
     if get(handles.checkbox18, 'Value') == 1
         params.orientationWeight = saliency(8);
         params.channels = cat(2, params.channels, 'O');
     end
-    
-    % AOI
-    
+    if get(handles.checkbox19, 'Value') == 1
+        params.harrisWeight = saliency(9);
+        params.channels = cat(2, params.channels, 'A');
+    end
     if get(handles.checkbox20, 'Value') == 1
-        params.harrisWeight = saliency(10);
+        params.AOIWeight = saliency(10);
         params.channels = cat(2, params.channels, 'H');
     end
-    
-    % Brightness
-    
-    % Depth
-    
-    
-    
-    if strcmp(params.channels , '') == 1; disp('Please select some channels'); return; end;
+    if get(handles.checkbox21, 'Value') == 1
+        params.saturationWeight = saliency(11);
+        params.channels = cat(2, params.channels, 'S');
+    end
+    if strcmp(params.channels , '') == 1; 
+        my_message('Please select some saliency channels',0); 
+        my_message('Ended badly',0); 
+        return; 
+    end;
 end
-disp('start Function');
 evaluate_saliency( bilder, durchlauf, params , kontroll_kennung, patient_kennung, data_path, image_path)
-disp('Finished');
+my_message('Finished evaluating saliencies',0)
+
+
+% --- Executes on button press in pushbutton8.
+function pushbutton8_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton8 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+my_message('',1)
+my_message('Finished conversion from .sacc to .mat',0)
 
 
 % --- Executes on button press in checkbox1.
@@ -799,25 +807,26 @@ if isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColo
 end
 
 
-% --- Executes on slider movement.
-function slider12_Callback(hObject, eventdata, handles)
-% hObject    handle to slider12 (see GCBO)
+% --- Executes on selection change in listbox1.
+function listbox1_Callback(hObject, eventdata, handles)
+% hObject    handle to listbox1 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hints: get(hObject,'Value') returns position of slider
-%        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
-set(handles.slider12, 'Value', round(get(hObject,'Value'),2));
-set(handles.text17, 'String', cat(2,num2str(round(get(hObject,'Value')*100)), '%'));
+% Hints: contents = cellstr(get(hObject,'String')) returns listbox1 contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from listbox1
 
 
 % --- Executes during object creation, after setting all properties.
-function slider12_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to slider12 (see GCBO)
+function listbox1_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to listbox1 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
-% Hint: slider controls usually have a light gray background.
-if isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor',[.9 .9 .9]);
+% Hint: listbox controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+global Listbox
+Listbox = hObject;
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
 end

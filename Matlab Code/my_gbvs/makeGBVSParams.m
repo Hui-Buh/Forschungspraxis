@@ -4,6 +4,11 @@ p = {};
 
 %%%%%%%%%%%%% general  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+p.imageName = '';                 % Name of the image computed just now. (For use of AOI saliency maps) 
+p.imagePath = '';                 % Path of AOI images (For use of AOI saliency maps) 
+p.imageSize = [0 0 0];            % image size
+
+
 p.salmapmaxsize = 32;             % size of output saliency maps (maximum dimension)
                                   % don't set this too high (e.g., >60)
                                   % if you want a saliency map at the
@@ -36,6 +41,8 @@ p.channels = 'DIO';               % feature channels to use encoded as a string
                                   %   F is for Flicker
                                   %   M is for Motion
                                   %   H is for Dist to Harris edges
+                                  %   S is for saturation
+                                  %   A is for AOI top-down channel
                                   %   D is for DKL Color (Derrington Krauskopf Lennie) ==
                                   %     much better than C channel
                                   % e.g., 'IR' would be only intensity and
@@ -51,6 +58,8 @@ p.flickerWeight = 1;
 p.motionWeight = 1;
 p.dklcolorWeight = 1;
 p.harrisWeight = 1;
+p.saturationWeight  = 1;
+p.AOIWeight = 1;
 
 p.gaborangles = [ 0 45 90 135 ];  % angles of gabor filters
 p.contrastwidth = .1;             % fraction of image width = length of square side over which luminance variance is 

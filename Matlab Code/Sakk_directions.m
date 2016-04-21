@@ -7,8 +7,7 @@
 
 
 function Sakk_directions(bilder, durchlauf, ~ , kontroll_kennung, patient_kennung, data_path, image_path)
-
-    if bilder > 15 || bilder < 1; disp('Enter valid number for "bilder"!'); return; end;
+    my_message('Evaluate saccade directions',0)
     
     [faces, faces_m, faces_t, kont] =  Separate_test_images(image_path);
 
@@ -21,8 +20,8 @@ function Sakk_directions(bilder, durchlauf, ~ , kontroll_kennung, patient_kennun
     if bilder >= 2; image_list = vertcat(image_list, faces_t{2:end}); bilder = bilder -2; end;
     if bilder >= 1; image_list = vertcat(image_list, kont{2:end}); bilder = bilder -1; end;
     
-    disp('Extract Data');
 %% Alle Daten der Kontrollen heraussuchen
+    my_message('Extract control data',0)
 
     Sakk_pos_control = zeros(1,4);
     
@@ -66,6 +65,7 @@ function Sakk_directions(bilder, durchlauf, ~ , kontroll_kennung, patient_kennun
     end
 
 %% Alle Daten der Patienten heraussuchen
+    my_message('Extract patient data',0)
 
     Sakk_pos_patient = zeros(1,4);
     
@@ -109,8 +109,7 @@ function Sakk_directions(bilder, durchlauf, ~ , kontroll_kennung, patient_kennun
     end
  
 %% Auswertung
-
-    disp('Evaluate Data');
+    my_message('Evaluate Data',0)
     
     Sakk_pos_control(1,:) = [];
     Sakk_pos_patient(1,:) = [];
@@ -177,6 +176,4 @@ function Sakk_directions(bilder, durchlauf, ~ , kontroll_kennung, patient_kennun
     u.Position(2) = 0;
     u.Position(3) = 274;
     u.Position(4) = 107;
-    
-    
 end

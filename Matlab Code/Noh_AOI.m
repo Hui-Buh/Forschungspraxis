@@ -6,8 +6,7 @@
 % image_path = absolute or relative path of the folder containing all images
 
 function Noh_AOI( bilder, durchlauf, ~, kontroll_kennung, patient_kennung, data_path, image_path)
-
-    if bilder > 15 || bilder < 2; disp('Enter valid number for "bilder"!'); return; end;
+    my_message('Evaluate AOI images',0)
 
     [faces, faces_m, faces_t, ~] =  Separate_test_images(image_path);
 
@@ -21,8 +20,8 @@ function Noh_AOI( bilder, durchlauf, ~, kontroll_kennung, patient_kennung, data_
     if bilder >= 2; image_list = vertcat(image_list, faces_t{2:end}); bilder = bilder -2; end;
 %     if bilder >= 1; image_list = vertcat(image_list, kont{2:end}); bilder = bilder -1; end;
 
-    disp('Extract Data');
 %% Alle Daten der Kontrollen heraussuchen
+    my_message('Extract control data',0)
 
     Sakk_pos_control = cell(size(image_list,1)-1,1);
     
@@ -60,6 +59,7 @@ function Noh_AOI( bilder, durchlauf, ~, kontroll_kennung, patient_kennung, data_
     end
 
 %% Alle Daten der Patienten heraussuchen
+    my_message('Extract patient data',0)
 
     Sakk_pos_patient = cell(size(image_list,1)-1,1);
     
@@ -97,8 +97,7 @@ function Noh_AOI( bilder, durchlauf, ~, kontroll_kennung, patient_kennung, data_
     end
 
 %% Auswertung
-
-    disp('Evaluate Data');
+    my_message('Evaluate Data',0)
 
     clearvars buf
 
@@ -128,7 +127,7 @@ function Noh_AOI( bilder, durchlauf, ~, kontroll_kennung, patient_kennung, data_
         points_control = buf(diag(image(buf(:,2), buf(:,1),2)) < 10 & diag(image(buf(:,2), buf(:,1),3)) < 10,:);
         plot(points_control(:,1) , points_control(:,2),'.b' );
         anzahl_control(1,a) = size(points_control,1); % Auge links
-        points_control = buf(diag(image(buf(:,2), buf(:,1),2)) < 10 & diag(image(buf(:,2), buf(:,1),1)) > 245 & diag(image(buf(:,2), buf(:,1),3)) > 245,:);
+        points_control = buf(diag(image(buf(:,2), buf(:,1),3)) < 10 & diag(image(buf(:,2), buf(:,1),1)) > 245 & diag(image(buf(:,2), buf(:,1),2)) > 245,:);
         plot(points_control(:,1) , points_control(:,2),'.k' );
         anzahl_control(2,a) = size(points_control,1); % Auge rechts
         points_control = buf(diag(image(buf(:,2), buf(:,1),1)) < 10 & diag(image(buf(:,2), buf(:,1),3)) < 10,:);
@@ -156,7 +155,7 @@ function Noh_AOI( bilder, durchlauf, ~, kontroll_kennung, patient_kennung, data_
         points_patient = buf(diag(image(buf(:,2), buf(:,1),2)) < 10 & diag(image(buf(:,2), buf(:,1),3)) < 10,:);
         plot(points_patient(:,1) , points_patient(:,2),'.b' );
         anzahl_patient(1,a) = size(points_patient,1); % Auge links
-        points_patient = buf(diag(image(buf(:,2), buf(:,1),2)) < 10 & diag(image(buf(:,2), buf(:,1),1)) > 245 & diag(image(buf(:,2), buf(:,1),3)) > 245,:);
+        points_patient = buf(diag(image(buf(:,2), buf(:,1),3)) < 10 & diag(image(buf(:,2), buf(:,1),1)) > 245 & diag(image(buf(:,2), buf(:,1),2)) > 245,:);
         plot(points_patient(:,1) , points_patient(:,2),'.k' );
         anzahl_patient(2,a) = size(points_patient,1); % Auge rechts
         points_patient = buf(diag(image(buf(:,2), buf(:,1),1)) < 10 & diag(image(buf(:,2), buf(:,1),3)) < 10,:);

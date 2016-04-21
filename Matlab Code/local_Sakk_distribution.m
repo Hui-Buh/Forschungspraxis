@@ -7,8 +7,7 @@
 
 
 function local_Sakk_distribution(bilder, durchlauf, ~ , kontroll_kennung, patient_kennung, data_path, image_path)
-
-    if bilder > 15 || bilder < 1; disp('Enter valid number for "bilder"!'); return; end;
+    my_message('Create Fixation maps',0)
 
     [faces, faces_m, faces_t, kont] =  Separate_test_images(image_path);
 
@@ -21,7 +20,6 @@ function local_Sakk_distribution(bilder, durchlauf, ~ , kontroll_kennung, patien
     if bilder >= 2; image_list = vertcat(image_list, faces_t{2:end}); bilder = bilder -2; end;
     if bilder >= 1; image_list = vertcat(image_list, kont{2:end}); bilder = bilder -1; end;
      
-    disp('Extract Data');
 %% Fixation map parameters
     Fixation_map_control = zeros(1024/8, 1280/8);
     Fixation_map_patient = zeros(1024/8, 1280/8);
@@ -32,6 +30,7 @@ function local_Sakk_distribution(bilder, durchlauf, ~ , kontroll_kennung, patien
     
 
 %% Alle Daten der Kontrollen heraussuchen
+    my_message('Extract control data',0)
 
     pos_control = [0 0];
     
@@ -69,6 +68,7 @@ function local_Sakk_distribution(bilder, durchlauf, ~ , kontroll_kennung, patien
     end
 
 %% Alle Daten der Patienten heraussuchen
+    my_message('Extract patient data',0)
 
     pos_patient = [0 0];
     
@@ -106,8 +106,7 @@ function local_Sakk_distribution(bilder, durchlauf, ~ , kontroll_kennung, patien
     end
 
 %% Auswertung
-
-    disp('Evaluate Data');
+    my_message('Evaluate Data',0)
 
     pos_patient(1,:) = [];
     pos_control(1,:) = [];

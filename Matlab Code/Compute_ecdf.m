@@ -7,8 +7,7 @@
 % image_path = absolute or relative path of the folder containing all images
 
 function Compute_ecdf( bilder, durchlauf, Sakka_Sakkd_Fix, kontroll_kennung, patient_kennung, data_path, image_path)
-
-    if bilder > 15 || bilder < 1; disp('Enter valid number for "bilder"!'); return; end;
+    my_message('Compute ECDF',0)
 
     [faces, faces_m, faces_t, kont] =  Separate_test_images(image_path);
 
@@ -21,8 +20,8 @@ function Compute_ecdf( bilder, durchlauf, Sakka_Sakkd_Fix, kontroll_kennung, pat
     if bilder >= 2; image_list = vertcat(image_list, faces_t{2:end}); bilder = bilder -2; end;
     if bilder >= 1; image_list = vertcat(image_list, kont{2:end}); bilder = bilder -1; end;
     
-    disp('Extract Data');
 %% Alle Daten der Kontrollen heraussuchen
+    my_message('Extract control data',0)
 
     Data_control = 0;
     
@@ -70,6 +69,7 @@ function Compute_ecdf( bilder, durchlauf, Sakka_Sakkd_Fix, kontroll_kennung, pat
     end
 
 %% Alle Daten der Patienten heraussuchen
+    my_message('Extract patient data',0)
 
     Data_patient = 0;
     
@@ -117,8 +117,7 @@ function Compute_ecdf( bilder, durchlauf, Sakka_Sakkd_Fix, kontroll_kennung, pat
     end
 
 %% Auswertung
-    
-    disp('Evaluate Data');
+    my_message('Evaluate Data',0)
     
     Data_control(1) = [];
     Data_patient(1) = [];
