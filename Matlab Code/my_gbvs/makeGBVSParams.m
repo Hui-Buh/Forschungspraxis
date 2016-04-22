@@ -43,6 +43,7 @@ p.channels = 'DIO';               % feature channels to use encoded as a string
                                   %   H is for Dist to Harris edges
                                   %   S is for saturation
                                   %   A is for AOI top-down channel
+                                  %   K is for Itti % Koch saliency model
                                   %   D is for DKL Color (Derrington Krauskopf Lennie) ==
                                   %     much better than C channel
                                   % e.g., 'IR' would be only intensity and
@@ -60,6 +61,7 @@ p.dklcolorWeight = 1;
 p.harrisWeight = 1;
 p.saturationWeight  = 1;
 p.AOIWeight = 1;
+p.ittikochWeight = 1;
 
 p.gaborangles = [ 0 45 90 135 ];  % angles of gabor filters
 p.contrastwidth = .1;             % fraction of image width = length of square side over which luminance variance is 

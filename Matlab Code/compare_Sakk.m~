@@ -8,8 +8,7 @@
 
 
 function compare_Sakk(bilder, durchlauf, Sakk_p_Sakk_grad_max_mean , kontroll_kennung, patient_kennung, data_path, image_path)
-    
-    if bilder > 15 && bilder < 1; disp('Enter valid number for "bilder"!'); return; end;
+    my_message('Compare saccades',0)
 
     [faces, faces_m, faces_t, kont] =  Separate_test_images(image_path);
 
@@ -22,9 +21,8 @@ function compare_Sakk(bilder, durchlauf, Sakk_p_Sakk_grad_max_mean , kontroll_ke
     if bilder >= 2; image_list = vertcat(image_list, faces_t{2:end}); bilder = bilder -2; end;
     if bilder >= 1; image_list = vertcat(image_list, kont{2:end}); bilder = bilder -1; end;
   
-
-    
-    %% Alle Daten der Kontrollen heraussuchen
+%% Alle Daten der Kontrollen heraussuchen
+    my_message('Extract control data',0)
     
     Sakk_amplitude_control = 0;
     Sakk_vel_control = 0;
@@ -42,7 +40,14 @@ function compare_Sakk(bilder, durchlauf, Sakk_p_Sakk_grad_max_mean , kontroll_ke
                 clearvars Sakk_parsed pos
                 Sakk_parsed = m.Sakk_parsed;
                 if isempty(Sakk_parsed) == 1; continue; end;
-                pos = center_image(Sakk_parsed(:,2), Sakk_parsed(:,3), m.Sakk_amplitude, m.Sakk_max_vel, m.Sakk_mean_vel, '-', 300, 460);
+                try
+                    Sakk_max_vel = m.Sakk_max_vel;
+                catch
+                    my_message('Max velocity not available in .mat file',0);
+                    my_message('Ended badly', 0);
+                    return;
+                end
+                pos = center_image(Sakk_parsed(:,2), Sakk_parsed(:,3), m.Sakk_amplitude, Sakk_max_vel, m.Sakk_mean_vel, '-', 300, 460);
                 if mod(Sakk_p_Sakk_grad_max_mean, 2) == 1
                     Sakk_amplitude_control = [Sakk_amplitude_control ; pos(:,3) ];
                 else
@@ -67,7 +72,14 @@ function compare_Sakk(bilder, durchlauf, Sakk_p_Sakk_grad_max_mean , kontroll_ke
                 clearvars Sakk_parsed pos
                 Sakk_parsed = m.Sakk_parsed;
                 if isempty(Sakk_parsed) == 1; continue; end;
-                pos = center_image(Sakk_parsed(:,2), Sakk_parsed(:,3), m.Sakk_amplitude, m.Sakk_max_vel, m.Sakk_mean_vel, '-', 300, 460);
+                try
+                    Sakk_max_vel = m.Sakk_max_vel;
+                catch
+                    my_message('Max velocity not available in .mat file',0);
+                    my_message('Ended badly', 0);
+                    return;
+                end
+                pos = center_image(Sakk_parsed(:,2), Sakk_parsed(:,3), m.Sakk_amplitude, Sakk_max_vel, m.Sakk_mean_vel, '-', 300, 460);
                 if mod(Sakk_p_Sakk_grad_max_mean, 2) == 1
                     Sakk_amplitude_control = [Sakk_amplitude_control ; pos(:,3) ];
                 else
@@ -83,7 +95,8 @@ function compare_Sakk(bilder, durchlauf, Sakk_p_Sakk_grad_max_mean , kontroll_ke
     end
 
 %% Alle Daten der Patienten heraussuchen
-
+    my_message('Extract patient data',0)
+    
     Sakk_amplitude_patient = 0;
     Sakk_vel_patient = 0;
     
@@ -100,7 +113,14 @@ function compare_Sakk(bilder, durchlauf, Sakk_p_Sakk_grad_max_mean , kontroll_ke
                 clearvars Sakk_parsed pos
                 Sakk_parsed = m.Sakk_parsed;
                 if isempty(Sakk_parsed) == 1; continue; end;
-                pos = center_image(Sakk_parsed(:,2), Sakk_parsed(:,3), m.Sakk_amplitude, m.Sakk_max_vel, m.Sakk_mean_vel, '-', 300, 460);
+                try
+                    Sakk_max_vel = m.Sakk_max_vel;
+                catch
+                    my_message('Max velocity not available in .mat file',0);
+                    my_message('Ended badly', 0);
+                    return;
+                end
+                pos = center_image(Sakk_parsed(:,2), Sakk_parsed(:,3), m.Sakk_amplitude, Sakk_max_vel, m.Sakk_mean_vel, '-', 300, 460);
                 if mod(Sakk_p_Sakk_grad_max_mean, 2) == 1
                     Sakk_amplitude_patient = [Sakk_amplitude_patient ; pos(:,3) ];
                 else
@@ -125,7 +145,14 @@ function compare_Sakk(bilder, durchlauf, Sakk_p_Sakk_grad_max_mean , kontroll_ke
                 clearvars Sakk_parsed pos
                 Sakk_parsed = m.Sakk_parsed;
                 if isempty(Sakk_parsed) == 1; continue; end;
-                pos = center_image(Sakk_parsed(:,2), Sakk_parsed(:,3), m.Sakk_amplitude, m.Sakk_max_vel, m.Sakk_mean_vel, '-', 300, 460);
+                try
+                    Sakk_max_vel = m.Sakk_max_vel;
+                catch
+                    my_message('Max velocity not available in .mat file',0);
+                    my_message('Ended badly', 0);
+                    return;
+                end
+                pos = center_image(Sakk_parsed(:,2), Sakk_parsed(:,3), m.Sakk_amplitude, Sakk_max_vel, m.Sakk_mean_vel, '-', 300, 460);
                 if mod(Sakk_p_Sakk_grad_max_mean, 2) == 1
                     Sakk_amplitude_patient = [Sakk_amplitude_patient ; pos(:,3) ];
                 else
@@ -141,53 +168,27 @@ function compare_Sakk(bilder, durchlauf, Sakk_p_Sakk_grad_max_mean , kontroll_ke
     end
 
 %% Auswertung
-
+    my_message('Evaluate Data',0)
+    
     Sakk_amplitude_patient(1) = [];
-    Sakk_amplitude_patient(1) = [];
-    Sakk_vel_patient(1) = [];
     Sakk_vel_patient(1) = [];
     Sakk_amplitude_control(1) = [];
     Sakk_vel_control(1) = [];
-    Sakk_vel_control(1) = [];
 
     
-    if Sakk_p_Sakk_grad_max_mean < 8
-        if mod(Sakk_p_Sakk_grad_max_mean, 2) == 1
-            Sakk_amplitude_control = Sakk_amplitude_control(Sakk_vel_control < 50);
-            Sakk_amplitude_patient = Sakk_amplitude_patient(Sakk_vel_patient < 50);
-            x1 = Sakk_amplitude_control;
-            x2 = Sakk_amplitude_patient;
-        else
-            Sakk_amplitude_control = Sakk_amplitude_control(Sakk_vel_control < 50);
-            Sakk_amplitude_patient = Sakk_amplitude_patient(Sakk_vel_control < 50);
-            x1 = Sakk_amplitude_control;
-            x2 = Sakk_amplitude_patient;
-        end
-        Sakk_vel_control = Sakk_vel_control(Sakk_vel_control < 50);
-        Sakk_vel_patient = Sakk_vel_patient(Sakk_vel_patient < 50);
-        y1 = Sakk_vel_control;
-        y2 = Sakk_vel_patient;
-    else
-        if mod(Sakk_p_Sakk_grad_max_mean, 2) == 1
-            Sakk_amplitude_control = Sakk_amplitude_control(Sakk_vel_control < 50);
-            Sakk_amplitude_patient = Sakk_amplitude_patient(Sakk_vel_patient < 50);
-            x1 = Sakk_amplitude_control;
-            x2 = Sakk_amplitude_patient;
-        else
-            Sakk_amplitude_control = Sakk_amplitude_control(Sakk_vel_control < 50);
-            Sakk_amplitude_patient = Sakk_amplitude_patient(Sakk_vel_patient < 50);
-            x1 = Sakk_amplitude_control;
-            x2 = Sakk_amplitude_patient;
-        end
-        Sakk_vel_control = Sakk_vel_control(Sakk_vel_control < 50);
-        Sakk_vel_patient = Sakk_vel_patient(Sakk_vel_patient < 50);
-        y1 = Sakk_vel_control;
-        y2 = Sakk_vel_patient;
-    end
+%     Sakk_amplitude_control = Sakk_amplitude_control(Sakk_vel_control < 50);
+%     Sakk_amplitude_patient = Sakk_amplitude_patient(Sakk_vel_patient < 50);
+    x1 = Sakk_amplitude_control;
+    x2 = Sakk_amplitude_patient;
     
-    
+%     Sakk_vel_control = Sakk_vel_control(Sakk_vel_control < 50);
+%     Sakk_vel_patient = Sakk_vel_patient(Sakk_vel_patient < 50);
+    y1 = Sakk_vel_control;
+    y2 = Sakk_vel_patient;
+
     figure(1)
     hold on; grid on;
+    
     z1 = sortrows([x1 y1]);
 %     z1(:,2) = medfilt1(z1(:,2), 11);
     [~, ia, ~] = unique(z1(:,1));
@@ -195,6 +196,7 @@ function compare_Sakk(bilder, durchlauf, Sakk_p_Sakk_grad_max_mean , kontroll_ke
     f = fit(z1(:,1), z1(:,2), 'poly2');
     plot(z1(:,1),z1(:,2), '.b');
     plot(f, 'k');
+    
     z2 = sortrows([x2 y2]);
 %     z2(:,2) = medfilt1(z2(:,2), 11);
     [~, ia, ~] = unique(z2(:,1));
@@ -202,7 +204,9 @@ function compare_Sakk(bilder, durchlauf, Sakk_p_Sakk_grad_max_mean , kontroll_ke
     f = fit(z2(:,1), z2(:,2), 'poly2');
     plot(z2(:,1),z2(:,2), '.r');
     plot(f, 'g');%,z2(:,1),z2(:,2));
+    
     legend({'Kontrollen Daten', 'Kontrollen Fit', 'Patienten Daten', 'Patienten Fit'}); 
+    
     if mod(Sakk_p_Sakk_grad_max_mean, 2) == 1
         xlabel('Sakkaden Amplitude (px)');
     else

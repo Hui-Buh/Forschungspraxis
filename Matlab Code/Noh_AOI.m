@@ -112,12 +112,14 @@ function Noh_AOI( bilder, durchlauf, ~, kontroll_kennung, patient_kennung, data_
     
     figure (1)
     
+    number = [0 0];
     anzahl_control = zeros(4,size(image_list ,1)-1);
     for a = 1:size(image_list ,1)-1
         if find( strcmp( image_list_AOI, cat(2,image_list{a+1}, '_AOI')) == 1) == 0; continue; end;
         buf = cell2mat(Sakk_pos_control(a,1));
         buf = round(buf);
         if size(buf,1) == 0; continue; end;
+        number(1) = number(1) + size(buf,1);
         buf(:,2) = -1 * buf(:,2) + 460;
         subplot(1,2,1)
         image = imread(cat(2, image_path, '/', cat(2,image_list{a+1}, '_AOI.jpg') ));
@@ -146,6 +148,7 @@ function Noh_AOI( bilder, durchlauf, ~, kontroll_kennung, patient_kennung, data_
         buf = cell2mat(Sakk_pos_patient(a,1));
         buf = round(buf);
         if size(buf,1) == 0; continue; end;
+        number(2) = number(2) + size(buf,1);
         buf(:,2) = -1 * buf(:,2) + 460;
         subplot(1,2,2)
         image = imread(cat(2, image_path, '/', cat(2,image_list{a+1}, '_AOI.jpg') ));
@@ -173,12 +176,16 @@ function Noh_AOI( bilder, durchlauf, ~, kontroll_kennung, patient_kennung, data_
     legend('Kontrollen');
     subplot(1,2,2)
     legend('Patienten');
+    anzahl_control = anzahl_control./number(1)*1000;
+    anzahl_patient = anzahl_patient./number(2)*1000;
+%     u = uitable('Data', [anzahl_control./number(1)*1000 anzahl_patient./number(2)*1000 (anzahl_control./number(1)*1000)./(anzahl_patient./number(2)*1000)], ...
     u = uitable('Data', [anzahl_control anzahl_patient anzahl_control./anzahl_patient], ...
     'RowName', {'eye_left', 'eye_right', 'mouth', 'nose'}, ...
-    'ColumnName', {'control' ,'patient', 'con./pat.'}, 'FontName', 'Arial', 'FontSize', 8);
+    'ColumnName', {'control |[#/1000sacc]' ,'patient |[#/1000sacc]', 'con./pat.'}, 'FontName', 'Arial', 'FontSize', 8);
+
     u.Position(1) = 10;
     u.Position(2) = 10;
-    u.Position(3) = 327;
-    u.Position(4) = 90;
+    u.Position(3) = 355;
+    u.Position(4) = 107;
 
 end

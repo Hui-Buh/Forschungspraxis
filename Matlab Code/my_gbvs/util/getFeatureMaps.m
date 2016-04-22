@@ -11,8 +11,8 @@ load mypath;
 %%%%
 
 mymessage(param,'forming image pyramid\n');
-
 levels = [ 2 : param.maxcomputelevel ];
+
 
 is_color = (size(img,3) == 3);
 imgr = []; imgg = []; imgb = [];
@@ -41,7 +41,6 @@ for i=levels
     end
 
 end
-
 %%% update previous frame estimate based on new frame
 if ( (param.flickerNewFrameWt == 1) || (isempty(prevMotionInfo) ) )
     motionInfo.imgL = imgL;

@@ -22,7 +22,7 @@ function varargout = Saccade_Analyzer_gui(varargin)
 
 % Edit the above text to modify the response to help test_gui
 
-% Last Modified by GUIDE v2.5 21-Apr-2016 14:23:56
+% Last Modified by GUIDE v2.5 22-Apr-2016 13:43:40
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -91,9 +91,9 @@ Sakk_p_Sakk_grad_mean_max = get(handles.radiobutton3,'Value')*2 + get(handles.ra
 Sakkpx_Sakkgrad = get(handles.radiobutton3,'Value')*2 + get(handles.radiobutton4,'Value')*1;
 closeall = get(handles.checkbox7,'Value');
 sakkaden_laenge = get(handles.edit5, 'String');
-saliency(1) = get(handles.slider1, 'Value');
-saliency(2) = get(handles.slider2, 'Value');
-saliency(3) = get(handles.slider3, 'Value');
+% saliency(1) = get(handles.slider1, 'Value');
+% saliency(2) = get(handles.slider2, 'Value');
+% saliency(3) = get(handles.slider3, 'Value');
 saliency(4) = get(handles.slider4, 'Value');
 saliency(5) = get(handles.slider5, 'Value');
 saliency(6) = get(handles.slider6, 'Value');
@@ -102,6 +102,7 @@ saliency(8) = get(handles.slider8, 'Value');
 saliency(9) = get(handles.slider9, 'Value');
 saliency(10) = get(handles.slider10, 'Value');
 saliency(11) = get(handles.slider11, 'Value');
+% saliency(12) = get(handles.slider12, 'Value');
 vel_acc = get(handles.checkbox8,'Value') + get(handles.checkbox9,'Value')*2;
 
 % --- Executes on button press in pushbutton1.
@@ -126,7 +127,7 @@ global bilder durchlauf kontroll_kennung patient_kennung data_path image_path cl
 my_message('',1)
 get_parameters(hObject, eventdata, handles)
 if closeall == 1; try close Figure 1; close Figure 2; close Figure 3; catch; end; end;
-local_Sakk_distribution(bilder, durchlauf, '' , kontroll_kennung, patient_kennung, data_path, image_path)
+local_Sakk_distribution(bilder, durchlauf, 0 , kontroll_kennung, patient_kennung, data_path, image_path)
 my_message('Finished creating fixation maps',0)
 
 % --- Executes on button press in pushbutton3.
@@ -196,15 +197,21 @@ if get(handles.checkbox12, 'Value') == 1
     if get(handles.radiobutton7, 'Value') == 1
         params.useIttiKochInsteadOfGBVS = 1;
     end
-    if get(handles.radiobutton8, 'Value') == 1
+    if get(handles.radiobutton11, 'Value') == 1
         params.useIttiKochInsteadOfGBVS = 0;
     end
     if get(handles.radiobutton9, 'Value') == 1
-        my_message('Not yet implemented',0); 
-        my_message('Ended badly',0); 
-        return
+        local_Sakk_distribution(bilder, durchlauf, 1 , kontroll_kennung, patient_kennung, data_path, image_path)
+        my_message('Finished evaluating saliencies',0)
+        return;
     end
 elseif get(handles.checkbox13, 'Value') == 1
+    if get(handles.radiobutton10, 'Value') == 1
+        params.useIttiKochInsteadOfGBVS = 1;
+    elseif get(handles.radiobutton11, 'Value') == 1
+        params.useIttiKochInsteadOfGBVS = 0;
+    end
+    
     params.channels = '';
     if get(handles.checkbox14, 'Value') == 1
         params.contrastWeight = saliency(4);
@@ -250,10 +257,12 @@ my_message('Finished evaluating saliencies',0)
 
 % --- Executes on button press in pushbutton8.
 function pushbutton8_Callback(hObject, eventdata, handles)
+global data_path
 % hObject    handle to pushbutton8 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 my_message('',1)
+convert_sacc_files(data_path);
 my_message('Finished conversion from .sacc to .mat',0)
 
 
@@ -545,78 +554,6 @@ end
 
 
 % --- Executes on slider movement.
-function slider1_Callback(hObject, eventdata, handles)
-% hObject    handle to slider1 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: get(hObject,'Value') returns position of slider
-%        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
-set(handles.slider1, 'Value', round(get(hObject,'Value'),2));
-set(handles.text5, 'String', cat(2,num2str(round(get(hObject,'Value')*100)), '%'));
-
-
-% --- Executes during object creation, after setting all properties.
-function slider1_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to slider1 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: slider controls usually have a light gray background.
-if isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor',[.9 .9 .9]);
-end
-
-
-% --- Executes on slider movement.
-function slider2_Callback(hObject, eventdata, handles)
-% hObject    handle to slider2 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: get(hObject,'Value') returns position of slider
-%        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
-set(handles.slider2, 'Value', round(get(hObject,'Value'),2));
-set(handles.text6, 'String', cat(2,num2str(round(get(hObject,'Value')*100)), '%'));
-
-
-% --- Executes during object creation, after setting all properties.
-function slider2_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to slider2 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: slider controls usually have a light gray background.
-if isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor',[.9 .9 .9]);
-end
-
-
-% --- Executes on slider movement.
-function slider3_Callback(hObject, eventdata, handles)
-% hObject    handle to slider3 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: get(hObject,'Value') returns position of slider
-%        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
-set(handles.slider3, 'Value', round(get(hObject,'Value'),2));
-set(handles.text7, 'String', cat(2,num2str(round(get(hObject,'Value')*100)), '%'));
-
-
-% --- Executes during object creation, after setting all properties.
-function slider3_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to slider3 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: slider controls usually have a light gray background.
-if isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor',[.9 .9 .9]);
-end
-
-
-% --- Executes on slider movement.
 function slider4_Callback(hObject, eventdata, handles)
 % hObject    handle to slider4 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -815,6 +752,30 @@ function listbox1_Callback(hObject, eventdata, handles)
 
 % Hints: contents = cellstr(get(hObject,'String')) returns listbox1 contents as cell array
 %        contents{get(hObject,'Value')} returns selected item from listbox1
+
+
+% --- Executes on slider movement.
+function slider12_Callback(hObject, eventdata, handles)
+% hObject    handle to slider12 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'Value') returns position of slider
+%        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
+set(handles.slider12, 'Value', round(get(hObject,'Value'),2));
+set(handles.text17, 'String', cat(2,num2str(round(get(hObject,'Value')*100)), '%'));
+
+
+% --- Executes during object creation, after setting all properties.
+function slider12_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to slider12 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: slider controls usually have a light gray background.
+if isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor',[.9 .9 .9]);
+end
 
 
 % --- Executes during object creation, after setting all properties.

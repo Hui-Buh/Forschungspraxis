@@ -2,7 +2,7 @@ function out = A_AOI( fparam, img , imgR, imgG, imgB, typeidx )
 
 if ( nargin == 1 )
 
-  out.weight = fparam.colorWeight;
+  out.weight = fparam.AOIWeight;
   
   out.numtypes = 2;
   out.descriptions{1} = 'AOI';

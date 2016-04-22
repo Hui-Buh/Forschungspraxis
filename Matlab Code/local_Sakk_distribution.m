@@ -6,7 +6,7 @@
 % image_path = absolute or relative path of the folder containing all images
 
 
-function local_Sakk_distribution(bilder, durchlauf, ~ , kontroll_kennung, patient_kennung, data_path, image_path)
+function local_Sakk_distribution(bilder, durchlauf, as_saliency , kontroll_kennung, patient_kennung, data_path, image_path)
     my_message('Create Fixation maps',0)
 
     [faces, faces_m, faces_t, kont] =  Separate_test_images(image_path);
@@ -21,11 +21,12 @@ function local_Sakk_distribution(bilder, durchlauf, ~ , kontroll_kennung, patien
     if bilder >= 1; image_list = vertcat(image_list, kont{2:end}); bilder = bilder -1; end;
      
 %% Fixation map parameters
-    Fixation_map_control = zeros(1024/8, 1280/8);
-    Fixation_map_patient = zeros(1024/8, 1280/8);
-    sigma = [100 60; 60 100];
-    x2 = 1:8:1024;
-    x1 = 1:8:1280;
+    downsampling = 8;
+    Fixation_map_control = zeros(1024/downsampling, 1280/downsampling);
+    Fixation_map_patient = zeros(1024/downsampling, 1280/downsampling);
+    sigma = [28 28; 28 28];
+    x2 = 1:downsampling:1024;
+    x1 = 1:downsampling:1280;
     [X1,X2] = meshgrid(x1,x2);
     
 
@@ -110,19 +111,21 @@ function local_Sakk_distribution(bilder, durchlauf, ~ , kontroll_kennung, patien
 
     pos_patient(1,:) = [];
     pos_control(1,:) = [];
-
+    
     for e = 1:size(pos_control,1)
         mu = [pos_control(e,1) pos_control(e,2)];
         buf = mvnpdf([X1(:) X2(:)],mu ,sigma);
         F = reshape(buf,length(x2),length(x1));
         Fixation_map_control = Fixation_map_control + F;
     end
+    Fixation_map_control = Fixation_map_control./sum(trapz(Fixation_map_control));
     for e = 1:size(pos_patient,1)
         mu = [pos_patient(e,1) pos_patient(e,2)];
         buf = mvnpdf([X1(:) X2(:)],mu ,sigma);
         F = reshape(buf,length(x2),length(x1));
         Fixation_map_patient = Fixation_map_patient + F;
     end
+    Fixation_map_patient = Fixation_map_patient./sum(trapz(Fixation_map_patient));
 
     figure(1)
     hold on; grid; 
@@ -132,7 +135,7 @@ function local_Sakk_distribution(bilder, durchlauf, ~ , kontroll_kennung, patien
     colorbar
     xlim([0 300])
     ylim([0 460])
-    
+
     figure(2)
     hold on; grid; 
     surf(x1,x2,Fixation_map_patient);
@@ -141,4 +144,37 @@ function local_Sakk_distribution(bilder, durchlauf, ~ , kontroll_kennung, patien
     colorbar
     xlim([0 300])
     ylim([0 460])
-end             
+    
+    h=figure(3);
+    hold on; grid; 
+    difference = (Fixation_map_control - Fixation_map_patient);
+    surf(x1,x2,difference);
+    caxis([min(difference(:))-.5*range(difference(:)),max(difference(:))]);
+    legend('Fixation map difference')
+    colorbar
+    xlim([0 300])
+    ylim([0 460])
+        
+    if as_saliency == 1
+        my_message('Compute NNS', 0);
+        
+        % Leave one out noch fertig machen!!!!!!!!!!!!!!!
+        
+        
+        Fixation_map_control = (Fixation_map_control - mean(Fixation_map_control(:)))/std(Fixation_map_control(:));
+        Fixation_map_patient = (Fixation_map_patient - mean(Fixation_map_patient(:)))/std(Fixation_map_patient(:));
+        
+        norm_scanpath_saliency_control = mean(diag(Fixation_map_patient(round(pos_control(:,1)/downsampling),round(pos_control(:,2)/downsampling))));
+        norm_scanpath_saliency_patient = mean(diag(Fixation_map_control(round(pos_patient(:,1)/downsampling),round(pos_patient(:,2)/downsampling))));
+        
+        u = uitable(h, 'Data', [norm_scanpath_saliency_control norm_scanpath_saliency_patient], ...
+        'RowName', {'NSS'}, ...
+        'ColumnName', {'control', 'patient'}, 'FontName', 'Arial', 'FontSize', 8);
+
+        u.Position(1) = 100;
+        u.Position(2) = 100;
+        u.Position(3) = 197;
+        u.Position(4) = 39;
+        
+    end
+end

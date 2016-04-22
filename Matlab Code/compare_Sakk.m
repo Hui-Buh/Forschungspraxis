@@ -40,7 +40,14 @@ function compare_Sakk(bilder, durchlauf, Sakk_p_Sakk_grad_max_mean , kontroll_ke
                 clearvars Sakk_parsed pos
                 Sakk_parsed = m.Sakk_parsed;
                 if isempty(Sakk_parsed) == 1; continue; end;
-                pos = center_image(Sakk_parsed(:,2), Sakk_parsed(:,3), m.Sakk_amplitude, m.Sakk_max_vel, m.Sakk_mean_vel, '-', 300, 460);
+                try
+                    Sakk_max_vel = m.Sakk_max_vel;
+                catch
+                    my_message('Max velocity not available in .mat file',0);
+                    my_message('Ended badly', 0);
+                    return;
+                end
+                pos = center_image(Sakk_parsed(:,2), Sakk_parsed(:,3), m.Sakk_amplitude, Sakk_max_vel, m.Sakk_mean_vel, '-', 300, 460);
                 if mod(Sakk_p_Sakk_grad_max_mean, 2) == 1
                     Sakk_amplitude_control = [Sakk_amplitude_control ; pos(:,3) ];
                 else
@@ -65,7 +72,14 @@ function compare_Sakk(bilder, durchlauf, Sakk_p_Sakk_grad_max_mean , kontroll_ke
                 clearvars Sakk_parsed pos
                 Sakk_parsed = m.Sakk_parsed;
                 if isempty(Sakk_parsed) == 1; continue; end;
-                pos = center_image(Sakk_parsed(:,2), Sakk_parsed(:,3), m.Sakk_amplitude, m.Sakk_max_vel, m.Sakk_mean_vel, '-', 300, 460);
+                try
+                    Sakk_max_vel = m.Sakk_max_vel;
+                catch
+                    my_message('Max velocity not available in .mat file',0);
+                    my_message('Ended badly', 0);
+                    return;
+                end
+                pos = center_image(Sakk_parsed(:,2), Sakk_parsed(:,3), m.Sakk_amplitude, Sakk_max_vel, m.Sakk_mean_vel, '-', 300, 460);
                 if mod(Sakk_p_Sakk_grad_max_mean, 2) == 1
                     Sakk_amplitude_control = [Sakk_amplitude_control ; pos(:,3) ];
                 else
@@ -99,7 +113,14 @@ function compare_Sakk(bilder, durchlauf, Sakk_p_Sakk_grad_max_mean , kontroll_ke
                 clearvars Sakk_parsed pos
                 Sakk_parsed = m.Sakk_parsed;
                 if isempty(Sakk_parsed) == 1; continue; end;
-                pos = center_image(Sakk_parsed(:,2), Sakk_parsed(:,3), m.Sakk_amplitude, m.Sakk_max_vel, m.Sakk_mean_vel, '-', 300, 460);
+                try
+                    Sakk_max_vel = m.Sakk_max_vel;
+                catch
+                    my_message('Max velocity not available in .mat file',0);
+                    my_message('Ended badly', 0);
+                    return;
+                end
+                pos = center_image(Sakk_parsed(:,2), Sakk_parsed(:,3), m.Sakk_amplitude, Sakk_max_vel, m.Sakk_mean_vel, '-', 300, 460);
                 if mod(Sakk_p_Sakk_grad_max_mean, 2) == 1
                     Sakk_amplitude_patient = [Sakk_amplitude_patient ; pos(:,3) ];
                 else
@@ -124,7 +145,14 @@ function compare_Sakk(bilder, durchlauf, Sakk_p_Sakk_grad_max_mean , kontroll_ke
                 clearvars Sakk_parsed pos
                 Sakk_parsed = m.Sakk_parsed;
                 if isempty(Sakk_parsed) == 1; continue; end;
-                pos = center_image(Sakk_parsed(:,2), Sakk_parsed(:,3), m.Sakk_amplitude, m.Sakk_max_vel, m.Sakk_mean_vel, '-', 300, 460);
+                try
+                    Sakk_max_vel = m.Sakk_max_vel;
+                catch
+                    my_message('Max velocity not available in .mat file',0);
+                    my_message('Ended badly', 0);
+                    return;
+                end
+                pos = center_image(Sakk_parsed(:,2), Sakk_parsed(:,3), m.Sakk_amplitude, Sakk_max_vel, m.Sakk_mean_vel, '-', 300, 460);
                 if mod(Sakk_p_Sakk_grad_max_mean, 2) == 1
                     Sakk_amplitude_patient = [Sakk_amplitude_patient ; pos(:,3) ];
                 else

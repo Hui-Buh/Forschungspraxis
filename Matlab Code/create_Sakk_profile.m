@@ -39,8 +39,6 @@ function create_Sakk_profile( bilder, durchlauf, Sakkpx_Sakkgrad, vel_acc, kontr
                     continue
                 end
                 % Extrahiere alle notwendigen Daten
-                Sakk_parsed = m.Sakk_parsed;
-                monokular = m.monokular;
                 try % Check for variable Data
                     Data = m.Data_;
                 catch my_error
@@ -48,6 +46,8 @@ function create_Sakk_profile( bilder, durchlauf, Sakkpx_Sakkgrad, vel_acc, kontr
                     my_message('Ended badly',0) 
                     return;
                 end
+                Sakk_parsed = m.Sakk_parsed;
+                monokular = m.monokular;
                 for d = 1:size(Sakk_parsed, 1)
                     clearvars buf
                     buf = Data(Data(:,1) >= Sakk_parsed(d,1) & Data(:,1) <= Sakk_parsed(d,4),:);
@@ -72,14 +72,14 @@ function create_Sakk_profile( bilder, durchlauf, Sakkpx_Sakkgrad, vel_acc, kontr
                     continue
                 end
                 % Extrahiere alle notwendigen Daten
-                Sakk_parsed = m.Sakk_parsed;
-                monokular = m.monokular;
                 try % Check for variable Data
                     Data = m.Data_;
                 catch my_error
                     msgbox('At least one file does not contain a needed variable. Please use other .mat files containing the variable "Data_"!', 'Needed variable not found!') 
                     return;
                 end
+                Sakk_parsed = m.Sakk_parsed;
+                monokular = m.monokular;
                 for d = 1:size(Sakk_parsed, 1)
                     clearvars buf
                     buf = Data(Data(:,1) >= Sakk_parsed(d,1) & Data(:,1) <= Sakk_parsed(d,4),:);
@@ -112,14 +112,14 @@ function create_Sakk_profile( bilder, durchlauf, Sakkpx_Sakkgrad, vel_acc, kontr
                     continue
                 end
                 % Extrahiere alle notwendigen Daten
-                Sakk_parsed = m.Sakk_parsed;
-                monokular = m.monokular;
                 try % Check for variable Data
                     Data = m.Data_;
                 catch my_error
                     msgbox('At least one file does not contain a needed variable. Please use other .mat files containing the variable "Data_"!', 'Needed variable not found!') 
                     return;
                 end
+                Sakk_parsed = m.Sakk_parsed;
+                monokular = m.monokular;
                 for d = 1:size(Sakk_parsed, 1)
                     clearvars buf
                     buf = Data(Data(:,1) >= Sakk_parsed(d,1) & Data(:,1) <= Sakk_parsed(d,4),:);
@@ -144,14 +144,14 @@ function create_Sakk_profile( bilder, durchlauf, Sakkpx_Sakkgrad, vel_acc, kontr
                     continue
                 end
                 % Extrahiere alle notwendigen Daten
-                Sakk_parsed = m.Sakk_parsed;
-                monokular = m.monokular;
                 try % Check for variable Data
                     Data = m.Data_;
                 catch my_error
                     msgbox('At least one file does not contain a needed variable. Please use other .mat files containing the variable "Data_"!', 'Needed variable not found!') 
                     return;
                 end
+                Sakk_parsed = m.Sakk_parsed;
+                monokular = m.monokular;
                 for d = 1:size(Sakk_parsed, 1)
                     clearvars buf
                     buf = Data(Data(:,1) >= Sakk_parsed(d,1) & Data(:,1) <= Sakk_parsed(d,4),:);

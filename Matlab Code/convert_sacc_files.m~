@@ -1,0 +1,107 @@
+% data_path = absolute or relative path of the folder containing all patient specific data in TUM format
+
+
+function convert_sacc_files( data_path )
+    
+Sakk_parsed_README = 'Start_time (ms) : x-coord. : y-coord. : End_time : x-coord. : y-coord. (mean of both eyes), indices of max_vel ind Data';
+README = 'Sakk_dauer (ms); Fix_dauer (ms); Sakk_amplitude (px bez. auf image_size); Sakk_max_vel (px/ms), Sakk_mean_vel (px/ms)';
+
+    liste = dir(data_path);
+    liste  = liste ([liste .isdir] == 1,:);
+    liste = liste(3:end,:);
+    
+    counter = 1;
+    for a = 1:1%size(liste,1)
+        dir_entries = dir(cat(2,data_path, '/', liste(a,1).name ));
+        for b = 1:size(dir_entries,1)
+            tmp = isempty(strfind(dir_entries(b,1).name, '.scc'));
+            if tmp == 0 
+                if size(dir_entries(b,1).name,2) == strfind(dir_entries(b,1).name, '.scc')+3
+                    file = fopen(cat(2,data_path, '/', liste(a,1).name, '/',dir_entries(b,1).name));
+                    table = textscan(file, '%s');
+                    table = table{1,1};
+                    fclose(file);
+                    index = find(strcmp(table, 'saccades'),1);
+                    if isempty(index) == 1
+                        my_message( dir_entries(b,1).name, 0); 
+                        my_message( 'Keyword "saccades" not found in', 0); 
+                        my_message( 'Ended badly', 0); 
+                        return; 
+                    end
+                    table = table(index+3:end);
+                    table = str2double(table);
+                    Sakk_parsed = reshape(table, 6, size(table,1)/6)';
+                    
+                    
+                    % Maximale Sakkadengeschwindigkeit
+                    clearvars Sakk_max_vel strecke
+
+                    if monokular == 1
+                        strecke(:,1) = Data(Sakk_parsed(:,7)-1,2) - Data(Sakk_parsed(:,7)+1,2);
+                        strecke(:,2) = Data(Sakk_parsed(:,7)-1,3) - Data(Sakk_parsed(:,7)+1,3);
+                    elseif monokular == 2
+                        strecke(:,1) = Data(Sakk_parsed(:,7)-1,4) - Data(Sakk_parsed(:,7)+1,4);
+                        strecke(:,2) = Data(Sakk_parsed(:,7)-1,5) - Data(Sakk_parsed(:,7)+1,5);
+                    elseif monokular == 3
+                        strecke(:,1) = mean([Data(Sakk_parsed(:,7)-1,2) Data(Sakk_parsed(:,7)-1,4)],2) - mean([Data(Sakk_parsed(:,4)+1,2) Data(Sakk_parsed(:,7)+1,4)],2);
+                        strecke(:,2) = mean([Data(Sakk_parsed(:,7)-1,3) Data(Sakk_parsed(:,7)-1,5)],2) - mean([Data(Sakk_parsed(:,4)+1,3) Data(Sakk_parsed(:,7)+1,5)],2);
+                    end
+
+                    for i = 1:size(strecke,1)
+                        strecke(i,3) = norm(strecke(i,:));
+                    end
+                    if isempty(strecke) == 0
+                        Sakk_max_vel = strecke(:,3)/4;
+                    else
+                        Sakk_max_vel = [];
+                    end
+                    % Positionen der maximalen Geschwindigkeit wieder löschen
+                    Sakk_parsed = Sakk_parsed(:,1:6);
+
+                    % Sakkadenamplituden berechnen
+                    clearvars difference Sakk_amplitude
+                    difference(:,1) = Sakk_parsed(:,2) - Sakk_parsed(:,5);
+                    difference(:,2) = Sakk_parsed(:,3) - Sakk_parsed(:,6);
+                    Sakk_amplitude = zeros(size(difference,1),1);
+                    for i = 1:size(difference,1)
+                        Sakk_amplitude(i) = norm(difference(i,:));
+                    end
+
+                    % Sakkadendauer
+                    clearvars Sakk_dauer
+                    Sakk_dauer = Sakk_parsed(:,4) - Sakk_parsed(:,1);
+
+                    % Intersakkadische Intervalle
+                    clearvars Fix_dauer 
+                    Fix_dauer = Sakk_parsed(2:end,1) - Sakk_parsed(1:end-1,4);
+
+                    % Mittlere Sakkadengeschwindigkeit
+
+                    clearvars Sakk_mean_vel 
+                    Sakk_mean_vel = Sakk_amplitude./Sakk_dauer;
+                    
+                    
+                    
+                    
+                    %% Write data
+
+
+                    % Speicherung mit weniger Daten zur Beschleunigung des Skriptes!
+                    % ! Daten werden überschrieben !!!
+                    % Unterscheidung zwischen erster und zweiter Frage
+                    if question(bild_nummer) == 1 % Erste Frage
+                        save(cat(2, goal_dir,original_filename(1:5), '/', original_filename(1:5), '_', image_name(1:end-4), '_1', '.mat' ),...
+                            'goal_dir', 'image_dir', 'image_size', 'mat_dir', 'Sakk_parsed', 'SamplingRate', 'image_name', 'patient_id', 'Sakk_amplitude', 'original_filename', 'Fix_dauer', 'Sakk_dauer', 'Sakk_mean_vel', 'Sakk_max_vel', 'monokular', 'README', 'Sakk_parsed_README');
+                    elseif question(bild_nummer) == 2 % Zweite Frage
+                        save(cat(2, goal_dir,original_filename(1:5), '/', original_filename(1:5), '_', image_name(1:end-4), '_2', '.mat' ),...
+                            'goal_dir', 'image_dir', 'image_size', 'mat_dir', 'Sakk_parsed', 'SamplingRate', 'image_name', 'patient_id', 'Sakk_amplitude', 'original_filename', 'Fix_dauer', 'Sakk_dauer', 'Sakk_mean_vel', 'Sakk_max_vel', 'monokular', 'README', 'Sakk_parsed_README');
+                    end
+                end
+            end
+        end
+    end
+    
+    
+    
+    
+end
