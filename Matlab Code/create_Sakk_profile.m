@@ -42,7 +42,7 @@ function create_Sakk_profile( bilder, durchlauf, Sakkpx_Sakkgrad, vel_acc, kontr
                 try % Check for variable Data
                     Data = m.Data_;
                 catch my_error
-                    my_message('.mat file lacks the variable Data ',0)
+                    my_message('.mat file lacks the Data ',0)
                     my_message('Ended badly',0) 
                     return;
                 end
@@ -75,7 +75,8 @@ function create_Sakk_profile( bilder, durchlauf, Sakkpx_Sakkgrad, vel_acc, kontr
                 try % Check for variable Data
                     Data = m.Data_;
                 catch my_error
-                    msgbox('At least one file does not contain a needed variable. Please use other .mat files containing the variable "Data_"!', 'Needed variable not found!') 
+                    my_message('.mat file lacks the Data ',0)
+                    my_message('Ended badly',0) 
                     return;
                 end
                 Sakk_parsed = m.Sakk_parsed;
@@ -115,7 +116,8 @@ function create_Sakk_profile( bilder, durchlauf, Sakkpx_Sakkgrad, vel_acc, kontr
                 try % Check for variable Data
                     Data = m.Data_;
                 catch my_error
-                    msgbox('At least one file does not contain a needed variable. Please use other .mat files containing the variable "Data_"!', 'Needed variable not found!') 
+                    my_message('.mat file lacks the Data ',0)
+                    my_message('Ended badly',0) 
                     return;
                 end
                 Sakk_parsed = m.Sakk_parsed;
@@ -147,7 +149,8 @@ function create_Sakk_profile( bilder, durchlauf, Sakkpx_Sakkgrad, vel_acc, kontr
                 try % Check for variable Data
                     Data = m.Data_;
                 catch my_error
-                    msgbox('At least one file does not contain a needed variable. Please use other .mat files containing the variable "Data_"!', 'Needed variable not found!') 
+                    my_message('.mat file lacks the Data ',0)
+                    my_message('Ended badly',0) 
                     return;
                 end
                 Sakk_parsed = m.Sakk_parsed;

@@ -175,14 +175,9 @@ function compare_Sakk(bilder, durchlauf, Sakk_p_Sakk_grad_max_mean , kontroll_ke
     Sakk_amplitude_control(1) = [];
     Sakk_vel_control(1) = [];
 
-    
-%     Sakk_amplitude_control = Sakk_amplitude_control(Sakk_vel_control < 50);
-%     Sakk_amplitude_patient = Sakk_amplitude_patient(Sakk_vel_patient < 50);
     x1 = Sakk_amplitude_control;
     x2 = Sakk_amplitude_patient;
     
-%     Sakk_vel_control = Sakk_vel_control(Sakk_vel_control < 50);
-%     Sakk_vel_patient = Sakk_vel_patient(Sakk_vel_patient < 50);
     y1 = Sakk_vel_control;
     y2 = Sakk_vel_patient;
 
@@ -190,22 +185,23 @@ function compare_Sakk(bilder, durchlauf, Sakk_p_Sakk_grad_max_mean , kontroll_ke
     hold on; grid on;
     
     z1 = sortrows([x1 y1]);
-%     z1(:,2) = medfilt1(z1(:,2), 11);
+    z1(:,2) = medfilt1(z1(:,2), 3);
     [~, ia, ~] = unique(z1(:,1));
     z1 = z1(ia,:);
-    f = fit(z1(:,1), z1(:,2), 'poly2');
+%     f = fit(z1(:,1), z1(:,2), 'poly3');
     plot(z1(:,1),z1(:,2), '.b');
-    plot(f, 'k');
+%     plot(f, 'k');
     
     z2 = sortrows([x2 y2]);
-%     z2(:,2) = medfilt1(z2(:,2), 11);
+    z2(:,2) = medfilt1(z2(:,2), 3);
     [~, ia, ~] = unique(z2(:,1));
     z2 = z2(ia,:);    
-    f = fit(z2(:,1), z2(:,2), 'poly2');
+%     f = fit(z2(:,1), z2(:,2), 'poly3');
     plot(z2(:,1),z2(:,2), '.r');
-    plot(f, 'g');%,z2(:,1),z2(:,2));
+%     plot(f, 'g');%,z2(:,1),z2(:,2));
     
-    legend({'Kontrollen Daten', 'Kontrollen Fit', 'Patienten Daten', 'Patienten Fit'}); 
+    legend({'Kontrollen Daten', 'Patienten Daten'}); 
+%     legend({'Kontrollen Daten', 'Kontrollen Fit', 'Patienten Daten', 'Patienten Fit'}); 
     
     if mod(Sakk_p_Sakk_grad_max_mean, 2) == 1
         xlabel('Sakkaden Amplitude (px)');

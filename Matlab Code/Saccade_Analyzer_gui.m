@@ -113,7 +113,7 @@ global bilder durchlauf kontroll_kennung patient_kennung data_path image_path Sa
 % handles    structure with handles and user data (see GUIDATA)
 my_message('',1)
 get_parameters(hObject, eventdata, handles)
-if closeall == 1; try close Figure 1; close Figure 2; close Figure 3; catch; end; end;
+if closeall == 1; try close Figure 1; close Figure 2; close Figure 3; close Figure 4; catch; end; end;
 Compute_ecdf( bilder, durchlauf, Sakka_Sakkd_Fix, kontroll_kennung, patient_kennung, data_path, image_path)
 my_message('Finished creating ECDFs',0)
 
@@ -126,7 +126,7 @@ global bilder durchlauf kontroll_kennung patient_kennung data_path image_path cl
 % handles    structure with handles and user data (see GUIDATA)
 my_message('',1)
 get_parameters(hObject, eventdata, handles)
-if closeall == 1; try close Figure 1; close Figure 2; close Figure 3; catch; end; end;
+if closeall == 1; try close Figure 1; close Figure 2; close Figure 3; close Figure 4; catch; end; end;
 local_Sakk_distribution(bilder, durchlauf, 0 , kontroll_kennung, patient_kennung, data_path, image_path)
 my_message('Finished creating fixation maps',0)
 
@@ -138,7 +138,7 @@ global bilder durchlauf kontroll_kennung patient_kennung data_path image_path Sa
 % handles    structure with handles and user data (see GUIDATA)
 my_message('',1)
 get_parameters(hObject, eventdata, handles)
-if closeall == 1; try close Figure 1; close Figure 2; close Figure 3; catch; end; end;
+if closeall == 1; try close Figure 1; close Figure 2; close Figure 3; close Figure 4; catch; end; end;
 compare_Sakk(bilder, durchlauf, Sakk_p_Sakk_grad_mean_max , kontroll_kennung, patient_kennung, data_path, image_path)
 my_message('Finished comparing saccades',0)
 
@@ -150,7 +150,7 @@ global bilder durchlauf kontroll_kennung patient_kennung data_path image_path Sa
 % handles    structure with handles and user data (see GUIDATA)
 my_message('',1)
 get_parameters(hObject, eventdata, handles)
-if closeall == 1; try close Figure 1; close Figure 2; close Figure 3; catch; end; end;
+if closeall == 1; try close Figure 1; close Figure 2; close Figure 3; close Figure 4; catch; end; end;
 create_Sakk_profile( bilder, durchlauf, Sakkpx_Sakkgrad, vel_acc, kontroll_kennung, patient_kennung, data_path, image_path, sakkaden_laenge )
 my_message('Finished creating saccade profiles',0)
 
@@ -163,7 +163,7 @@ global bilder durchlauf kontroll_kennung patient_kennung data_path image_path cl
 % handles    structure with handles and user data (see GUIDATA)
 my_message('',1)
 get_parameters(hObject, eventdata, handles)
-if closeall == 1; try close Figure 1; close Figure 2; close Figure 3; catch; end; end;
+if closeall == 1; try close Figure 1; close Figure 2; close Figure 3; close Figure 4; catch; end; end;
 Sakk_directions(bilder, durchlauf, '' , kontroll_kennung, patient_kennung, data_path, image_path)
 my_message('Finished evaluating saccade directions',0)
 
@@ -176,7 +176,7 @@ global bilder durchlauf kontroll_kennung patient_kennung data_path image_path cl
 % handles    structure with handles and user data (see GUIDATA)
 my_message('',1)
 get_parameters(hObject, eventdata, handles)
-if closeall == 1; try close Figure 1; close Figure 2; close Figure 3; catch; end; end;
+if closeall == 1; try close Figure 1; close Figure 2; close Figure 3; close Figure 4; catch; end; end;
 Noh_AOI( bilder, durchlauf, '' , kontroll_kennung, patient_kennung, data_path, image_path)
 my_message('Finished interpreting AOI regions',0)
 
@@ -188,7 +188,7 @@ global bilder durchlauf kontroll_kennung patient_kennung data_path image_path cl
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 my_message('',1)
-if closeall == 1; try close Figure 1; close Figure 2; close Figure 3; catch; end; end;
+if closeall == 1; try close Figure 1; close Figure 2; close Figure 3; close Figure 4; catch; end; end;
 get_parameters(hObject, eventdata, handles)
 run('./my_gbvs/gbvs_install.m');
 params =  makeGBVSParams;
