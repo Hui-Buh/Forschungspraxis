@@ -127,7 +127,7 @@ function evaluate_saliency(bilder, durchlauf, saliency_params, kontroll_kennung,
 %% Auswertung
     my_message('Evaluate Data',0)
     
-%     Sanyity check
+%     Sanity check
 %     for a =  1:size(mask, 1)
 %         mask{a,1} = mask{a,1}+100*rand;
 %     end

@@ -12,6 +12,21 @@ function create_Sakk_profile( bilder, durchlauf, Sakkpx_Sakkgrad, vel_acc, kontr
     my_message('Create saccade profile',0)
     
     sakkaden_laenge = str2num(sakkaden_laenge);
+    if isempty(sakkaden_laenge) == 1
+        my_message('Please enter valid saccade length',0);
+        my_message('Ended badly',0);
+        return;
+    end
+    if mod(sakkaden_laenge,2) ==1 
+        my_message('Only even saccade lengths are valid',0);
+        my_message('Ended badly',0);
+        return;
+    end
+    if sakkaden_laenge < 20 || sakkaden_laenge > 80
+        my_message('Only 20-80 ms saccades are valid',0);
+        my_message('Ended badly',0);
+        return;
+    end
 
     [faces, faces_m, faces_t, kont] =  Separate_test_images(image_path);
 
@@ -175,9 +190,6 @@ function create_Sakk_profile( bilder, durchlauf, Sakkpx_Sakkgrad, vel_acc, kontr
 %% Auswertung
     my_message('Evaluate Data',0)
     
-    figure(1)
-    hold on; grid on;
-    
     time_c = (0:2:(sakkaden_laenge-4))';
     vel_c = zeros((sakkaden_laenge-2)/2,1);
     acc_c = zeros((sakkaden_laenge-2)/2,1);
@@ -197,7 +209,7 @@ function create_Sakk_profile( bilder, durchlauf, Sakkpx_Sakkgrad, vel_acc, kontr
                 if  (sakk(end,1) > sakkaden_laenge -1) && (sakk(end,1) < sakkaden_laenge +1)
                     vel = sqrt(sum(diff_ .* diff_, 2))/2;
                     if Sakkpx_Sakkgrad == 2
-                        vel = vel *450/9.8 /1000;
+                        vel = vel *9.8/450 *1000;
                     end
                     vel_c = [vel_c vel(1:end-1)];
                     acc_c = [acc_c diff(vel)/2];
@@ -225,7 +237,7 @@ function create_Sakk_profile( bilder, durchlauf, Sakkpx_Sakkgrad, vel_acc, kontr
                 if  (sakk(end,1) > sakkaden_laenge -1) && (sakk(end,1) < sakkaden_laenge +1)
                     vel = sqrt(sum(diff_ .* diff_, 2))/2;
                     if Sakkpx_Sakkgrad == 2
-                        vel = vel *450/9.8 /1000;
+                        vel = vel *9.8/450 *1000;
                     end
                     vel_p = [vel_p vel(1:end-1)];
                     acc_p = [acc_p diff(vel)/2];
@@ -244,53 +256,65 @@ function create_Sakk_profile( bilder, durchlauf, Sakkpx_Sakkgrad, vel_acc, kontr
     vel_p = mean(vel_p,2);
     acc_p = mean(acc_p,2);
     
+    h=figure(1);
+    hold on; grid on; box on;
+    set(gca,'FontWeight','bold');
+    h.Position = [200 200 900 450];
     
     subplot(1,2,1)
+    hold on; grid on; box on;
+    set(gca,'FontWeight','bold');
+    title('Control', 'FontSize', 12);
     if vel_acc == 1 
-        plot(time_c, vel_c);
+        plot(time_c, vel_c, 'b');
         xlabel('Time (ms)');
-        ylabel('velocity (px/ms)');
+        ylabel('Velocity (px/ms)');
         if Sakkpx_Sakkgrad == 2; ylabel('velocity (°/s)'); end;
-        legend('Geschwindigkeit Kontrolle')
+        legend('Velocity Control')
     elseif vel_acc == 2
-        plot(time_c, acc_c);
+        plot(time_c, acc_c, 'r');
         xlabel('Time (ms)');
-        ylabel('acceleration (px/ms^2)');
+        ylabel('Acceleration (px/ms^2)');
         if Sakkpx_Sakkgrad == 2; ylabel('acceleration (°/s^2)'); end;
-        legend('Beschleunigung Kontrolle')
+        legend('Acceleration Control')
     elseif vel_acc == 3
         [x,y,z] = plotyy(time_c, vel_c, time_c, acc_c);
+        set(x, 'FontWeight','bold');
         xlabel('Time (ms)');
-        ylabel(x(1), 'velocity (px/ms)');
-        ylabel(x(2), 'acceleration (px/ms^2)');
+        ylabel(x(1), 'Velocity (px/ms)');
+        ylabel(x(2), 'Acceleration (px/ms^2)');
         if Sakkpx_Sakkgrad == 2
-            ylabel(x(1), 'velocity (°/s)');
-            ylabel(x(2), 'acceleration (°/s^2)');
+            ylabel(x(1), 'Velocity (°/s)');
+            ylabel(x(2), 'Acceleration (°/s^2)');
         end
-        legend('Geschwindigkeit Kontrolle', 'Beschleunigung Kontrolle')
+        legend('Velocity Control', 'Acceleration Control')
     end
     subplot(1,2,2)
+    hold on; grid on; box on;
+    set(gca,'FontWeight','bold');
+    title('Patient', 'FontSize', 12);
     if vel_acc == 1 
-        plot(time_p, vel_p);
+        plot(time_p, vel_p, 'b');
         xlabel('Time (ms)');
-        ylabel('velocity (px/ms)');
+        ylabel('Velocity (px/ms)');
         if Sakkpx_Sakkgrad == 2; ylabel('velocity (°/s)'); end;
-        legend('Geschwindigkeit Patient')
+        legend('Velocity Patient')
     elseif vel_acc == 2
-        plot(time_p, acc_p);
+        plot(time_p, acc_p, 'r');
         xlabel('Time (ms)');
-        ylabel('acceleration (px/ms^2)');
-        if Sakkpx_Sakkgrad == 2; ylabel(x(2), 'acceleration (°/s^2)'); end;
-        legend('Beschleunigung Patient')
+        ylabel('Acceleration (px/ms^2)');
+        if Sakkpx_Sakkgrad == 2; ylabel(x(2), 'Acceleration (°/s^2)'); end;
+        legend('Acceleration Patient')
     elseif vel_acc == 3
         [x,y,z] = plotyy(time_p, vel_p, time_p, acc_p);
+        set(x, 'FontWeight','bold');
         xlabel('Time (ms)');
-        ylabel(x(1), 'velocity (px/ms)');
-        ylabel(x(2), 'acceleration (px/ms^2)');
+        ylabel(x(1), 'Velocity (px/ms)');
+        ylabel(x(2), 'Acceleration (px/ms^2)');
         if Sakkpx_Sakkgrad == 2
-            ylabel(x(1), 'velocity (°/s)');
-            ylabel(x(2), 'acceleration (°/s^2)');
+            ylabel(x(1), 'Velocity (°/s)');
+            ylabel(x(2), 'Acceleration (°/s^2)');
         end
-        legend('Geschwindigkeit Patient', 'Beschleunigung Patient')
+        legend('Velocity Patient', 'Acceleration Patient')
     end
 end

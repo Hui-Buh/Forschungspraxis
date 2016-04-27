@@ -21,12 +21,12 @@ function local_Sakk_distribution(bilder, durchlauf, as_saliency , kontroll_kennu
     if bilder >= 1; image_list = vertcat(image_list, kont{2:end}); bilder = bilder -1; end;
      
 %% Fixation map parameters
-    downsampling = 4;
-    Fixation_map_control = zeros(460/downsampling, 300/downsampling);
-    Fixation_map_patient = zeros(460/downsampling, 300/downsampling);
+    downsampling = 1;
+    Fixation_map_control = zeros(456/downsampling, 288/downsampling);
+    Fixation_map_patient = zeros(456/downsampling, 288/downsampling);
     sigma = [28 0; 0 28];
-    x2 = 1:downsampling:460;
-    x1 = 1:downsampling:300;
+    x2 = 1:downsampling:456;
+    x1 = 1:downsampling:288;
     [X1,X2] = meshgrid(x1,x2);
     
 
@@ -159,10 +159,9 @@ function local_Sakk_distribution(bilder, durchlauf, as_saliency , kontroll_kennu
     
     figure(3);
     hold on; grid off; 
-    
-
     difference = (Fixation_map_control - Fixation_map_patient);
-    difference(difference < max(max(difference))*0.95 & difference > min(min(difference))*0.95) = 0;
+    amplitude = max(difference(:)) - min(difference(:));
+    difference(difference < max(difference(:)) - amplitude*0.25 & difference > min(difference(:)) - amplitude*0.25) = 0;
     surf(x1,x2,difference, 'LineStyle', 'none');
     caxis([min(difference(:))-.5*range(difference(:)),max(difference(:))]);
     legend('Fixation map difference')
@@ -176,8 +175,8 @@ function local_Sakk_distribution(bilder, durchlauf, as_saliency , kontroll_kennu
 %% leave one out saliency maps control
         % Saliency map von jedem Probanden einzeln
         % Gaußglocke um jeden Fixationspunkt eines Probanden
-        leave_one_out_map_control = cell(2,size(anz_sakkpro_control,1)-1);
-        for f = 1:size(anz_sakkpro_control,1)-1
+     leave_one_out_map_control = cell(2,size(anz_sakkpro_control,1)-1);
+        for f = 1:size(anz_sakkpro_control)-1
             leave_one_out_map_control{1,f} = zeros(length(x2),length(x1));
             for e = (sum(anz_sakkpro_control(1:f))+1):(sum(anz_sakkpro_control(1:f))+anz_sakkpro_control(f+1))
                 mu = [pos_control(e,1) pos_control(e,2)];
@@ -186,24 +185,30 @@ function local_Sakk_distribution(bilder, durchlauf, as_saliency , kontroll_kennu
                 leave_one_out_map_control{1,f} = leave_one_out_map_control{1,f} + F;
             end
         end
+        % Einzelne Maps normieren
+        for h = 1:size(anz_sakkpro_control,1)-1
+            leave_one_out_map_control{1,h} = leave_one_out_map_control{1,h}./sum(trapz(leave_one_out_map_control{1,h}));
+        end
         anz_sakkpro_control(1) = [];
         % Saliency map vorletzter herausgelassen + normieren
         leave_one_out_map_control{2,end} = leave_one_out_map_control{1,end};
-        for g = 1:size(anz_sakkpro_control,1)-2
+        for g = 1:size(anz_sakkpro_control)-2
             leave_one_out_map_control{2,end} = leave_one_out_map_control{2,end} + leave_one_out_map_control{1,g};
         end
-        leave_one_out_map_control{2,end} = leave_one_out_map_control{2,end}./sum(trapz(leave_one_out_map_control{2,end}));
-        leave_one_out_map_control{2,end} = (leave_one_out_map_control{2,end} - mean(leave_one_out_map_control{2,end}(:)))/std(leave_one_out_map_control{2,end}(:));
+        leave_one_out_map_control{2,end} = leave_one_out_map_control{2,end}./sum(trapz(leave_one_out_map_control{2,end}));    
         % Saliency map von allen anderen basierend auf dem vorher berechneten berechnen + normieren
-        for f = size(anz_sakkpro_control,1)-1:-1:2
+        for f = size(anz_sakkpro_control)-1:-1:2
             leave_one_out_map_control{2,f} = leave_one_out_map_control{1,f} + leave_one_out_map_control{2,f+1} - leave_one_out_map_control{1,f-1};
             leave_one_out_map_control{2,f} = leave_one_out_map_control{2,f}./sum(trapz(leave_one_out_map_control{2,f}));
-            leave_one_out_map_control{2,f} = (leave_one_out_map_control{2,f} - mean(leave_one_out_map_control{2,f}(:)))/std(leave_one_out_map_control{2,f}(:));
-        end
+         end
         % Letzte Saliency map extra berechnen + normieren
         leave_one_out_map_control{2,1} = leave_one_out_map_control{1,1} + leave_one_out_map_control{2,2} - leave_one_out_map_control{1,7};
         leave_one_out_map_control{2,1} = leave_one_out_map_control{2,1}./sum(trapz(leave_one_out_map_control{2,1}));
-        leave_one_out_map_control{2,1} = (leave_one_out_map_control{2,1} - mean(leave_one_out_map_control{2,1}(:)))/std(leave_one_out_map_control{2,1}(:));
+        
+        % Normieren
+        for h = 1:size(anz_sakkpro_control,1)
+            leave_one_out_map_control{2,h} = (leave_one_out_map_control{2,h} - mean(leave_one_out_map_control{2,h}(:)))/std(leave_one_out_map_control{2,h}(:));
+        end
         
 %% leave one out saliency maps patient
         % Saliency map von jedem Probanden einzeln
@@ -218,64 +223,88 @@ function local_Sakk_distribution(bilder, durchlauf, as_saliency , kontroll_kennu
                 leave_one_out_map_patient{1,f} = leave_one_out_map_patient{1,f} + F;
             end
         end
+        % Einzelne Maps normieren
+        for h = 1:size(anz_sakkpro_patient,1)-1
+            leave_one_out_map_patient{1,h} = leave_one_out_map_patient{1,h}./sum(trapz(leave_one_out_map_patient{1,h}));
+        end
         anz_sakkpro_patient(1) = [];
         % Saliency map vorletzter herausgelassen + normieren
         leave_one_out_map_patient{2,end} = leave_one_out_map_patient{1,end};
         for g = 1:size(anz_sakkpro_patient)-2
             leave_one_out_map_patient{2,end} = leave_one_out_map_patient{2,end} + leave_one_out_map_patient{1,g};
         end
-        leave_one_out_map_patient{2,end} = leave_one_out_map_patient{2,end}./sum(trapz(leave_one_out_map_patient{2,end}));
-        leave_one_out_map_patient{2,end} = (leave_one_out_map_patient{2,end} - mean(leave_one_out_map_patient{2,end}(:)))/std(leave_one_out_map_patient{2,end}(:));
+        leave_one_out_map_patient{2,end} = leave_one_out_map_patient{2,end}./sum(trapz(leave_one_out_map_patient{2,end}));    
         % Saliency map von allen anderen basierend auf dem vorher berechneten berechnen + normieren
         for f = size(anz_sakkpro_patient)-1:-1:2
             leave_one_out_map_patient{2,f} = leave_one_out_map_patient{1,f} + leave_one_out_map_patient{2,f+1} - leave_one_out_map_patient{1,f-1};
             leave_one_out_map_patient{2,f} = leave_one_out_map_patient{2,f}./sum(trapz(leave_one_out_map_patient{2,f}));
-            leave_one_out_map_patient{2,f} = (leave_one_out_map_patient{2,f} - mean(leave_one_out_map_patient{2,f}(:)))/std(leave_one_out_map_patient{2,f}(:));
-        end
+         end
         % Letzte Saliency map extra berechnen + normieren
         leave_one_out_map_patient{2,1} = leave_one_out_map_patient{1,1} + leave_one_out_map_patient{2,2} - leave_one_out_map_patient{1,7};
         leave_one_out_map_patient{2,1} = leave_one_out_map_patient{2,1}./sum(trapz(leave_one_out_map_patient{2,1}));
-        leave_one_out_map_patient{2,1} = (leave_one_out_map_patient{2,1} - mean(leave_one_out_map_patient{2,1}(:)))/std(leave_one_out_map_patient{2,1}(:));
+        
+        % Normieren
+        for h = 1:size(anz_sakkpro_patient,1)
+            leave_one_out_map_patient{2,h} = (leave_one_out_map_patient{2,h} - mean(leave_one_out_map_patient{2,h}(:)))/std(leave_one_out_map_patient{2,h}(:));
+        end
         
 %% NSS
-        norm_scanpath_saliency_control = zeros(2,size(anz_sakkpro_control,1));
-        pos_buf = [floor(pos_control(1:anz_sakkpro_control(1),1)/downsampling) floor(pos_control(1:anz_sakkpro_control(1),2)/downsampling)];
-        pos_buf(pos_buf ==0) = 1;
-        norm_scanpath_saliency_control(1,1) = mean(diag(leave_one_out_map_control{2,1}(pos_buf(:,2), pos_buf(:,1)))); % Unter Kontrollen
-        pos_buf = [floor(pos_patient(:,1)/downsampling) floor(pos_patient(:,2)/downsampling)];
-        pos_buf(pos_buf ==0) = 1;
-        norm_scanpath_saliency_control(2,1) = mean(diag(leave_one_out_map_control{2,1}(pos_buf(:,2), pos_buf(:,1)))); % Zwischen Kontrollen und Patienten
+        anz_sakkpro_control = [0; anz_sakkpro_control];
         for a = 2:size(anz_sakkpro_control,1)
-            pos_buf = [floor(pos_control(sum(anz_sakkpro_control(1:a-1))+1:sum(anz_sakkpro_control(1:a-1)) + anz_sakkpro_control(a),1)/downsampling) floor(pos_control(sum(anz_sakkpro_control(1:a-1))+1:sum(anz_sakkpro_control(1:a-1)) + anz_sakkpro_control(a),2)/downsampling)];
-            pos_buf(pos_buf ==0) = 1;
-            norm_scanpath_saliency_control(1,a) = mean(diag(leave_one_out_map_control{2,a}(pos_buf(:,2),pos_buf(:,1)))); % Unter Kontrollen
-            pos_buf = [floor(pos_patient(:,1)/downsampling) floor(pos_patient(:,2)/downsampling)];
-            pos_buf(pos_buf ==0) = 1;
-            norm_scanpath_saliency_control(2,a) = mean(diag(leave_one_out_map_control{2,1}(pos_buf(:,2), pos_buf(:,1)))); % Zwischen Kontrollen und Patienten
+            anz_sakkpro_control(a) = anz_sakkpro_control(a-1) + anz_sakkpro_control(a);
+        end
+        anz_sakkpro_patient = [0; anz_sakkpro_patient];
+        for a = 2:size(anz_sakkpro_patient,1)
+            anz_sakkpro_patient(a) = anz_sakkpro_patient(a-1) + anz_sakkpro_patient(a);
         end
 
-        norm_scanpath_saliency_patient = zeros(2,size(anz_sakkpro_patient,1));
-        pos_buf = [floor(pos_patient(1:anz_sakkpro_patient(1),1)/downsampling) floor(pos_patient(1:anz_sakkpro_patient(1),2)/downsampling)];
+    % NSS für Kontrollen
+        norm_scanpath_saliency_control = zeros(2,size(anz_sakkpro_control,1)-1);
+
+        pos_buf = [floor(pos_control(anz_sakkpro_control(end-1)+1:anz_sakkpro_control(end),1)/downsampling) floor(pos_control(anz_sakkpro_control(end-1)+1:anz_sakkpro_control(end),2)/downsampling)];
         pos_buf(pos_buf ==0) = 1;
-        norm_scanpath_saliency_patient(1,1) = mean(diag(leave_one_out_map_patient{2,1}(pos_buf(:,2), pos_buf(:,1)))); % Unter Patienten
+        norm_scanpath_saliency_control(1,1) = mean(diag(leave_one_out_map_control{2,1}(pos_buf(:,2), pos_buf(:,1)))); % Unter n-1 Kontrollen und der herausgelassenen Kontrolle
+
+        pos_buf = [floor(pos_patient(:,1)/downsampling) floor(pos_patient(:,2)/downsampling)];
+        pos_buf(pos_buf ==0) = 1;
+        norm_scanpath_saliency_control(2,1) = mean(diag(leave_one_out_map_control{2,1}(pos_buf(:,2), pos_buf(:,1)))); % Zwischen n-1 Kontrollen und allen Patienten
+
+        for a = 3:size(anz_sakkpro_control,1)
+            pos_buf = [floor(pos_control(anz_sakkpro_control(a-2)+1:anz_sakkpro_control(a-1),1)/downsampling) floor(pos_control(anz_sakkpro_control(a-2)+1:anz_sakkpro_control(a-1),2)/downsampling)];
+            pos_buf(pos_buf ==0) = 1;
+            norm_scanpath_saliency_control(1,a-1) = mean(diag(leave_one_out_map_control{2,a-1}(pos_buf(:,2),pos_buf(:,1)))); % Unter n-1 Kontrollen und der herausgelassenen Kontrolle
+
+            pos_buf = [floor(pos_patient(:,1)/downsampling) floor(pos_patient(:,2)/downsampling)];
+            pos_buf(pos_buf ==0) = 1;
+            norm_scanpath_saliency_control(2,a-1) = mean(diag(leave_one_out_map_control{2,a-1}(pos_buf(:,2), pos_buf(:,1)))); % Zwischen n-1 Kontrollen und allen Patienten
+        end
+
+    % NSS für Patienten
+        norm_scanpath_saliency_patient = zeros(2,size(anz_sakkpro_patient,1)-1);
+
+        pos_buf = [floor(pos_patient(anz_sakkpro_patient(end-1)+1:anz_sakkpro_patient(end),1)/downsampling) floor(pos_patient(anz_sakkpro_patient(end-1)+1:anz_sakkpro_patient(end),2)/downsampling)];
+        pos_buf(pos_buf ==0) = 1;
+        norm_scanpath_saliency_patient(1,1) = mean(diag(leave_one_out_map_patient{2,1}(pos_buf(:,2), pos_buf(:,1)))); % Unter n-1 Kontrollen und der herausgelassenen Kontrolle
+
         pos_buf = [floor(pos_control(:,1)/downsampling) floor(pos_control(:,2)/downsampling)];
         pos_buf(pos_buf ==0) = 1;
-        norm_scanpath_saliency_patient(2,1) = mean(diag(leave_one_out_map_patient{2,a}(pos_buf(:,2), pos_buf(:,1)))); % Unter Patienten und Kontrollen
-        for a = 2:size(anz_sakkpro_patient,1)
-            pos_buf = [floor(pos_patient(sum(anz_sakkpro_patient(1:a-1))+1:sum(anz_sakkpro_patient(1:a-1)) + anz_sakkpro_patient(a),1)/downsampling) floor(pos_patient(sum(anz_sakkpro_patient(1:a-1))+1:sum(anz_sakkpro_patient(1:a-1)) + anz_sakkpro_patient(a),2)/downsampling)];
+        norm_scanpath_saliency_patient(2,1) = mean(diag(leave_one_out_map_patient{2,1}(pos_buf(:,2), pos_buf(:,1)))); % Zwischen n-1 Kontrollen und allen Patienten
+
+        for a = 3:size(anz_sakkpro_patient,1)
+            pos_buf = [floor(pos_patient(anz_sakkpro_patient(a-2)+1:anz_sakkpro_patient(a-1),1)/downsampling) floor(pos_patient(anz_sakkpro_patient(a-2)+1:anz_sakkpro_patient(a-1),2)/downsampling)];
             pos_buf(pos_buf ==0) = 1;
-            norm_scanpath_saliency_patient(1,a) = mean(diag(leave_one_out_map_patient{2,a}(pos_buf(:,2),pos_buf(:,1)))); % Unter Patienten
+            norm_scanpath_saliency_patient(1,a-1) = mean(diag(leave_one_out_map_patient{2,a-1}(pos_buf(:,2),pos_buf(:,1)))); % Unter n-1 Kontrollen und der herausgelassenen Kontrolle
+
             pos_buf = [floor(pos_control(:,1)/downsampling) floor(pos_control(:,2)/downsampling)];
             pos_buf(pos_buf ==0) = 1;
-            norm_scanpath_saliency_patient(2,a) = mean(diag(leave_one_out_map_patient{2,a}(pos_buf(:,2), pos_buf(:,1)))); % Unter Patienten und Kontrollen
+            norm_scanpath_saliency_patient(2,a-1) = mean(diag(leave_one_out_map_patient{2,a-1}(pos_buf(:,2), pos_buf(:,1)))); % Zwischen n-1 Kontrollen und allen Patienten
         end
         
-        figure(4)
-        hold on; grid on;
-        
-        boxplot([norm_scanpath_saliency_control' norm_scanpath_saliency_patient'], 'labels', {'n-1 controls vs. 1 control', 'n-1 controls vs. m patients', 'm-1 patients vs. 1 patients', 'm-1 patients vs. n controls'});
-        
-        ylabel('NSS');
-        
+    figure(4)
+    hold on; grid on;
+
+    boxplot([norm_scanpath_saliency_control' norm_scanpath_saliency_patient'], 'labels', {'n-1 controls vs. 1 control', 'n-1 controls vs. m patients', 'm-1 patients vs. 1 patients', 'm-1 patients vs. n controls'});
+
+    ylabel('NSS');
     end
 end

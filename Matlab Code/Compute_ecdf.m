@@ -38,7 +38,7 @@ function Compute_ecdf( bilder, durchlauf, Sakka_Sakkd_Fix, kontroll_kennung, pat
                 if Sakka_Sakkd_Fix == 0
                     Data_control = [Data_control; m.Sakk_amplitude]; % Fasse alle Sakkadenamplituden zusammen in px;
                 elseif Sakka_Sakkd_Fix == 1
-                    Data_control = [Data_control; m.Sakk_amplitude*9.8/450]; % Fasse alle Sakkadenamplituden zusammen in ° in °
+                    Data_control = [Data_control; m.Sakk_amplitude*9.8/450]; % Fasse alle Sakkadenamplituden zusammen in °
                 elseif Sakka_Sakkd_Fix == 2
                     Data_control = [Data_control; m.Sakk_dauer]; % Fasse alle Sakkadendauern zusammen
                 elseif Sakka_Sakkd_Fix == 3
@@ -58,7 +58,7 @@ function Compute_ecdf( bilder, durchlauf, Sakka_Sakkd_Fix, kontroll_kennung, pat
                 if Sakka_Sakkd_Fix == 0
                     Data_control = [Data_control; m.Sakk_amplitude]; % Fasse alle Sakkadenamplituden zusammen in px;
                 elseif Sakka_Sakkd_Fix == 1
-                    Data_control = [Data_control; m.Sakk_amplitude*9.8/450]; % Fasse alle Sakkadenamplituden zusammen in ° in °
+                    Data_control = [Data_control; m.Sakk_amplitude*9.8/450]; % Fasse alle Sakkadenamplituden zusammen in °
                 elseif Sakka_Sakkd_Fix == 2
                     Data_control = [Data_control; m.Sakk_dauer]; % Fasse alle Sakkadendauern zusammen
                 elseif Sakka_Sakkd_Fix == 3
@@ -86,7 +86,7 @@ function Compute_ecdf( bilder, durchlauf, Sakka_Sakkd_Fix, kontroll_kennung, pat
                 if Sakka_Sakkd_Fix == 0
                     Data_patient = [Data_patient; m.Sakk_amplitude]; % Fasse alle Sakkadenamplituden zusammen in px;
                 elseif Sakka_Sakkd_Fix == 1
-                    Data_patient = [Data_patient; m.Sakk_amplitude*9.8/450]; % Fasse alle Sakkadenamplituden zusammen in ° in °
+                    Data_patient = [Data_patient; m.Sakk_amplitude*9.8/450]; % Fasse alle Sakkadenamplituden zusammen in °
                 elseif Sakka_Sakkd_Fix == 2
                     Data_patient = [Data_patient; m.Sakk_dauer]; % Fasse alle Sakkadendauern zusammen
                 elseif Sakka_Sakkd_Fix == 3
@@ -106,7 +106,7 @@ function Compute_ecdf( bilder, durchlauf, Sakka_Sakkd_Fix, kontroll_kennung, pat
                 if Sakka_Sakkd_Fix == 0
                     Data_patient = [Data_patient; m.Sakk_amplitude]; % Fasse alle Sakkadenamplituden zusammen in px;
                 elseif Sakka_Sakkd_Fix == 1
-                    Data_patient = [Data_patient; m.Sakk_amplitude*9.8/450]; % Fasse alle Sakkadenamplituden zusammen in ° in °
+                    Data_patient = [Data_patient; m.Sakk_amplitude*9.8/450]; % Fasse alle Sakkadenamplituden zusammen in °
                 elseif Sakka_Sakkd_Fix == 2
                     Data_patient = [Data_patient; m.Sakk_dauer]; % Fasse alle Sakkadendauern zusammen
                 elseif Sakka_Sakkd_Fix == 3
@@ -124,18 +124,18 @@ function Compute_ecdf( bilder, durchlauf, Sakka_Sakkd_Fix, kontroll_kennung, pat
     
     h = figure (1);
     h.Position = [200 200 900 450];
-    hold on; grid on;
     
+    hold on; grid on; box on;
     subplot(1,2,1)
+    hold on; grid on; box on;
+    set(gca,'FontWeight','bold');
     title('ecdf', 'FontSize', 12);
-    subplot(1,2,2)
-    title('ecdf Ausschnitt', 'FontSize', 12);
-    subplot(1,2,1)
-    hold on; grid on;
     ecdf(Data_control); % Kontrollen
     ecdf(Data_patient); % Patienten
     subplot(1,2,2)
-    hold on; grid on;
+    hold on; grid on; box on;
+    set(gca,'FontWeight','bold');
+    title('ecdf extract', 'FontSize', 12);
     ecdf(Data_control); % Kontrollen
     ecdf(Data_patient); % Patienten 
     % kstest_reject: Die Sakkadenamplituden von Patienten und Kontrollen resultieren aus 1=unterschiedliche Verteilungen, 0=gleiche Verteilungen
@@ -146,20 +146,36 @@ function Compute_ecdf( bilder, durchlauf, Sakka_Sakkd_Fix, kontroll_kennung, pat
     data_median(2) = median(Data_patient);
     
     if Sakka_Sakkd_Fix == 0 
-        legend('Sakk. Amp. Kontrollen (px)', 'Sakk. Amp. Patienten (px)', 'location', 'southeast');
-        legend('Sakk. Amp. Kontrollen (px)', 'Sakk. Amp. Patienten (px)', 'location', 'southeast');
+        subplot(1,2,1)
+        legend('Sacc. amp. Control (px)', 'Sacc. amp. Patients (px)', 'location', 'southeast');
+        legend('Sacc. amp. Control (px)', 'Sacc. amp. Patients (px)', 'location', 'southeast');
+        subplot(1,2,2)
+        legend('Sacc. amp. Control (px)', 'Sacc. amp. Patients (px)', 'location', 'southeast');
+        legend('Sacc. amp. Control (px)', 'Sacc. amp. Patients (px)', 'location', 'southeast');
         xlim([0 200]);
     elseif Sakka_Sakkd_Fix == 1
-        legend('Sakk. Amp. Kontrollen (°)', 'Sakk. Amp. Patienten (°)', 'location', 'southeast');
-        legend('Sakk. Amp. Kontrollen (°)', 'Sakk. Amp. Patienten (°)', 'location', 'southeast');
+        subplot(1,2,1)
+        legend('Sacc. amp. Control (°)', 'Sacc. amp. Patients (°)', 'location', 'southeast');
+        legend('Sacc. amp. Control (°)', 'Sacc. amp. Patients (°)', 'location', 'southeast');
+        subplot(1,2,2)
+        legend('Sacc. amp. Control (°)', 'Sacc. amp. Patients (°)', 'location', 'southeast');
+        legend('Sacc. amp. Control (°)', 'Sacc. amp. Patients (°)', 'location', 'southeast');
         xlim([0 5]);
     elseif Sakka_Sakkd_Fix == 2
-        legend('Sakk. Dauer Kontrollen (ms)', 'Sakk. Dauer Patienten (ms)', 'location', 'southeast');
-        legend('Sakk. Dauer Kontrollen (ms)', 'Sakk. Dauer Patienten (ms)', 'location', 'southeast');
+        subplot(1,2,1)
+        legend('Sacc. duration Control (ms)', 'Sacc. duration Patients (ms)', 'location', 'southeast');
+        legend('Sacc. duration Control (ms)', 'Sacc. duration Patients (ms)', 'location', 'southeast');
+        subplot(1,2,2)
+        legend('Sacc. duration Control (ms)', 'Sacc. duration Patients (ms)', 'location', 'southeast');
+        legend('Sacc. duration Control (ms)', 'Sacc. duration Patients (ms)', 'location', 'southeast');
         xlim([0 100]);
     elseif Sakka_Sakkd_Fix == 3
-        legend('Fix. Dauer Kontrollen (ms)', 'Fix. Dauer Patienten (ms)', 'location', 'southeast');
-        legend('Fix. Dauer Kontrollen (ms)', 'Fix. Dauer Patienten (ms)', 'location', 'southeast');
+        subplot(1,2,1)
+        legend('Fix. duration Control (ms)', 'Fix. duration Patients (ms)', 'location', 'southeast');
+        legend('Fix. duration Control (ms)', 'Fix. duration Patients (ms)', 'location', 'southeast');
+        subplot(1,2,2)
+        legend('Fix. duration Control (ms)', 'Fix. duration Patients (ms)', 'location', 'southeast');
+        legend('Fix. duration Control (ms)', 'Fix. duration Patients (ms)', 'location', 'southeast');
         xlim([0 1000]);
     end
     

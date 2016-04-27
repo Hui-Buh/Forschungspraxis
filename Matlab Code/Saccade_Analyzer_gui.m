@@ -298,7 +298,6 @@ function checkbox4_Callback(hObject, eventdata, handles)
 % Hint: get(hObject,'Value') returns toggle state of checkbox4
 
 
-
 % --- Executes on button press in checkbox5.
 function checkbox5_Callback(hObject, eventdata, handles)
 % hObject    handle to checkbox5 (see GCBO)
@@ -372,7 +371,6 @@ function checkbox14_Callback(hObject, eventdata, handles)
 % hObject    handle to checkbox14 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-
 % Hint: get(hObject,'Value') returns toggle state of checkbox14
 
 
@@ -381,7 +379,6 @@ function checkbox15_Callback(hObject, eventdata, handles)
 % hObject    handle to checkbox15 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-
 % Hint: get(hObject,'Value') returns toggle state of checkbox15
 
 
@@ -390,7 +387,6 @@ function checkbox16_Callback(hObject, eventdata, handles)
 % hObject    handle to checkbox16 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-
 % Hint: get(hObject,'Value') returns toggle state of checkbox16
 
 
@@ -399,7 +395,6 @@ function checkbox17_Callback(hObject, eventdata, handles)
 % hObject    handle to checkbox17 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-
 % Hint: get(hObject,'Value') returns toggle state of checkbox17
 
 
@@ -749,7 +744,6 @@ function listbox1_Callback(hObject, eventdata, handles)
 % hObject    handle to listbox1 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-
 % Hints: contents = cellstr(get(hObject,'String')) returns listbox1 contents as cell array
 %        contents{get(hObject,'Value')} returns selected item from listbox1
 

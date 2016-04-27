@@ -7,7 +7,13 @@
 
 function Noh_AOI( bilder, durchlauf, ~, kontroll_kennung, patient_kennung, data_path, image_path)
     my_message('Evaluate AOI images',0)
-
+    
+    if bilder == 1
+        my_message('No AOI imagages available',0);
+        my_message('Ended badly',0);
+        return;
+    end
+    
     [faces, faces_m, faces_t, ~] =  Separate_test_images(image_path);
 
     [control_listing, patient_listing] =  Separate_test_persons(kontroll_kennung, patient_kennung, data_path);
@@ -18,7 +24,9 @@ function Noh_AOI( bilder, durchlauf, ~, kontroll_kennung, patient_kennung, data_
     if bilder >= 8; image_list = vertcat(image_list, faces{2:end}); bilder = bilder -8; end;
     if bilder >= 4; image_list = vertcat(image_list, faces_m{2:end}); bilder = bilder -4; end;
     if bilder >= 2; image_list = vertcat(image_list, faces_t{2:end}); bilder = bilder -2; end;
-%     if bilder >= 1; image_list = vertcat(image_list, kont{2:end}); bilder = bilder -1; end;
+    
+    % Variablen
+    color_grenzwert = 20;
 
 %% Alle Daten der Kontrollen heraussuchen
     my_message('Extract control data',0)
@@ -123,19 +131,19 @@ function Noh_AOI( bilder, durchlauf, ~, kontroll_kennung, patient_kennung, data_
         buf(:,2) = -1 * buf(:,2) + 460;
         subplot(1,2,1)
         image = imread(cat(2, image_path, '/', cat(2,image_list{a+1}, '_AOI.jpg') ));
+        imshow(image);
         image = double(image);
-        imshow(uint8(image));
         hold on;
-        points_control = buf(diag(image(buf(:,2), buf(:,1),2)) < 10 & diag(image(buf(:,2), buf(:,1),3)) < 10,:);
+        points_control = buf(diag(image(buf(:,2), buf(:,1),2)) < 0 + color_grenzwert & diag(image(buf(:,2), buf(:,1),3)) < 0 + color_grenzwert,:);
         plot(points_control(:,1) , points_control(:,2),'.b' );
         anzahl_control(1,a) = size(points_control,1); % Auge links
-        points_control = buf(diag(image(buf(:,2), buf(:,1),3)) < 10 & diag(image(buf(:,2), buf(:,1),1)) > 245 & diag(image(buf(:,2), buf(:,1),2)) > 245,:);
+        points_control = buf(diag(image(buf(:,2), buf(:,1),3)) < 0 + color_grenzwert & diag(image(buf(:,2), buf(:,1),1)) > 255 - color_grenzwert & diag(image(buf(:,2), buf(:,1),2)) > 255 - color_grenzwert,:);
         plot(points_control(:,1) , points_control(:,2),'.k' );
         anzahl_control(2,a) = size(points_control,1); % Auge rechts
-        points_control = buf(diag(image(buf(:,2), buf(:,1),1)) < 10 & diag(image(buf(:,2), buf(:,1),3)) < 10,:);
+        points_control = buf(diag(image(buf(:,2), buf(:,1),1)) < 0 + color_grenzwert & diag(image(buf(:,2), buf(:,1),3)) < 0 + color_grenzwert,:);
         plot(points_control(:,1) , points_control(:,2),'.r' );
         anzahl_control(3,a) = size(points_control,1); % Mund
-        points_control = buf(diag(image(buf(:,2), buf(:,1),1)) < 10 & diag(image(buf(:,2), buf(:,1),2)) < 10,:);
+        points_control = buf(diag(image(buf(:,2), buf(:,1),1)) < 0 + color_grenzwert & diag(image(buf(:,2), buf(:,1),2)) < 0 + color_grenzwert,:);
         plot(points_control(:,1) , points_control(:,2),'.y' );
         anzahl_control(4,a) = size(points_control,1); % Nase
         hold off;
@@ -152,19 +160,19 @@ function Noh_AOI( bilder, durchlauf, ~, kontroll_kennung, patient_kennung, data_
         buf(:,2) = -1 * buf(:,2) + 460;
         subplot(1,2,2)
         image = imread(cat(2, image_path, '/', cat(2,image_list{a+1}, '_AOI.jpg') ));
+        imshow(image);
         image = double(image);
-        imshow(uint8(image));
         hold on;
-        points_patient = buf(diag(image(buf(:,2), buf(:,1),2)) < 10 & diag(image(buf(:,2), buf(:,1),3)) < 10,:);
+        points_patient = buf(diag(image(buf(:,2), buf(:,1),2)) < 0 + color_grenzwert & diag(image(buf(:,2), buf(:,1),3)) < 0 + color_grenzwert,:);
         plot(points_patient(:,1) , points_patient(:,2),'.b' );
         anzahl_patient(1,a) = size(points_patient,1); % Auge links
-        points_patient = buf(diag(image(buf(:,2), buf(:,1),3)) < 10 & diag(image(buf(:,2), buf(:,1),1)) > 245 & diag(image(buf(:,2), buf(:,1),2)) > 245,:);
+        points_patient = buf(diag(image(buf(:,2), buf(:,1),3)) < 0 + color_grenzwert & diag(image(buf(:,2), buf(:,1),1)) > 255 - color_grenzwert & diag(image(buf(:,2), buf(:,1),2)) > 255 - color_grenzwert,:);
         plot(points_patient(:,1) , points_patient(:,2),'.k' );
         anzahl_patient(2,a) = size(points_patient,1); % Auge rechts
-        points_patient = buf(diag(image(buf(:,2), buf(:,1),1)) < 10 & diag(image(buf(:,2), buf(:,1),3)) < 10,:);
+        points_patient = buf(diag(image(buf(:,2), buf(:,1),1)) < 0 + color_grenzwert & diag(image(buf(:,2), buf(:,1),3)) < 0 + color_grenzwert,:);
         plot(points_patient(:,1) , points_patient(:,2),'.r' );
         anzahl_patient(3,a) = size(points_patient,1); % Mund
-        points_patient = buf(diag(image(buf(:,2), buf(:,1),1)) < 10 & diag(image(buf(:,2), buf(:,1),2)) < 10,:);
+        points_patient = buf(diag(image(buf(:,2), buf(:,1),1)) < 0 + color_grenzwert & diag(image(buf(:,2), buf(:,1),2)) < 0 + color_grenzwert,:);
         plot(points_patient(:,1) , points_patient(:,2),'.y' );
         anzahl_patient(4,a) = size(points_patient,1); % Nase
         hold off;
