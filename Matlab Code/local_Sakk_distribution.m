@@ -21,7 +21,7 @@ function local_Sakk_distribution(bilder, durchlauf, as_saliency , kontroll_kennu
     if bilder >= 1; image_list = vertcat(image_list, kont{2:end}); bilder = bilder -1; end;
      
 %% Fixation map parameters
-    downsampling = 1;
+    downsampling = 4;
     Fixation_map_control = zeros(456/downsampling, 288/downsampling);
     Fixation_map_patient = zeros(456/downsampling, 288/downsampling);
     sigma = [28 0; 0 28];
@@ -140,25 +140,28 @@ function local_Sakk_distribution(bilder, durchlauf, as_saliency , kontroll_kennu
     Fixation_map_patient = Fixation_map_patient./sum(trapz(Fixation_map_patient));
         
     figure(1)
-    hold on; grid off; 
+    hold on; grid on; box on;
+    set(gca,'FontWeight','bold');
     surf(x1,x2,Fixation_map_control, 'LineStyle', 'none');
     caxis([min(Fixation_map_control(:))-.5*range(Fixation_map_control(:)),max(Fixation_map_control(:))]);
-    legend('Fixation map - Kontrollen')
+    legend('Fixation map - Control')
     colorbar
-    xlim([0 300])
-    ylim([0 460])
+    xlim([0 280])
+    ylim([0 456])
 
     figure(2)
-    hold on; grid off; 
+    hold on; grid on; box on;
+    set(gca,'FontWeight','bold');
     surf(x1,x2,Fixation_map_patient, 'LineStyle', 'none');
     caxis([min(Fixation_map_patient(:))-.5*range(Fixation_map_patient(:)),max(Fixation_map_patient(:))]);
-    legend('Fixation map - Patienten')
+    legend('Fixation map - Patient')
     colorbar
-    xlim([0 300])
-    ylim([0 460])
+    xlim([0 280])
+    ylim([0 456])
     
     figure(3);
-    hold on; grid off; 
+    hold on; grid on; box on;
+    set(gca,'FontWeight','bold');
     difference = (Fixation_map_control - Fixation_map_patient);
     amplitude = max(difference(:)) - min(difference(:));
     difference(difference < max(difference(:)) - amplitude*0.25 & difference > min(difference(:)) - amplitude*0.25) = 0;
@@ -166,8 +169,8 @@ function local_Sakk_distribution(bilder, durchlauf, as_saliency , kontroll_kennu
     caxis([min(difference(:))-.5*range(difference(:)),max(difference(:))]);
     legend('Fixation map difference')
     colorbar
-    xlim([0 300])
-    ylim([0 460])
+    xlim([0 280])
+    ylim([0 456])
         
     if as_saliency == 1
         my_message('Compute NNS', 0);

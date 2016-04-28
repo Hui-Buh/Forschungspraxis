@@ -50,13 +50,18 @@ function compare_Sakk(bilder, durchlauf, Sakk_p_Sakk_grad_max_mean , kontroll_ke
                 pos = center_image(Sakk_parsed(:,2), Sakk_parsed(:,3), m.Sakk_amplitude, Sakk_max_vel, m.Sakk_mean_vel, '-', 300, 460);
                 if mod(Sakk_p_Sakk_grad_max_mean, 2) == 1
                     Sakk_amplitude_control = [Sakk_amplitude_control ; pos(:,3) ];
+                    if Sakk_p_Sakk_grad_max_mean < 8
+                        Sakk_vel_control = [Sakk_vel_control ; pos(:,4)];
+                    else
+                        Sakk_vel_control = [Sakk_vel_control ; pos(:,5)];
+                    end
                 else
-                    Sakk_amplitude_control = [Sakk_amplitude_control ; pos(:,3) *450/9.8 ];
-                end
-                if Sakk_p_Sakk_grad_max_mean < 8
-                    Sakk_vel_control = [Sakk_vel_control ; pos(:,4)];
-                else
-                    Sakk_vel_control = [Sakk_vel_control ; pos(:,5)];
+                    Sakk_amplitude_control = [Sakk_amplitude_control ; pos(:,3) *9.8/450 ];
+                    if Sakk_p_Sakk_grad_max_mean < 8
+                        Sakk_vel_control = [Sakk_vel_control ; pos(:,4) *9.8/450 *1000];
+                    else
+                        Sakk_vel_control = [Sakk_vel_control ; pos(:,5) *9.8/450 *1000];
+                    end
                 end
             end
         end
@@ -82,13 +87,18 @@ function compare_Sakk(bilder, durchlauf, Sakk_p_Sakk_grad_max_mean , kontroll_ke
                 pos = center_image(Sakk_parsed(:,2), Sakk_parsed(:,3), m.Sakk_amplitude, Sakk_max_vel, m.Sakk_mean_vel, '-', 300, 460);
                 if mod(Sakk_p_Sakk_grad_max_mean, 2) == 1
                     Sakk_amplitude_control = [Sakk_amplitude_control ; pos(:,3) ];
+                    if Sakk_p_Sakk_grad_max_mean < 8
+                        Sakk_vel_control = [Sakk_vel_control ; pos(:,4)];
+                    else
+                        Sakk_vel_control = [Sakk_vel_control ; pos(:,5)];
+                    end
                 else
-                    Sakk_amplitude_control = [Sakk_amplitude_control ; pos(:,3) *450/9.8 ];
-                end
-                if Sakk_p_Sakk_grad_max_mean < 8
-                    Sakk_vel_control = [Sakk_vel_control ; pos(:,4)];
-                else
-                    Sakk_vel_control = [Sakk_vel_control ; pos(:,5)];
+                    Sakk_amplitude_control = [Sakk_amplitude_control ; pos(:,3) *9.8/450 ];
+                    if Sakk_p_Sakk_grad_max_mean < 8
+                        Sakk_vel_control = [Sakk_vel_control ; pos(:,4) *9.8/450 *1000];
+                    else
+                        Sakk_vel_control = [Sakk_vel_control ; pos(:,5) *9.8/450 *1000];
+                    end
                 end
             end
         end
@@ -111,7 +121,7 @@ function compare_Sakk(bilder, durchlauf, Sakk_p_Sakk_grad_max_mean , kontroll_ke
                 end
                 % Extrahiere alle notwendigen Daten
                 clearvars Sakk_parsed pos
-                Sakk_parsed = m.Sakk_parsed;
+                Sakk_parsed = m.Sakk_parsed;         
                 if isempty(Sakk_parsed) == 1; continue; end;
                 try
                     Sakk_max_vel = m.Sakk_max_vel;
@@ -123,13 +133,18 @@ function compare_Sakk(bilder, durchlauf, Sakk_p_Sakk_grad_max_mean , kontroll_ke
                 pos = center_image(Sakk_parsed(:,2), Sakk_parsed(:,3), m.Sakk_amplitude, Sakk_max_vel, m.Sakk_mean_vel, '-', 300, 460);
                 if mod(Sakk_p_Sakk_grad_max_mean, 2) == 1
                     Sakk_amplitude_patient = [Sakk_amplitude_patient ; pos(:,3) ];
+                    if Sakk_p_Sakk_grad_max_mean < 8
+                        Sakk_vel_patient = [Sakk_vel_patient ; pos(:,4)];
+                    else
+                        Sakk_vel_patient = [Sakk_vel_patient ; pos(:,5)];
+                    end
                 else
-                    Sakk_amplitude_patient = [Sakk_amplitude_patient ; pos(:,3) *450/9.8 ];
-                end
-                if Sakk_p_Sakk_grad_max_mean < 8
-                    Sakk_vel_patient = [Sakk_vel_patient ; pos(:,4)];
-                else
-                    Sakk_vel_patient = [Sakk_vel_patient ; pos(:,5)];
+                    Sakk_amplitude_patient = [Sakk_amplitude_patient ; pos(:,3) *9.8/450 ];
+                    if Sakk_p_Sakk_grad_max_mean < 8
+                        Sakk_vel_patient = [Sakk_vel_patient ; pos(:,4) *9.8/450 *1000];
+                    else
+                        Sakk_vel_patient = [Sakk_vel_patient ; pos(:,5) *9.8/450 *1000];
+                    end
                 end
             end
         end
@@ -155,13 +170,18 @@ function compare_Sakk(bilder, durchlauf, Sakk_p_Sakk_grad_max_mean , kontroll_ke
                 pos = center_image(Sakk_parsed(:,2), Sakk_parsed(:,3), m.Sakk_amplitude, Sakk_max_vel, m.Sakk_mean_vel, '-', 300, 460);
                 if mod(Sakk_p_Sakk_grad_max_mean, 2) == 1
                     Sakk_amplitude_patient = [Sakk_amplitude_patient ; pos(:,3) ];
+                    if Sakk_p_Sakk_grad_max_mean < 8
+                        Sakk_vel_patient = [Sakk_vel_patient ; pos(:,4)];
+                    else
+                        Sakk_vel_patient = [Sakk_vel_patient ; pos(:,5)];
+                    end
                 else
-                    Sakk_amplitude_patient = [Sakk_amplitude_patient ; pos(:,3) *450/9.8 ];
-                end
-                if Sakk_p_Sakk_grad_max_mean < 8
-                    Sakk_vel_patient = [Sakk_vel_patient ; pos(:,4)];
-                else
-                    Sakk_vel_patient = [Sakk_vel_patient ; pos(:,5)];
+                    Sakk_amplitude_patient = [Sakk_amplitude_patient ; pos(:,3) *9.8/450 ];
+                    if Sakk_p_Sakk_grad_max_mean < 8
+                        Sakk_vel_patient = [Sakk_vel_patient ; pos(:,4) *9.8/450 *1000];
+                    else
+                        Sakk_vel_patient = [Sakk_vel_patient ; pos(:,5) *9.8/450 *1000];
+                    end
                 end
             end
         end
@@ -181,71 +201,110 @@ function compare_Sakk(bilder, durchlauf, Sakk_p_Sakk_grad_max_mean , kontroll_ke
     y1 = Sakk_vel_control;
     y2 = Sakk_vel_patient;
 
+    % Declare fit type
+    ft = fittype( 'a*x^b+c', 'independent', 'x', 'dependent', 'y' );
+    opts = fitoptions( 'Method', 'NonlinearLeastSquares' );
+    opts.Display = 'Off';
+    opts.MaxIter = 1000;
+    opts.MaxFunEvals = 1000;
+    opts.Lower = [-Inf 0 -Inf];
+    opts.StartPoint = [0 0.5 0];
+    opts.Upper = [Inf 1 Inf];
+
     figure(1)
-    hold on; grid on;
+    hold on; grid on; box on;
+    set(gca,'FontWeight','bold');
     
     z1 = sortrows([x1 y1]);
     z1(:,2) = medfilt1(z1(:,2), 3);
     [~, ia, ~] = unique(z1(:,1));
     z1 = z1(ia,:);
-%     f = fit(z1(:,1), z1(:,2), 'poly3');
-    plot(z1(:,1),z1(:,2), '.b');
-%     plot(f, 'k');
     
     z2 = sortrows([x2 y2]);
     z2(:,2) = medfilt1(z2(:,2), 3);
     [~, ia, ~] = unique(z2(:,1));
-    z2 = z2(ia,:);    
-%     f = fit(z2(:,1), z2(:,2), 'poly3');
-    plot(z2(:,1),z2(:,2), '.r');
-%     plot(f, 'g');%,z2(:,1),z2(:,2));
-    
-    legend({'Kontrollen Daten', 'Patienten Daten'}); 
-%     legend({'Kontrollen Daten', 'Kontrollen Fit', 'Patienten Daten', 'Patienten Fit'}); 
-    
-    if mod(Sakk_p_Sakk_grad_max_mean, 2) == 1
-        xlabel('Sakkaden Amplitude (px)');
-    else
-        xlabel('Sakkaden Amplitude (°)');
-    end
-    if Sakk_p_Sakk_grad_max_mean < 8
-        ylabel('max. Geschwindigkeit (px/ms)');
-    else
-        ylabel('durchschnittl. Geschwindigkeit (px/ms)');
-    end
-    
-    figure(2);
-    hold on; grid on;
-    scatterhist(x1,y1);
-    if mod(Sakk_p_Sakk_grad_max_mean, 2) == 1
-        xlabel('Sakkaden Amplitude (px)');
-    else
-        xlabel('Sakkaden Amplitude (°)');
-    end
-    if Sakk_p_Sakk_grad_max_mean < 8
-        ylabel('max. Geschwindigkeit (px/ms)');
-    else
-        ylabel('durchschnittl. Geschwindigkeit (px/ms)');
-    end
-    legend('Kontrollen');
-%     fit_control = fit(x1, y1, 'poly2');
-%     plot(fit_control, 'g');
+    z2 = z2(ia,:);   
 
-    figure(3)
-    hold on; grid on;
-    scatterhist(x2,y2);
+    plot(z1(:,1),z1(:,2), '.b');
+    plot(z2(:,1),z2(:,2), '.r');
+    
+    try
+    [f, gof, ~] = fit(z1(:,1), z1(:,2), ft, opts);
+    plot(f, 'k');
+    [f, gof2, ~] = fit(z2(:,1), z2(:,2), ft, opts);
+    plot(f, 'g');
+    catch
+        my_message('Fitting chrashed');
+    end
+    
+    legend({'Control Data', 'Patient Data', 'Control Fit', 'Patient Fit'}); 
+    
     if mod(Sakk_p_Sakk_grad_max_mean, 2) == 1
-        xlabel('Sakkaden Amplitude (px)');
+        xlabel('Saccade amplitude (px)');    
+        if Sakk_p_Sakk_grad_max_mean < 8
+            ylabel('Max. velocity (px/ms)');
+        else
+            ylabel('Mean velocity (px/ms)');
+        end
     else
-        xlabel('Sakkaden Amplitude (°)');
+        xlabel('Saccade amplitude (°)');    
+        if Sakk_p_Sakk_grad_max_mean < 8
+            ylabel('Max. velocity (°/s)');
+        else
+            ylabel('Mean velocity (°/s)');
+        end
     end
-    if Sakk_p_Sakk_grad_max_mean < 8
-        ylabel('max. Geschwindigkeit (px/ms)');
-    else
-        ylabel('durchschnittl. Geschwindigkeit (px/ms)');
-    end
-    legend('Patienten');
-%     fit_patient = fit(x2, y2, 'poly2');
-%     plot(fit_patient, 'y');
+    
+    u = uitable('Data', {'a*x^b+c'; gof.rmse; gof2.rmse}, ...
+    'RowName', {'Fittype', 'RMSE Cont.', 'RMSE Pat.'}, ...
+    'ColumnName', 'Data', 'FontName', 'Arial', 'FontSize', 8);
+
+    u.Position(1) = 250;
+    u.Position(2) = 100;
+    u.Position(3) = 188;
+    u.Position(4) = 73;
+    
+%     figure(2);
+%     hold on; grid on; box on;
+%     set(gca,'FontWeight','bold');
+%     scatterhist(x1,y1);
+%     if mod(Sakk_p_Sakk_grad_max_mean, 2) == 1
+%         xlabel('Sakkaden Amplitude (px)');    
+%         if Sakk_p_Sakk_grad_max_mean < 8
+%             ylabel('max. Geschwindigkeit (px/ms)');
+%         else
+%             ylabel('durchschnittl. Geschwindigkeit (px/ms)');
+%         end
+%     else
+%         xlabel('Sakkaden Amplitude (°)');    
+%         if Sakk_p_Sakk_grad_max_mean < 8
+%             ylabel('max. Geschwindigkeit (°/s)');
+%         else
+%             ylabel('durchschnittl. Geschwindigkeit (°/s)');
+%         end
+%     end
+%     legend('Kontrollen');
+% 
+%     figure(3)
+%     hold on; grid on; box on;
+%     set(gca,'FontWeight','bold');
+%     scatterhist(x2,y2);
+%     if mod(Sakk_p_Sakk_grad_max_mean, 2) == 1
+%         xlabel('Sakkaden Amplitude (px)');    
+%         if Sakk_p_Sakk_grad_max_mean < 8
+%             ylabel('max. Geschwindigkeit (px/ms)');
+%         else
+%             ylabel('durchschnittl. Geschwindigkeit (px/ms)');
+%         end
+%     else
+%         xlabel('Sakkaden Amplitude (°)');    
+%         if Sakk_p_Sakk_grad_max_mean < 8
+%             ylabel('max. Geschwindigkeit (°/s)');
+%         else
+%             ylabel('durchschnittl. Geschwindigkeit (°/s)');
+%         end
+%     end
+% 
+%     legend('Patienten');
     
 end

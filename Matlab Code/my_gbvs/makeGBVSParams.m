@@ -40,10 +40,11 @@ p.channels = 'DIO';               % feature channels to use encoded as a string
                                   %   R is for contRast
                                   %   F is for Flicker
                                   %   M is for Motion
-                                  %   H is for Dist to Harris edges
-                                  %   S is for saturation
+                                  %   H is for Distance to Harris edges
+                                  %   S is for Saturation
                                   %   A is for AOI top-down channel
                                   %   K is for Itti % Koch saliency model
+                                  %   B Is for Distance to FAST features
                                   %   D is for DKL Color (Derrington Krauskopf Lennie) ==
                                   %     much better than C channel
                                   % e.g., 'IR' would be only intensity and
@@ -61,6 +62,7 @@ p.dklcolorWeight = 1;
 p.harrisWeight = 1;
 p.saturationWeight  = 1;
 p.AOIWeight = 1;
+p.fastWeight = 1;
 p.ittikochWeight = 1;
 
 p.gaborangles = [ 0 45 90 135 ];  % angles of gabor filters

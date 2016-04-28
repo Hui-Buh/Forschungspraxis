@@ -32,11 +32,9 @@ Nt = 255;
 p = zeros(Nt,2);
 Ntrues = 0;
 Nfalses = 0;
-TP = zeros(255,1);
-FP = zeros(255,1);
-
+TP = zeros(Nt,1);
+FP = zeros(Nt,1);
 for a = 1:size(salmap,1)
-    
     % limit to 256 unique values
     saliency_map_cotrol = mat2gray(salmap{a,1});
     saliency_map_patient = mat2gray(salmap{a,2});
@@ -62,7 +60,7 @@ for a = 1:size(salmap,1)
         FP(ti) = FP(ti) + sum( FPm(:) );
     end
 end
- 
+
 tpr = TP / Ntrues;
 fpr = FP / Nfalses;
 p = [ tpr fpr ];

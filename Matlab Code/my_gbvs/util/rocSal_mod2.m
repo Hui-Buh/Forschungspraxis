@@ -31,6 +31,7 @@ function [p, a] = rocSal_mod2( salmap , mask )
 %  only above threshold location, the TPR is 90%, and the FPR is 0%
 %
 
+
 % limit to 256 unique values
 salmap = mat2gray(salmap);
 if ( strcmp(class(salmap),'double') )
@@ -49,7 +50,6 @@ Ntrues = sum(mask(:));
 falses = (mask==0);
 Nfalses = sum( falses(:) );
 if ( Nfalses == 0 ) Nfalses = 1e-6; end
-
 for ti = 1 : Nt   
 
     T = t(ti);    

@@ -120,6 +120,9 @@ for ci = 1 : length(channel_files)
                     map = channelfunc(param,imgL{lev},imgR{lev},imgG{lev},imgB{lev},ti);
                 end    
                 obj.maps.origval{ti}{lev} = map.map;
+                if isempty(map.map) == 1
+                    pause(1);
+                end
                 map = imresize( map.map , param.salmapsize , 'bicubic' );
                 obj.maps.val{ti}{lev} = map;
             end

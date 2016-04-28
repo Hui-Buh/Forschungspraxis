@@ -147,45 +147,45 @@ function Compute_ecdf( bilder, durchlauf, Sakka_Sakkd_Fix, kontroll_kennung, pat
     
     if Sakka_Sakkd_Fix == 0 
         subplot(1,2,1)
-        legend('Sacc. amp. Control (px)', 'Sacc. amp. Patients (px)', 'location', 'southeast');
-        legend('Sacc. amp. Control (px)', 'Sacc. amp. Patients (px)', 'location', 'southeast');
+        legend('Sacc. amp. Controls (px)', 'Sacc. amp. Patients (px)', 'location', 'southeast');
+        legend('Sacc. amp. Controls (px)', 'Sacc. amp. Patients (px)', 'location', 'southeast');
         subplot(1,2,2)
-        legend('Sacc. amp. Control (px)', 'Sacc. amp. Patients (px)', 'location', 'southeast');
-        legend('Sacc. amp. Control (px)', 'Sacc. amp. Patients (px)', 'location', 'southeast');
+        legend('Sacc. amp. Controls (px)', 'Sacc. amp. Patients (px)', 'location', 'southeast');
+        legend('Sacc. amp. Controls (px)', 'Sacc. amp. Patients (px)', 'location', 'southeast');
         xlim([0 200]);
     elseif Sakka_Sakkd_Fix == 1
         subplot(1,2,1)
-        legend('Sacc. amp. Control (°)', 'Sacc. amp. Patients (°)', 'location', 'southeast');
-        legend('Sacc. amp. Control (°)', 'Sacc. amp. Patients (°)', 'location', 'southeast');
+        legend('Sacc. amp. Controls (°)', 'Sacc. amp. Patients (°)', 'location', 'southeast');
+        legend('Sacc. amp. Controls (°)', 'Sacc. amp. Patients (°)', 'location', 'southeast');
         subplot(1,2,2)
-        legend('Sacc. amp. Control (°)', 'Sacc. amp. Patients (°)', 'location', 'southeast');
-        legend('Sacc. amp. Control (°)', 'Sacc. amp. Patients (°)', 'location', 'southeast');
+        legend('Sacc. amp. Controls (°)', 'Sacc. amp. Patients (°)', 'location', 'southeast');
+        legend('Sacc. amp. Controls (°)', 'Sacc. amp. Patients (°)', 'location', 'southeast');
         xlim([0 5]);
     elseif Sakka_Sakkd_Fix == 2
         subplot(1,2,1)
-        legend('Sacc. duration Control (ms)', 'Sacc. duration Patients (ms)', 'location', 'southeast');
-        legend('Sacc. duration Control (ms)', 'Sacc. duration Patients (ms)', 'location', 'southeast');
+        legend('Sacc. duration Controls (ms)', 'Sacc. duration Patients (ms)', 'location', 'southeast');
+        legend('Sacc. duration Controls (ms)', 'Sacc. duration Patients (ms)', 'location', 'southeast');
         subplot(1,2,2)
-        legend('Sacc. duration Control (ms)', 'Sacc. duration Patients (ms)', 'location', 'southeast');
-        legend('Sacc. duration Control (ms)', 'Sacc. duration Patients (ms)', 'location', 'southeast');
+        legend('Sacc. duration Controls (ms)', 'Sacc. duration Patients (ms)', 'location', 'southeast');
+        legend('Sacc. duration Controls (ms)', 'Sacc. duration Patients (ms)', 'location', 'southeast');
         xlim([0 100]);
     elseif Sakka_Sakkd_Fix == 3
         subplot(1,2,1)
-        legend('Fix. duration Control (ms)', 'Fix. duration Patients (ms)', 'location', 'southeast');
-        legend('Fix. duration Control (ms)', 'Fix. duration Patients (ms)', 'location', 'southeast');
+        legend('Fix. duration Controls (ms)', 'Fix. duration Patients (ms)', 'location', 'southeast');
+        legend('Fix. duration Controls (ms)', 'Fix. duration Patients (ms)', 'location', 'southeast');
         subplot(1,2,2)
-        legend('Fix. duration Control (ms)', 'Fix. duration Patients (ms)', 'location', 'southeast');
-        legend('Fix. duration Control (ms)', 'Fix. duration Patients (ms)', 'location', 'southeast');
+        legend('Fix. duration Controls (ms)', 'Fix. duration Patients (ms)', 'location', 'southeast');
+        legend('Fix. duration Controls (ms)', 'Fix. duration Patients (ms)', 'location', 'southeast');
         xlim([0 1000]);
     end
     
     u = uitable('Data', [kstest_reject; p; max_vert_abstand; data_mean(1); data_mean(2); data_median(1); data_median(2)], ...
-    'RowName', {'reject h_0', 'p-Wert', 'max. vert. Abst.', 'Mean Kontrollen', 'Mean Patienten', 'Median Kontrollen', 'Median Patienten'}, ...
-    'ColumnName', 'Daten', 'FontName', 'Arial', 'FontSize', 8);
+    'RowName', {'reject h_0', 'p-value', 'max. vert. dist.', 'Mean Control', 'Mean Patient', 'Median Control', 'Median Patient'}, ...
+    'ColumnName', 'Data', 'FontName', 'Arial', 'FontSize', 8);
 
     u.Position(1) = 180;
     u.Position(2) = 120;
-    u.Position(3) = 265;
+    u.Position(3) = 254;
     u.Position(4) = 141;
 
 end

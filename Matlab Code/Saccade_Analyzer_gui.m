@@ -80,7 +80,9 @@ varargout{1} = handles.output;
 function get_parameters(hObject, eventdata, handles)
 my_message('Get parameters',0)
 global bilder durchlauf kontroll_kennung patient_kennung data_path image_path Sakka_Sakkd_Fix Sakk_p_Sakk_grad_mean_max Sakkpx_Sakkgrad closeall sakkaden_laenge saliency vel_acc
+bilder = 0;
 bilder = get(handles.checkbox1,'Value')*8 + get(handles.checkbox2,'Value')*4 + get(handles.checkbox3,'Value')*2 + get(handles.checkbox4,'Value');
+if bilder == 0; bilder = 8; set(handles.checkbox1,'Value', 1); end;
 durchlauf = get(handles.checkbox5,'Value') + get(handles.checkbox6,'Value')*2;
 kontroll_kennung = get(handles.edit3,'String'); 
 patient_kennung = get(handles.edit4,'String'); 
@@ -102,7 +104,7 @@ saliency(8) = get(handles.slider8, 'Value');
 saliency(9) = get(handles.slider9, 'Value');
 saliency(10) = get(handles.slider10, 'Value');
 saliency(11) = get(handles.slider11, 'Value');
-% saliency(12) = get(handles.slider12, 'Value');
+saliency(12) = get(handles.slider12, 'Value');
 vel_acc = get(handles.checkbox8,'Value') + get(handles.checkbox9,'Value')*2;
 
 % --- Executes on button press in pushbutton1.
@@ -244,6 +246,10 @@ elseif get(handles.checkbox13, 'Value') == 1
     if get(handles.checkbox21, 'Value') == 1
         params.saturationWeight = saliency(11);
         params.channels = cat(2, params.channels, 'S');
+    end
+    if get(handles.checkbox22, 'Value') == 1
+        params.fastWeight = saliency(12);
+        params.channels = cat(2, params.channels, 'B');
     end
     if strcmp(params.channels , '') == 1; 
         my_message('Please select some saliency channels',0); 

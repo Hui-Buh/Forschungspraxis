@@ -29,7 +29,7 @@ function evaluate_saliency(bilder, durchlauf, saliency_params, kontroll_kennung,
         saliency_params.imageSize = size(imread(cat(2, image_path, '/', image_list{z,1}, '.jpg')));
         saliency_map(z) = gbvs(image, saliency_params);
         image_size(z,:) = size(saliency_map(z).master_map_resized);
-    end
+    end 
     
     
 %% Alle Daten der Kontrollen heraussuchen
@@ -44,6 +44,7 @@ function evaluate_saliency(bilder, durchlauf, saliency_params, kontroll_kennung,
                 if exist(cat(2, data_path, '/', control_listing{b,1}, '/', control_listing{b,1}, '_', image_list{c,1} , '_1','.mat' ), 'file') > 0
                     m = matfile(cat(2, data_path, '/', control_listing{b,1}, '/', control_listing{b,1}, '_', image_list{c,1} , '_1','.mat' ));
                 else
+                    counter = counter +1;
                     continue
                 end
                 % Extrahiere alle notwendigen Daten
@@ -52,7 +53,7 @@ function evaluate_saliency(bilder, durchlauf, saliency_params, kontroll_kennung,
                 Sakk_pos = center_image(Sakk_parsed(:,5), Sakk_parsed(:,6), '-', '-', '-', '-', image_size(c,2), image_size(c,1));
                 Sakk_pos_control{c,1} = Sakk_pos;
                 map{counter,1} = saliency_map(c).master_map_resized;
-                mask{counter,1} = makeFixationMask( Sakk_pos(:,1) , Sakk_pos(:,2) , size(map{counter}) , size(map{counter}) );
+                mask{counter,1} = makeFixationMask( Sakk_pos(:,1) , Sakk_pos(:,2) , size(map{counter,1}) , size(map{counter,1}) );
 %                 rocSal(map{counter,1}, mask{counter,1})
                 counter = counter +1;
             end
@@ -63,6 +64,7 @@ function evaluate_saliency(bilder, durchlauf, saliency_params, kontroll_kennung,
                 if exist(cat(2, data_path, '/', control_listing{b,1}, '/', control_listing{b,1}, '_', image_list{c,1} , '_2','.mat' ), 'file') > 0
                     m = matfile(cat(2, data_path, '/', control_listing{b,1}, '/', control_listing{b,1}, '_', image_list{c,1} , '_2','.mat' ));
                 else
+                    counter = counter +1;
                     continue
                 end
                 % Extrahiere alle notwendigen Daten
@@ -71,7 +73,7 @@ function evaluate_saliency(bilder, durchlauf, saliency_params, kontroll_kennung,
                 Sakk_pos = center_image(Sakk_parsed(:,5), Sakk_parsed(:,6), '-', '-', '-', '-', image_size(c,2), image_size(c,1));
                 Sakk_pos_control{c,1} = Sakk_pos;
                 map{counter,1} = saliency_map(c).master_map_resized;
-                mask{counter,1} = makeFixationMask( Sakk_pos(:,1) , Sakk_pos(:,2) , size(map{counter}) , size(map{counter}) );
+                mask{counter,1} = makeFixationMask( Sakk_pos(:,1) , Sakk_pos(:,2) , size(map{counter,1}) , size(map{counter,1}) );
 %                 rocSal(map{counter,1}, mask{counter,1})
                 counter = counter +1;
             end
@@ -90,6 +92,7 @@ function evaluate_saliency(bilder, durchlauf, saliency_params, kontroll_kennung,
                 if exist(cat(2, data_path, '/', patient_listing{b,1}, '/', patient_listing{b,1}, '_', image_list{c,1} , '_1','.mat' ), 'file') > 0
                     m = matfile(cat(2, data_path, '/', patient_listing{b,1}, '/', patient_listing{b,1}, '_', image_list{c,1} , '_1','.mat' ));
                 else
+                    counter = counter +1;
                     continue
                 end
                 % Extrahiere alle notwendigen Daten
@@ -98,7 +101,7 @@ function evaluate_saliency(bilder, durchlauf, saliency_params, kontroll_kennung,
                 Sakk_pos = center_image(Sakk_parsed(:,5), Sakk_parsed(:,6), '-', '-', '-', '-', image_size(c,2), image_size(c,1));
                 Sakk_pos_control{c,1} = Sakk_pos;
                 map{counter,2} = saliency_map(c).master_map_resized;
-                mask{counter,2} = makeFixationMask( Sakk_pos(:,1) , Sakk_pos(:,2) , size(map{counter}) , size(map{counter}) );
+                mask{counter,2} = makeFixationMask( Sakk_pos(:,1) , Sakk_pos(:,2) , size(map{counter,2}) , size(map{counter,2}) );
 %                 rocSal(map{counter,2}, mask{counter,2})
                 counter = counter +1;
             end
@@ -109,6 +112,7 @@ function evaluate_saliency(bilder, durchlauf, saliency_params, kontroll_kennung,
                 if exist(cat(2, data_path, '/', patient_listing{b,1}, '/', patient_listing{b,1}, '_', image_list{c,1} , '_2','.mat' ), 'file') > 0
                     m = matfile(cat(2, data_path, '/', patient_listing{b,1}, '/', patient_listing{b,1}, '_', image_list{c,1} , '_2','.mat' ));
                 else
+                    counter = counter +1;
                     continue
                 end
                 % Extrahiere alle notwendigen Daten
@@ -117,7 +121,7 @@ function evaluate_saliency(bilder, durchlauf, saliency_params, kontroll_kennung,
                 Sakk_pos = center_image(Sakk_parsed(:,5), Sakk_parsed(:,6), '-', '-', '-', '-', image_size(c,2), image_size(c,1));
                 Sakk_pos_control{c,1} = Sakk_pos;
                 map{counter,2} = saliency_map(c).master_map_resized;
-                mask{counter,2} = makeFixationMask( Sakk_pos(:,1) , Sakk_pos(:,2) , size(map{counter}) , size(map{counter}) );
+                mask{counter,2} = makeFixationMask( Sakk_pos(:,1) , Sakk_pos(:,2) , size(map{counter,2}) , size(map{counter,2}) );
 %                 rocSal(map{counter,2}, mask{counter,2})
                 counter = counter +1;
             end
@@ -131,25 +135,35 @@ function evaluate_saliency(bilder, durchlauf, saliency_params, kontroll_kennung,
 %     for a =  1:size(mask, 1)
 %         mask{a,1} = mask{a,1}+100*rand;
 %     end
+
+
+mask( all(cellfun(@isempty,map(:,1)),2), : ) = [];
+map( all(cellfun(@isempty,map(:,1)),2), : ) = [];
+mask( all(cellfun(@isempty,map(:,2)),2), : ) = [];
+map( all(cellfun(@isempty,map(:,2)),2), : ) = [];
+
     
     figure(1)
-    hold on; grid on;
+    hold on; grid on; box on;
+    set(gca,'FontWeight','bold');
     [p, area] = rocSal_mod(map, mask);
     plot(p(:,2), p(:,1));
     plot([0 1], [0 1],'k')
     text(0.6, 0.3, cat(2, 'Area under ROC: ', num2str(area) ));
     legend('ROC-curve');
-    title('Classification of patients and control');
+    title('Classification of patients and controls');
     xlabel('False Positive Rate (%)');
     ylabel('True Positive Rate (%)');
     
     h = figure(2);
-    hold on; grid on;
+    hold on; grid on; box on;
+    set(gca,'FontWeight','bold');
     plot([0 1], [0 1],'k')
     subplot(1,2,1)
     plot([0 1], [0 1],'k')
-    hold on; grid on;
-    title('Classification of fixations and non fixations of 1^s^t control');
+    hold on; grid on; box on;
+    set(gca,'FontWeight','bold');
+    title('Classification of fix. and non fix. of some controls');
     xlabel('False Positive Rate (%)');
     ylabel('True Positive Rate (%)');
     for a = 2:5
@@ -158,9 +172,10 @@ function evaluate_saliency(bilder, durchlauf, saliency_params, kontroll_kennung,
     end
     legend('ROC-curve for image 1', 'ROC-curve for image 2', 'ROC-curve for image 3', 'ROC-curve for image 4');
     subplot(1,2,2)
-    hold on; grid on;
+    hold on; grid on; box on;
+    set(gca,'FontWeight','bold');
     plot([0 1], [0 1],'k')
-    title('Classification of fixations and non fixations of 1^s^t patient');
+    title('Classification of fix. and non fix. of some patients');
     xlabel('False Positive Rate (%)');
     ylabel('True Positive Rate (%)');
     RowName = cell(4,1);
@@ -181,7 +196,8 @@ function evaluate_saliency(bilder, durchlauf, saliency_params, kontroll_kennung,
     u.Position(4) = 90;
     
     figure(3)
-    hold on; grid on;
+    hold on; grid on; box on;
+    set(gca,'FontWeight','bold');
     for a = 6:size(mask,1)
         [~, area(a,1)] = rocSal_mod2(map{a,1}, mask{a,1});
         [~, area(a,2)] = rocSal_mod2(map{a,2}, mask{a,2});
@@ -189,9 +205,9 @@ function evaluate_saliency(bilder, durchlauf, saliency_params, kontroll_kennung,
     area(2:end,:) = sort(area(2:end,:));
     plot(1:size(mask, 1)-1, area(2:end,1));
     plot(1:size(mask, 1)-1, area(2:end,2));
-%     histogram(area(2:end,1),100);
-%     histogram(area(2:end,2),100);
-    title('Plot - Area under ROC')
+    difference = (trapz(area(2:end,1)) / trapz(area(2:end,2)) -1)*100;
+    text(10, 0.8, cat(2, 'Control fixations are ', num2str(difference), '% better predictable.'));
+    title('Area under ROC')
     ylabel('area under ROC [0,1]');
     xlabel('#')
     legend('control', 'patient');

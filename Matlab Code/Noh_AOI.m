@@ -116,9 +116,10 @@ function Noh_AOI( bilder, durchlauf, ~, kontroll_kennung, patient_kennung, data_
     if bilder >= 8; image_list_AOI = vertcat(image_list_AOI, faces{2:end}); bilder = bilder -8; end;
     if bilder >= 4; image_list_AOI = vertcat(image_list_AOI, faces_m{2:end}); bilder = bilder -4; end;
     if bilder >= 2; image_list_AOI = vertcat(image_list_AOI, faces_t{2:end}); bilder = bilder -2; end;
-%     if bilder >= 1; image_list_AOI = vertcat(image_list_AOI, kont{2:end}); bilder = bilder -1; end;
     
     figure (1)
+    grid on; box on;
+    set(gca,'FontWeight','bold');
     
     number = [0 0];
     anzahl_control = zeros(4,size(image_list ,1)-1);
@@ -146,7 +147,7 @@ function Noh_AOI( bilder, durchlauf, ~, kontroll_kennung, patient_kennung, data_
         points_control = buf(diag(image(buf(:,2), buf(:,1),1)) < 0 + color_grenzwert & diag(image(buf(:,2), buf(:,1),2)) < 0 + color_grenzwert,:);
         plot(points_control(:,1) , points_control(:,2),'.y' );
         anzahl_control(4,a) = size(points_control,1); % Nase
-        hold off;
+%         hold off;
     end
     anzahl_control = sum(anzahl_control,2);
     
@@ -175,18 +176,23 @@ function Noh_AOI( bilder, durchlauf, ~, kontroll_kennung, patient_kennung, data_
         points_patient = buf(diag(image(buf(:,2), buf(:,1),1)) < 0 + color_grenzwert & diag(image(buf(:,2), buf(:,1),2)) < 0 + color_grenzwert,:);
         plot(points_patient(:,1) , points_patient(:,2),'.y' );
         anzahl_patient(4,a) = size(points_patient,1); % Nase
-        hold off;
+%         hold off;
     end
     anzahl_patient = sum(anzahl_patient,2);
 
     figure(1)
+    hold on; grid on; box on;
+    set(gca,'FontWeight','bold');
     subplot(1,2,1)
-    legend('Kontrollen');
+    hold on; grid on; box on;
+    set(gca,'FontWeight','bold');
+    legend('Controls');
     subplot(1,2,2)
-    legend('Patienten');
+    hold on; grid on; box on;
+    set(gca,'FontWeight','bold');
+    legend('Patients');
     anzahl_control = anzahl_control./number(1)*1000;
     anzahl_patient = anzahl_patient./number(2)*1000;
-%     u = uitable('Data', [anzahl_control./number(1)*1000 anzahl_patient./number(2)*1000 (anzahl_control./number(1)*1000)./(anzahl_patient./number(2)*1000)], ...
     u = uitable('Data', [anzahl_control anzahl_patient anzahl_control./anzahl_patient], ...
     'RowName', {'eye_left', 'eye_right', 'mouth', 'nose'}, ...
     'ColumnName', {'control |[#/1000sacc]' ,'patient |[#/1000sacc]', 'con./pat.'}, 'FontName', 'Arial', 'FontSize', 8);

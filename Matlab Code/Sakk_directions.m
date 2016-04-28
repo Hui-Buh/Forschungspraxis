@@ -116,7 +116,8 @@ function Sakk_directions(bilder, durchlauf, ~ , kontroll_kennung, patient_kennun
 
     h = figure(1);
     h.Position = [100 100 300*1.5 460*1.5];
-    hold on; grid on;
+    hold on; grid on; box on;
+    set(gca,'FontWeight','bold');
 
     coeff_control = pca([Sakk_pos_control(:,3) Sakk_pos_control(:,4)]);
     coeff_patient = pca([Sakk_pos_patient(:,3) Sakk_pos_patient(:,4)]);
@@ -125,10 +126,11 @@ function Sakk_directions(bilder, durchlauf, ~ , kontroll_kennung, patient_kennun
     quiver(Sakk_pos_patient(:,1), Sakk_pos_patient(:,2), Sakk_pos_patient(:,3)*2, Sakk_pos_patient(:,4)*2 );
     quiver([300/2; 300/2], [460/2; 460/2], coeff_control(:,1)*100, coeff_control(:,2)*100, 'k');
     quiver([300/2; 300/2], [460/2; 460/2], coeff_patient(:,1)*100, coeff_patient(:,2)*100, 'g');
-    legend('Sakkaden Richtungen Kontrollen', 'Sakkaden Richtungen Patienten', 'Hauptkomponenten Kontrollen', 'Hauptkomponenten Patienten');
+    legend('Saccade direction controls', 'Saccade direction patients', 'Principal components controls', 'Principal components patients');
     
     figure(2)
-    hold on; grid on;
+    hold on; grid on; box on;
+    set(gca,'FontWeight','bold');
     phi = linspace(0, 2*pi, 53);
     x = sin(phi(1:end-1));
     y = cos(phi(1:end-1));
@@ -164,7 +166,7 @@ function Sakk_directions(bilder, durchlauf, ~ , kontroll_kennung, patient_kennun
     percent_patient(3) = probability_patient(26) + probability_patient(27) + probability_patient(28);
     percent_patient(4) = probability_patient(39) + probability_patient(40) + probability_patient(41);
     plot(kreis(:,1), kreis(:,2), 'r');
-    legend('Kontrollen', 'Patienten');
+    legend('Controls', 'Patients');
     
     ratio(1) = (percent_control(2)+percent_control(4))/(percent_control(1)+percent_control(3));
     ratio(2) = (percent_patient(2)+percent_patient(4))/(percent_patient(1)+percent_patient(3));

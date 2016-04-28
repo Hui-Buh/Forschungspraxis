@@ -8,9 +8,12 @@ if ( nargin == 1 )
   out.descriptions{1} = 'AOI';
 
 else
-    
-    
-    image_AOI = imread(cat(2, fparam.imagePath, fparam.imageName, '_AOI.jpg'));
+    try
+        image_AOI = imread(cat(2, fparam.imagePath, fparam.imageName, '_AOI.jpg'));
+    catch
+        out.map = zeros(size(img,1),size(img,2));
+        return;
+    end
     image_size = fparam.imageSize;
     image_size = image_size(1:2);
     image_AOI = imresize(image_AOI, image_size);
@@ -18,10 +21,6 @@ else
     
     levels =  2 : fparam.maxcomputelevel ;
 
-    
-%     imgR_AOI{1} = mySubsample(image_AOI(:,:,1)); 
-%     imgG_AOI{1} = mySubsample(image_AOI(:,:,2)); 
-%     imgB_AOI{1} = mySubsample(image_AOI(:,:,3));
     [imgr,imgg,imgb,imgi] = mygetrgb( image_AOI );
     imgR_AOI{1} = mySubsample(imgr); imgG_AOI{1} = mySubsample(imgg); imgB_AOI{1} = mySubsample(imgb);
     if size(imgR_AOI{1}) == size(img)
