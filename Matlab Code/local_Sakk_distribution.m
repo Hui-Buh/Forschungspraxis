@@ -35,14 +35,21 @@ my_message('Create Fixation maps',0)
         my_message('Ended badly',0)
         return;
     end
+    
+    % Variablen
+    boot_nr = 1000;
+    image_x = 288;
+    image_y = 456;
+    
      
 %% Fixation map parameters
     downsampling = 1;
-    Fixation_map_control = zeros(456/downsampling, 288/downsampling);
-    Fixation_map_patient = zeros(456/downsampling, 288/downsampling);
+    auswertung = 32;
+    Fixation_map_control = zeros((image_y+auswertung)/downsampling, (image_x+auswertung)/downsampling);
+    Fixation_map_patient = zeros((image_y+auswertung)/downsampling, (image_x+auswertung)/downsampling);
     sigma = [28 0; 0 28];
-    x2 = 1:downsampling:456;
-    x1 = 1:downsampling:288;
+    x2 = 1:auswertung/downsampling+1;
+    x1 = 1:auswertung/downsampling+1;
     [X1,X2] = meshgrid(x1,x2);
     
 
@@ -140,47 +147,74 @@ my_message('Evaluate Data',0)
     pos_patient(1,:) = [];
     pos_control(1,:) = [];
     
-    boot_nr = 100;
     [~, test] = bootstrp(boot_nr, 'mean' ,pos_control(:,1));
     [~, test2] = bootstrp(boot_nr,'mean',pos_patient(:,1));
 
+    leave_one_out_map_control = cell(2,size(anz_sakkpro_control,1)-1);
+    leave_one_out_map_patient = cell(2,size(anz_sakkpro_patient,1)-1);
+    init = zeros((image_y+auswertung)/downsampling,(image_x+auswertung)/downsampling); init = mat2cell(init,(image_y+auswertung)/downsampling,(image_x+auswertung)/downsampling);
+    leave_one_out_map_control(1,:) = init;
+    leave_one_out_map_patient(1,:) = init;
+    F = mvnpdf([X1(:) X2(:)],[floor(mean(x1)) floor(mean(x1))] ,sigma);
+    F  = reshape(F,length(x1),length(x2));
+    pos_control_down = floor(pos_control/downsampling);
+    pos_control_down(pos_control_down==0) = 1;
+    pos_patient_down = floor(pos_patient);
+    pos_patient_down(pos_patient_down==0) = 1;
     for f = 1:boot_nr
 my_message(cat(2,'Evaluate Data ', num2str(f), '/', num2str(boot_nr)),2)
-        for e = 1:size(pos_control,1)
-            mu = [pos_control(test(e,f),1) pos_control(test(e,f),2)];
-            buf = mvnpdf([X1(:) X2(:)],mu ,sigma);
-            F = reshape(buf,length(x2),length(x1));
-            Fixation_map_control = Fixation_map_control + F;
+        for g = 1:size(anz_sakkpro_control)-1
+            for e = (sum(anz_sakkpro_control(1:g))+1):(sum(anz_sakkpro_control(1:g))+anz_sakkpro_control(g+1))
+%                 g
+%                 e
+%                 if g == 18 && e == 19312
+%                     pause(1);
+%                 end;
+                leave_one_out_map_control{1,g}(pos_control_down(e,2):pos_control_down(e,2)+length(x1)-1,pos_control_down(e,1):pos_control_down(e,1)+length(x1)-1) =...
+                leave_one_out_map_control{1,g}(pos_control_down(e,2):pos_control_down(e,2)+length(x1)-1,pos_control_down(e,1):pos_control_down(e,1)+length(x1)-1) + F;
+            end
         end
-        for e = 1:size(pos_patient,1)
-            mu = [pos_patient(test2(e,f),1) pos_patient(test2(e,f),2)];
-            buf = mvnpdf([X1(:) X2(:)],mu ,sigma);
-            F = reshape(buf,length(x2),length(x1));
-            Fixation_map_patient = Fixation_map_patient + F;
+        
+        for g = 1:size(anz_sakkpro_patient)-1
+            for e = (sum(anz_sakkpro_patient(1:g))+1):(sum(anz_sakkpro_patient(1:g))+anz_sakkpro_patient(g+1))
+                leave_one_out_map_patient{1,g}(pos_patient_down(e,2):pos_patient_down(e,2)+length(x1)-1,pos_patient_down(e,1):pos_patient_down(e,1)+length(x1)-1) =...
+                leave_one_out_map_patient{1,g}(pos_patient_down(e,2):pos_patient_down(e,2)+length(x1)-1,pos_patient_down(e,1):pos_patient_down(e,1)+length(x1)-1) + F;
+            end
         end
     end
+    
+    
+    for a = 1:size(leave_one_out_map_control,2)
+        Fixation_map_control = Fixation_map_control+ leave_one_out_map_control{1,a};
+    end
+    for a = 1:size(leave_one_out_map_patient,2)
+        Fixation_map_patient = Fixation_map_patient+ leave_one_out_map_patient{1,a};
+    end
+    Fixation_map_control = Fixation_map_control((mean(x1)-1)/downsampling+1:end-(mean(x1)-1)/downsampling-1,(mean(x1)-1)/downsampling+1:end-(mean(x1)-1)/downsampling-1);
+    Fixation_map_patient = Fixation_map_patient((mean(x1)-1)/downsampling+1:end-(mean(x1)-1)/downsampling-1,(mean(x1)-1)/downsampling+1:end-(mean(x1)-1)/downsampling-1);
+    
     Fixation_map_control = Fixation_map_control./sum(trapz(Fixation_map_control));
     Fixation_map_patient = Fixation_map_patient./sum(trapz(Fixation_map_patient));
         
     figure(1)
     hold on; grid on; box on;
     set(gca,'FontWeight','bold');
-    surf(x1,x2,Fixation_map_control, 'LineStyle', 'none');
+    surf(Fixation_map_control, 'LineStyle', 'none');
     caxis([min(Fixation_map_control(:))-.5*range(Fixation_map_control(:)),max(Fixation_map_control(:))]);
     legend('Fixation map - Control')
     colorbar
-    xlim([0 280])
-    ylim([0 456])
+    xlim([0 image_x])
+    ylim([0 image_y])
 
     figure(2)
     hold on; grid on; box on;
     set(gca,'FontWeight','bold');
-    surf(x1,x2,Fixation_map_patient, 'LineStyle', 'none');
+    surf(Fixation_map_patient, 'LineStyle', 'none');
     caxis([min(Fixation_map_patient(:))-.5*range(Fixation_map_patient(:)),max(Fixation_map_patient(:))]);
     legend('Fixation map - Patient')
     colorbar
-    xlim([0 280])
-    ylim([0 456])
+    xlim([0 image_x])
+    ylim([0 image_y])
     
     figure(3);
     hold on; grid on; box on;
@@ -188,32 +222,32 @@ my_message(cat(2,'Evaluate Data ', num2str(f), '/', num2str(boot_nr)),2)
     difference = (Fixation_map_control - Fixation_map_patient);
     amplitude = max(difference(:)) - min(difference(:));
     difference(difference(:) < (max(difference(:)) - amplitude*0.25) & difference(:) > (min(difference(:)) + amplitude*0.25)) = 0;
-    surf(x1,x2,difference, 'LineStyle', 'none');
+    surf(difference, 'LineStyle', 'none');
     caxis([min(difference(:))-.5*range(difference(:)),max(difference(:))]);
-    legend('Fixation map difference')
+    legend('Fixation map difference (cont. - pat.)')
     colorbar
-    xlim([0 280])
-    ylim([0 456])
+    xlim([0 image_x])
+    ylim([0 image_y])
         
     if as_saliency == 1
 %% leave one out saliency maps control
         % Saliency map von jedem Probanden einzeln
         % Gaußglocke um jeden Fixationspunkt eines Probanden
 my_message('Compute saliency maps control', 0);
-     leave_one_out_map_control = cell(2,size(anz_sakkpro_control,1)-1);
-        for f = 1:size(anz_sakkpro_control)-1
-            leave_one_out_map_control{1,f} = zeros(length(x2),length(x1));
-            for e = (sum(anz_sakkpro_control(1:f))+1):(sum(anz_sakkpro_control(1:f))+anz_sakkpro_control(f+1))
-                mu = [pos_control(e,1) pos_control(e,2)];
-                buf = mvnpdf([X1(:) X2(:)],mu ,sigma);
-                F  = reshape(buf,length(x2),length(x1));
-                leave_one_out_map_control{1,f} = leave_one_out_map_control{1,f} + F;
-            end
-        end
-        % Einzelne Maps normieren
-        for h = 1:size(anz_sakkpro_control,1)-1
-            leave_one_out_map_control{1,h} = leave_one_out_map_control{1,h}./sum(trapz(leave_one_out_map_control{1,h}));
-        end
+%      leave_one_out_map_control = cell(2,size(anz_sakkpro_control,1)-1);
+%         for f = 1:size(anz_sakkpro_control)-1
+%             leave_one_out_map_control{1,f} = zeros(length(x2),length(x1));
+%             for e = (sum(anz_sakkpro_control(1:f))+1):(sum(anz_sakkpro_control(1:f))+anz_sakkpro_control(f+1))
+%                 mu = [pos_control(e,1) pos_control(e,2)];
+%                 buf = mvnpdf([X1(:) X2(:)],mu ,sigma);
+%                 F  = reshape(buf,length(x2),length(x1));
+%                 leave_one_out_map_control{1,f} = leave_one_out_map_control{1,f} + F;
+%             end
+%         end
+%         % Einzelne Maps normieren
+%         for h = 1:size(anz_sakkpro_control,1)-1
+%             leave_one_out_map_control{1,h} = leave_one_out_map_control{1,h}./sum(trapz(leave_one_out_map_control{1,h}));
+%         end
         anz_sakkpro_control(1) = [];
         
         if size(anz_sakkpro_control,1) >1;
@@ -246,20 +280,20 @@ my_message('Compute saliency maps control', 0);
         % Saliency map von jedem Probanden einzeln
         % Gaußglocke um jeden Fixationspunkt eines Probanden
 my_message('Compute saliency maps patient', 0);
-        leave_one_out_map_patient = cell(2,size(anz_sakkpro_patient,1)-1);
-        for f = 1:size(anz_sakkpro_patient)-1
-            leave_one_out_map_patient{1,f} = zeros(length(x2),length(x1));
-            for e = (sum(anz_sakkpro_patient(1:f))+1):(sum(anz_sakkpro_patient(1:f))+anz_sakkpro_patient(f+1))
-                mu = [pos_patient(e,1) pos_patient(e,2)];
-                buf = mvnpdf([X1(:) X2(:)],mu ,sigma);
-                F  = reshape(buf,length(x2),length(x1));
-                leave_one_out_map_patient{1,f} = leave_one_out_map_patient{1,f} + F;
-            end
-        end
-        % Einzelne Maps normieren
-        for h = 1:size(anz_sakkpro_patient,1)-1
-            leave_one_out_map_patient{1,h} = leave_one_out_map_patient{1,h}./sum(trapz(leave_one_out_map_patient{1,h}));
-        end
+%         leave_one_out_map_patient = cell(2,size(anz_sakkpro_patient,1)-1);
+%         for f = 1:size(anz_sakkpro_patient)-1
+%             leave_one_out_map_patient{1,f} = zeros(length(x2),length(x1));
+%             for e = (sum(anz_sakkpro_patient(1:f))+1):(sum(anz_sakkpro_patient(1:f))+anz_sakkpro_patient(f+1))
+%                 mu = [pos_patient(e,1) pos_patient(e,2)];
+%                 buf = mvnpdf([X1(:) X2(:)],mu ,sigma);
+%                 F  = reshape(buf,length(x2),length(x1));
+%                 leave_one_out_map_patient{1,f} = leave_one_out_map_patient{1,f} + F;
+%             end
+%         end
+%         % Einzelne Maps normieren
+%         for h = 1:size(anz_sakkpro_patient,1)-1
+%             leave_one_out_map_patient{1,h} = leave_one_out_map_patient{1,h}./sum(trapz(leave_one_out_map_patient{1,h}));
+%         end
         anz_sakkpro_patient(1) = [];
         
         if size(anz_sakkpro_patient,1) >1;
