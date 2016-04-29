@@ -7,7 +7,7 @@
 
 
 function Sakk_directions(bilder, durchlauf, ~ , kontroll_kennung, patient_kennung, data_path, image_path)
-    my_message('Evaluate saccade directions',0)
+my_message('Evaluate saccade directions',0)
     
     [faces, faces_m, faces_t, kont] =  Separate_test_images(image_path);
 
@@ -20,12 +20,29 @@ function Sakk_directions(bilder, durchlauf, ~ , kontroll_kennung, patient_kennun
     if bilder >= 2; image_list = vertcat(image_list, faces_t{2:end}); bilder = bilder -2; end;
     if bilder >= 1; image_list = vertcat(image_list, kont{2:end}); bilder = bilder -1; end;
     
+    if size(image_list,1) == 1
+        my_message('No matching images found',0)
+        my_message('Ended badly',0)
+        return;
+    end
+    if size(control_listing,1) == 1
+        my_message(cat(2,'No control with ID ', kontroll_kennung, ' found'),0)
+        my_message('Ended badly',0)
+        return;
+    end
+    if size(patient_listing,1) == 1
+        my_message(cat(2,'No patient with ID ', patient_kennung, ' found'),0)
+        my_message('Ended badly',0)
+        return;
+    end
+    
 %% Alle Daten der Kontrollen heraussuchen
-    my_message('Extract control data',0)
+my_message('Extract control data',0)
 
     Sakk_pos_control = zeros(1,4);
     
     for b = 2:size(control_listing,1)
+my_message(cat(2,'Extract control data ', num2str(b), '/', num2str(size(control_listing,1))),2)
         if durchlauf == 1 || durchlauf == 3
             for c = 2:size(image_list,1)
                 % Open .mat file
@@ -65,11 +82,12 @@ function Sakk_directions(bilder, durchlauf, ~ , kontroll_kennung, patient_kennun
     end
 
 %% Alle Daten der Patienten heraussuchen
-    my_message('Extract patient data',0)
+my_message('Extract patient data',0)
 
     Sakk_pos_patient = zeros(1,4);
     
     for b = 2:size(patient_listing,1)
+my_message(cat(2,'Extract patient data ', num2str(b), '/', num2str(size(patient_listing,1))),2)
         if durchlauf == 1 || durchlauf == 3
             for c = 2:size(image_list,1)
                 % Open .mat file
@@ -137,7 +155,8 @@ function Sakk_directions(bilder, durchlauf, ~ , kontroll_kennung, patient_kennun
     kreis = [x' y'];
     einheitskreis = kreis;
     for f = 1:size(Sakk_pos_control,1)
-        buf = (x + Sakk_pos_control(f,3)).^2  + (y + Sakk_pos_control(f,4)).^2;
+ my_message(cat(2,'Evaluate Data ', num2str(f), '/', num2str(size(Sakk_pos_control,1)+size(Sakk_pos_patient,1))),2)
+       buf = (x + Sakk_pos_control(f,3)).^2  + (y + Sakk_pos_control(f,4)).^2;
         [~, buf1] = max(buf);
         kreis(buf1,:) = kreis(buf1,:) + einheitskreis(buf1,:);
     end
@@ -153,7 +172,9 @@ function Sakk_directions(bilder, durchlauf, ~ , kontroll_kennung, patient_kennun
     
     kreis = [x' y'];
     einheitskreis = kreis;
+    tmp=f;
     for f = 1:size(Sakk_pos_patient,1)
+ my_message(cat(2,'Evaluate Data ', num2str(f+tmp), '/', num2str(size(Sakk_pos_control,1)+size(Sakk_pos_patient,1))),2)
         buf = (x + Sakk_pos_patient(f,3)).^2  + (y + Sakk_pos_patient(f,4)).^2;
         [~, buf1] = max(buf);
         kreis(buf1,:) = kreis(buf1,:) + einheitskreis(buf1,:);

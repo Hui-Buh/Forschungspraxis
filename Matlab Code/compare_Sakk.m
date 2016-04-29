@@ -8,7 +8,7 @@
 
 
 function compare_Sakk(bilder, durchlauf, Sakk_p_Sakk_grad_max_mean , kontroll_kennung, patient_kennung, data_path, image_path)
-    my_message('Compare saccades',0)
+my_message('Compare saccades',0)
 
     [faces, faces_m, faces_t, kont] =  Separate_test_images(image_path);
 
@@ -20,14 +20,31 @@ function compare_Sakk(bilder, durchlauf, Sakk_p_Sakk_grad_max_mean , kontroll_ke
     if bilder >= 4; image_list = vertcat(image_list, faces_m{2:end}); bilder = bilder -4; end;
     if bilder >= 2; image_list = vertcat(image_list, faces_t{2:end}); bilder = bilder -2; end;
     if bilder >= 1; image_list = vertcat(image_list, kont{2:end}); bilder = bilder -1; end;
-  
+    
+    if size(image_list,1) == 1
+        my_message('No matching images found',0)
+        my_message('Ended badly',0)
+        return;
+    end
+    if size(control_listing,1) == 1
+        my_message(cat(2,'No control with ID ', kontroll_kennung, ' found'),0)
+        my_message('Ended badly',0)
+        return;
+    end
+    if size(patient_listing,1) == 1
+        my_message(cat(2,'No patient with ID ', patient_kennung, ' found'),0)
+        my_message('Ended badly',0)
+        return;
+    end
+    
 %% Alle Daten der Kontrollen heraussuchen
-    my_message('Extract control data',0)
+my_message('Extract control data',0)
     
     Sakk_amplitude_control = 0;
     Sakk_vel_control = 0;
     
     for b = 2:size(control_listing,1)
+my_message(cat(2,'Extract control data ', num2str(b), '/', num2str(size(control_listing,1))),2)
         if durchlauf == 1 || durchlauf == 3
             for c = 2:size(image_list,1)
                 % Open .mat file
@@ -111,6 +128,7 @@ function compare_Sakk(bilder, durchlauf, Sakk_p_Sakk_grad_max_mean , kontroll_ke
     Sakk_vel_patient = 0;
     
     for b = 2:size(patient_listing,1)
+my_message(cat(2,'Extract patient data ', num2str(b), '/', num2str(size(patient_listing,1))),2)
         if durchlauf == 1 || durchlauf == 3
             for c = 2:size(image_list,1)
                 % Open .mat file

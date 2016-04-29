@@ -6,7 +6,7 @@
 % image_path = absolute or relative path of the folder containing all images
 
 function Noh_AOI( bilder, durchlauf, ~, kontroll_kennung, patient_kennung, data_path, image_path)
-    my_message('Evaluate AOI images',0)
+my_message('Evaluate AOI images',0)
     
     if bilder == 1
         my_message('No AOI imagages available',0);
@@ -25,15 +25,33 @@ function Noh_AOI( bilder, durchlauf, ~, kontroll_kennung, patient_kennung, data_
     if bilder >= 4; image_list = vertcat(image_list, faces_m{2:end}); bilder = bilder -4; end;
     if bilder >= 2; image_list = vertcat(image_list, faces_t{2:end}); bilder = bilder -2; end;
     
+    
+    if size(image_list,1) == 1
+        my_message('No matching images found',0)
+        my_message('Ended badly',0)
+        return;
+    end
+    if size(control_listing,1) == 1
+        my_message(cat(2,'No control with ID ', kontroll_kennung, ' found'),0)
+        my_message('Ended badly',0)
+        return;
+    end
+    if size(patient_listing,1) == 1
+        my_message(cat(2,'No patient with ID ', patient_kennung, ' found'),0)
+        my_message('Ended badly',0)
+        return;
+    end
+    
     % Variablen
     color_grenzwert = 20;
 
 %% Alle Daten der Kontrollen heraussuchen
-    my_message('Extract control data',0)
+my_message('Extract control data',0)
 
     Sakk_pos_control = cell(size(image_list,1)-1,1);
     
     for b = 2:size(control_listing,1)
+my_message(cat(2,'Extract control data ', num2str(b), '/', num2str(size(control_listing,1))),2)
         if durchlauf == 1 || durchlauf == 3
             for c = 2:size(image_list,1)
                 % Open .mat file
@@ -67,11 +85,12 @@ function Noh_AOI( bilder, durchlauf, ~, kontroll_kennung, patient_kennung, data_
     end
 
 %% Alle Daten der Patienten heraussuchen
-    my_message('Extract patient data',0)
+my_message('Extract patient data',0)
 
     Sakk_pos_patient = cell(size(image_list,1)-1,1);
     
     for b = 2:size(patient_listing,1)
+my_message(cat(2,'Extract patient data ', num2str(b), '/', num2str(size(patient_listing,1))),2)
         if durchlauf == 1 || durchlauf == 3
             for c = 2:size(image_list,1)
                 % Open .mat file
@@ -124,7 +143,8 @@ function Noh_AOI( bilder, durchlauf, ~, kontroll_kennung, patient_kennung, data_
     number = [0 0];
     anzahl_control = zeros(4,size(image_list ,1)-1);
     for a = 1:size(image_list ,1)-1
-        if find( strcmp( image_list_AOI, cat(2,image_list{a+1}, '_AOI')) == 1) == 0; continue; end;
+ my_message(cat(2,'Evaluate Data ', num2str(a), '/', num2str(size(image_list ,1)*2-2)),2)
+       if find( strcmp( image_list_AOI, cat(2,image_list{a+1}, '_AOI')) == 1) == 0; continue; end;
         buf = cell2mat(Sakk_pos_control(a,1));
         buf = round(buf);
         if size(buf,1) == 0; continue; end;
@@ -152,7 +172,9 @@ function Noh_AOI( bilder, durchlauf, ~, kontroll_kennung, patient_kennung, data_
     anzahl_control = sum(anzahl_control,2);
     
     anzahl_patient = zeros(4,size(image_list ,1)-1);
+    tmp=a;
     for a = 1:size(image_list ,1)-1
+ my_message(cat(2,'Evaluate Data ', num2str(a+tmp), '/', num2str(size(image_list ,1)*2-2)),2)
         if find( strcmp( image_list_AOI, cat(2,image_list{a+1}, '_AOI')) == 1) == 0; continue; end;
         buf = cell2mat(Sakk_pos_patient(a,1));
         buf = round(buf);

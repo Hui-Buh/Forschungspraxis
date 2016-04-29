@@ -22,7 +22,7 @@ function varargout = Saccade_Analyzer_gui(varargin)
 
 % Edit the above text to modify the response to help test_gui
 
-% Last Modified by GUIDE v2.5 22-Apr-2016 13:43:40
+% Last Modified by GUIDE v2.5 29-Apr-2016 11:04:08
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -76,7 +76,7 @@ function varargout = test_gui_OutputFcn(hObject, eventdata, handles)
 % Get default command line output from handles structure
 varargout{1} = handles.output;
 
-
+% Parameteraustausch über globale Variablen
 function get_parameters(hObject, eventdata, handles)
 my_message('Get parameters',0)
 global bilder durchlauf kontroll_kennung patient_kennung data_path image_path Sakka_Sakkd_Fix Sakk_p_Sakk_grad_mean_max Sakkpx_Sakkgrad closeall sakkaden_laenge saliency vel_acc
@@ -179,6 +179,7 @@ global bilder durchlauf kontroll_kennung patient_kennung data_path image_path cl
 my_message('',1)
 get_parameters(hObject, eventdata, handles)
 if closeall == 1; try close Figure 1; close Figure 2; close Figure 3; close Figure 4; catch; end; end;
+set(handles.checkbox4, 'Value', 0);
 Noh_AOI( bilder, durchlauf, '' , kontroll_kennung, patient_kennung, data_path, image_path)
 my_message('Finished interpreting AOI regions',0)
 
@@ -236,11 +237,11 @@ elseif get(handles.checkbox13, 'Value') == 1
         params.channels = cat(2, params.channels, 'O');
     end
     if get(handles.checkbox19, 'Value') == 1
-        params.harrisWeight = saliency(9);
+        params.AOIWeight = saliency(9);
         params.channels = cat(2, params.channels, 'A');
     end
     if get(handles.checkbox20, 'Value') == 1
-        params.AOIWeight = saliency(10);
+        params.harrisWeight = saliency(10);
         params.channels = cat(2, params.channels, 'H');
     end
     if get(handles.checkbox21, 'Value') == 1
@@ -445,7 +446,6 @@ function checkbox22_Callback(hObject, eventdata, handles)
 % hObject    handle to checkbox22 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-
 % Hint: get(hObject,'Value') returns toggle state of checkbox22
 
 

@@ -9,7 +9,7 @@
 
 
 function create_Sakk_profile( bilder, durchlauf, Sakkpx_Sakkgrad, vel_acc, kontroll_kennung, patient_kennung, data_path, image_path, sakkaden_laenge )
-    my_message('Create saccade profile',0)
+my_message('Create saccade profile',0)
     
     sakkaden_laenge = str2num(sakkaden_laenge);
     if isempty(sakkaden_laenge) == 1
@@ -39,12 +39,29 @@ function create_Sakk_profile( bilder, durchlauf, Sakkpx_Sakkgrad, vel_acc, kontr
     if bilder >= 2; image_list = vertcat(image_list, faces_t{2:end}); bilder = bilder -2; end;
     if bilder >= 1; image_list = vertcat(image_list, kont{2:end}); bilder = bilder -1; end;
     
+    if size(image_list,1) == 1
+        my_message('No matching images found',0)
+        my_message('Ended badly',0)
+        return;
+    end
+    if size(control_listing,1) == 1
+        my_message(cat(2,'No control with ID ', kontroll_kennung, ' found'),0)
+        my_message('Ended badly',0)
+        return;
+    end
+    if size(patient_listing,1) == 1
+        my_message(cat(2,'No patient with ID ', patient_kennung, ' found'),0)
+        my_message('Ended badly',0)
+        return;
+    end
+    
 %% Alle Daten der Kontrollen heraussuchen
-    my_message('Extract control data',0)
+my_message('Extract control data',0)
 
     counter = 1;
     
     for b = 2:size(control_listing,1)
+my_message(cat(2,'Extract control data ', num2str(b), '/', num2str(size(control_listing,1))),2)
         if durchlauf == 1 || durchlauf == 3
             for c = 2:size(image_list,1)
                 % Open .mat file
@@ -114,11 +131,12 @@ function create_Sakk_profile( bilder, durchlauf, Sakkpx_Sakkgrad, vel_acc, kontr
     end
 
 %% Alle Daten der Patienten heraussuchen
-    my_message('Extract patient data',0)
+my_message('Extract patient data',0)
 
     counter = 1;
     
     for b = 2:size(patient_listing,1)
+my_message(cat(2,'Extract patient data ', num2str(b), '/', num2str(size(patient_listing,1))),2)
         if durchlauf == 1 || durchlauf == 3
             for c = 2:size(image_list,1)
                 % Open .mat file
@@ -195,6 +213,7 @@ function create_Sakk_profile( bilder, durchlauf, Sakkpx_Sakkgrad, vel_acc, kontr
     acc_c = zeros((sakkaden_laenge-2)/2,1);
     
     for a = 1:size(sakkade_control,2) % alle Bilder aller Patienten durchlaufen     - Kontrollen
+my_message(cat(2,'Evaluate Data ', num2str(a), '/', num2str(size(sakkade_control,2)+size(sakkade_patient,2))),2)
         for b = 1:size(sakkade_control,1) % Alle Sakkaden in einem Bild durchlaufen - Kontrollen
             clearvars sakk diff_ vel
             sakk = sakkade_control(b,a);
@@ -221,8 +240,9 @@ function create_Sakk_profile( bilder, durchlauf, Sakkpx_Sakkgrad, vel_acc, kontr
     time_p = (0:2:(sakkaden_laenge-4))';
     vel_p = zeros((sakkaden_laenge-2)/2,1);
     acc_p = zeros((sakkaden_laenge-2)/2,1);
-    
+    tmp = a;
     for a = 1:size(sakkade_patient,2) % alle Bilder aller Patienten durchlaufen     - Patienten
+my_message(cat(2,'Evaluate Data ', num2str(tmp+a), '/', num2str(size(sakkade_control,2)+size(sakkade_patient,2))),2)
         for b = 1:size(sakkade_patient,1) % Alle Sakkaden in einem Bild durchlaufen - Patienten
             clearvars sakk diff_ vel
             sakk = sakkade_patient(b,a);

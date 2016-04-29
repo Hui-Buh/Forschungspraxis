@@ -35,6 +35,8 @@ Nfalses = 0;
 TP = zeros(Nt,1);
 FP = zeros(Nt,1);
 for a = 1:size(salmap,1)
+my_message(cat(2,'Evaluate data 1: ', num2str(a), '/', num2str(size(salmap,1))),2)
+
     % limit to 256 unique values
     saliency_map_cotrol = mat2gray(salmap{a,1});
     saliency_map_patient = mat2gray(salmap{a,2});

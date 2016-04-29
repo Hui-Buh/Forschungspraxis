@@ -8,7 +8,7 @@
 
 
 function evaluate_saliency(bilder, durchlauf, saliency_params, kontroll_kennung, patient_kennung, data_path, image_path)
-    my_message('Evaluate saliencies',0)
+my_message('Evaluate saliencies',0)
 
     [faces, faces_m, faces_t, kont] =  Separate_test_images(image_path);
 
@@ -21,6 +21,22 @@ function evaluate_saliency(bilder, durchlauf, saliency_params, kontroll_kennung,
     if bilder >= 2; image_list = vertcat(image_list, faces_t{2:end}); bilder = bilder -2; end;
     if bilder >= 1; image_list = vertcat(image_list, kont{2:end}); bilder = bilder -1; end;
     
+    if size(image_list,1) == 1
+        my_message('No matching images found',0)
+        my_message('Ended badly',0)
+        return;
+    end
+    if size(control_listing,1) == 1
+        my_message(cat(2,'No control with ID ', kontroll_kennung, ' found'),0)
+        my_message('Ended badly',0)
+        return;
+    end
+    if size(patient_listing,1) == 1
+        my_message(cat(2,'No patient with ID ', patient_kennung, ' found'),0)
+        my_message('Ended badly',0)
+        return;
+    end
+    
     % Erstelle Saliancy maps für alle Bilder
     for z = 2:size(image_list,1)
         image = cat(2, image_path, '/', image_list{z,1}, '.jpg');
@@ -31,13 +47,13 @@ function evaluate_saliency(bilder, durchlauf, saliency_params, kontroll_kennung,
         image_size(z,:) = size(saliency_map(z).master_map_resized);
     end 
     
-    
 %% Alle Daten der Kontrollen heraussuchen
-    my_message('Extract control data',0)
+my_message('Extract control data',0)
 
     counter = 1;
 
     for b = 2:size(control_listing,1)
+my_message(cat(2,'Extract control data ', num2str(b), '/', num2str(size(control_listing,1))),2)
         if durchlauf == 1 || durchlauf == 3
             for c = 2:size(image_list,1)
                 % Open .mat file
@@ -81,11 +97,12 @@ function evaluate_saliency(bilder, durchlauf, saliency_params, kontroll_kennung,
     end
 
 %% Alle Daten der Patienten heraussuchen
-    my_message('Extract patient data',0)
+my_message('Extract patient data',0)
 
     counter = 1;
 
     for b = 2:size(patient_listing,1)
+my_message(cat(2,'Extract patient data ', num2str(b), '/', num2str(size(patient_listing,1))),2)
         if durchlauf == 1 || durchlauf == 3
             for c = 2:size(image_list,1)
                 % Open .mat file
@@ -129,7 +146,7 @@ function evaluate_saliency(bilder, durchlauf, saliency_params, kontroll_kennung,
     end
 
 %% Auswertung
-    my_message('Evaluate Data',0)
+    my_message('Evaluate Data 1:',0)
     
 %     Sanity check
 %     for a =  1:size(mask, 1)
@@ -158,6 +175,7 @@ map( all(cellfun(@isempty,map(:,2)),2), : ) = [];
     h = figure(2);
     hold on; grid on; box on;
     set(gca,'FontWeight','bold');
+my_message('Evaluate Data 2:',0)
     plot([0 1], [0 1],'k')
     subplot(1,2,1)
     plot([0 1], [0 1],'k')
@@ -167,6 +185,7 @@ map( all(cellfun(@isempty,map(:,2)),2), : ) = [];
     xlabel('False Positive Rate (%)');
     ylabel('True Positive Rate (%)');
     for a = 2:5
+my_message(cat(2,'Evaluate data 2: ', num2str(a), '/', num2str(size(mask,1)+10)),2)
         [p, area(a,1)] = rocSal_mod2(map{a,1}, mask{a,1});
         plot(p(:,2), p(:,1));
     end
@@ -179,10 +198,11 @@ map( all(cellfun(@isempty,map(:,2)),2), : ) = [];
     xlabel('False Positive Rate (%)');
     ylabel('True Positive Rate (%)');
     RowName = cell(4,1);
-    for a = 2:5
-        [p, area(a,2)] = rocSal_mod2(map{a,2}, mask{a,2});
+    for c = 2:5
+my_message(cat(2,'Evaluate data 2: ', num2str(a+c), '/', num2str(size(mask,1)+10)),2)
+        [p, area(c,2)] = rocSal_mod2(map{c,2}, mask{c,2});
         plot(p(:,2), p(:,1));
-        RowName{a-1,1} = cat(2, 'image ', num2str(a-1));
+        RowName{c-1,1} = cat(2, 'image ', num2str(c-1));
     end
     legend('ROC-curve for image 1', 'ROC-curve for image 2', 'ROC-curve for image 3', 'ROC-curve for image 4');
     
@@ -198,9 +218,10 @@ map( all(cellfun(@isempty,map(:,2)),2), : ) = [];
     figure(3)
     hold on; grid on; box on;
     set(gca,'FontWeight','bold');
-    for a = 6:size(mask,1)
-        [~, area(a,1)] = rocSal_mod2(map{a,1}, mask{a,1});
-        [~, area(a,2)] = rocSal_mod2(map{a,2}, mask{a,2});
+    for b = 6:size(mask,1)
+my_message(cat(2,'Evaluate data 2: ', num2str(a+b+c), '/', num2str(size(mask,1)+10)),2)
+        [~, area(b,1)] = rocSal_mod2(map{b,1}, mask{b,1});
+        [~, area(b,2)] = rocSal_mod2(map{b,2}, mask{b,2});
     end
     area(2:end,:) = sort(area(2:end,:));
     plot(1:size(mask, 1)-1, area(2:end,1));
