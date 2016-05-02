@@ -27,7 +27,7 @@ README = 'Sakk_dauer (ms); Fix_dauer (ms); Sakk_amplitude (px bez. auf image_siz
                     index = find(strcmp(table, 'saccades'),1);
                     if isempty(index) == 1
                         my_message( dir_entries(b,1).name, 0); 
-                        my_message( 'Keyword "saccades" not found in', 0); 
+                        my_message( 'Keyword "saccades" not found', 0); 
                         my_message( 'Ended badly', 0); 
                         return; 
                     end

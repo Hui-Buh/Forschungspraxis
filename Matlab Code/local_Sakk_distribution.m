@@ -37,7 +37,7 @@ my_message('Create Fixation maps',0)
     end
     
     % Variablen
-    boot_nr = 1000;
+    boot_nr = 1;
     image_x = 288;
     image_y = 456;
     
@@ -199,35 +199,47 @@ my_message(cat(2,'Evaluate Data ', num2str(f), '/', num2str(boot_nr)),2)
     figure(1)
     hold on; grid on; box on;
     set(gca,'FontWeight','bold');
-    surf(Fixation_map_control, 'LineStyle', 'none');
+    surf(Fixation_map_control, 'LineStyle', 'none', 'FaceAlpha', 0.3);
     caxis([min(Fixation_map_control(:))-.5*range(Fixation_map_control(:)),max(Fixation_map_control(:))]);
     legend('Fixation map - Control')
     colorbar
     xlim([0 image_x])
     ylim([0 image_y])
+    if size(image_list,1) == 2
+        image = imread(cat(2, image_path, '/', cat(2,image_list{2}, '.jpg')));
+        imshow(image);
+    end
 
     figure(2)
     hold on; grid on; box on;
     set(gca,'FontWeight','bold');
-    surf(Fixation_map_patient, 'LineStyle', 'none');
+    surf(Fixation_map_patient, 'LineStyle', 'none', 'FaceAlpha', 0.3);
     caxis([min(Fixation_map_patient(:))-.5*range(Fixation_map_patient(:)),max(Fixation_map_patient(:))]);
     legend('Fixation map - Patient')
     colorbar
     xlim([0 image_x])
     ylim([0 image_y])
+    if size(image_list,1) == 2
+        image = imread(cat(2, image_path, '/', cat(2,image_list{2}, '.jpg')));
+        imshow(image);
+    end
     
     figure(3);
-    hold on; grid on; box on;
+    hold on; grid on; box on;    
     set(gca,'FontWeight','bold');
     difference = (Fixation_map_control - Fixation_map_patient);
     amplitude = max(difference(:)) - min(difference(:));
     difference(difference(:) < (max(difference(:)) - amplitude*0.25) & difference(:) > (min(difference(:)) + amplitude*0.25)) = 0;
-    surf(difference, 'LineStyle', 'none');
+    surf(difference, 'LineStyle', 'none', 'FaceAlpha', 0.3);
     caxis([min(difference(:))-.5*range(difference(:)),max(difference(:))]);
     legend('Fixation map difference (cont. - pat.)')
     colorbar
     xlim([0 image_x])
     ylim([0 image_y])
+    if size(image_list,1) == 2
+        image = imread(cat(2, image_path, '/', cat(2,image_list{2}, '.jpg')));
+        imshow(image);
+    end
         
     if as_saliency == 1
 %% leave one out saliency maps control

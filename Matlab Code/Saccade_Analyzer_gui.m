@@ -22,7 +22,7 @@ function varargout = Saccade_Analyzer_gui(varargin)
 
 % Edit the above text to modify the response to help test_gui
 
-% Last Modified by GUIDE v2.5 29-Apr-2016 11:04:08
+% Last Modified by GUIDE v2.5 02-May-2016 13:27:24
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -83,7 +83,7 @@ global bilder durchlauf kontroll_kennung patient_kennung data_path image_path Sa
 bilder = 0;
 bilder = get(handles.checkbox1,'Value')*8 + get(handles.checkbox2,'Value')*4 + get(handles.checkbox3,'Value')*2 + get(handles.checkbox4,'Value');
 if bilder == 0; bilder = 8; set(handles.checkbox1,'Value', 1); end;
-durchlauf = get(handles.checkbox5,'Value') + get(handles.checkbox6,'Value')*2;
+durchlauf = get(handles.checkbox5,'Value') + get(handles.checkbox6,'Value')*2;% + get(handles.checkbox10,'Value')*4;
 kontroll_kennung = get(handles.edit3,'String'); 
 patient_kennung = get(handles.edit4,'String'); 
 data_path = get(handles.edit2,'String'); 
@@ -344,6 +344,14 @@ function checkbox9_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 % Hint: get(hObject,'Value') returns toggle state of checkbox9
 
+
+% --- Executes on button press in checkbox10.
+function checkbox10_Callback(hObject, eventdata, handles)
+% hObject    handle to checkbox10 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of checkbox10
 
 % --- Executes on button press in checkbox12.
 function checkbox12_Callback(hObject, eventdata, handles)

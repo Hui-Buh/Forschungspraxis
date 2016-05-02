@@ -8,22 +8,17 @@
 % image_path = absolute or relative path of the folder containing all images
 
 
-function create_Sakk_profile( bilder, durchlauf, Sakkpx_Sakkgrad, vel_acc, kontroll_kennung, patient_kennung, data_path, image_path, sakkaden_laenge )
+function create_Sakk_profile( bilder, durchlauf, Sakkpx_Sakkgrad, vel_acc, kontroll_kennung, patient_kennung, data_path, image_path, sakkaden_amplitude )
 my_message('Create saccade profile',0)
     
-    sakkaden_laenge = str2num(sakkaden_laenge);
-    if isempty(sakkaden_laenge) == 1
-        my_message('Please enter valid saccade length',0);
+    sakkaden_amplitude = str2num(sakkaden_amplitude);
+    if isempty(sakkaden_amplitude) == 1
+        my_message('Please enter valid saccade amplitude',0);
         my_message('Ended badly',0);
         return;
     end
-    if mod(sakkaden_laenge,2) ==1 
-        my_message('Only even saccade lengths are valid',0);
-        my_message('Ended badly',0);
-        return;
-    end
-    if sakkaden_laenge < 20 || sakkaden_laenge > 80
-        my_message('Only 20-80 ms saccades are valid',0);
+    if sakkaden_amplitude < 0
+        my_message('Only positive saccade amplitudes are valid',0);
         my_message('Ended badly',0);
         return;
     end
@@ -208,41 +203,54 @@ my_message(cat(2,'Extract patient data ', num2str(b), '/', num2str(size(patient_
 %% Auswertung
     my_message('Evaluate Data',0)
     
-    time_c = (0:2:(sakkaden_laenge-4))';
-    vel_c = zeros((sakkaden_laenge-2)/2,1);
-    acc_c = zeros((sakkaden_laenge-2)/2,1);
-    
+    time_c = 1;
+    counter = 1;
+
     for a = 1:size(sakkade_control,2) % alle Bilder aller Patienten durchlaufen     - Kontrollen
 my_message(cat(2,'Evaluate Data ', num2str(a), '/', num2str(size(sakkade_control,2)+size(sakkade_patient,2))),2)
         for b = 1:size(sakkade_control,1) % Alle Sakkaden in einem Bild durchlaufen - Kontrollen
             clearvars sakk diff_ vel
             sakk = sakkade_control(b,a);
             sakk = cell2mat(sakk); % Positionen einer einzelnen Sakkade
-            
             if isempty(sakk) == 1
                 continue;
             else
                 sakk(:,1) = sakk(:,1) - sakk(1,1);
                 diff_ = (sakk(1:end-1,[2 3]) - sakk(2:end,[2 3])); 
+                tmp = norm(sakk(end,2:3)-sakk(1,2:3))*9.8/450;
                 
-                if  (sakk(end,1) > sakkaden_laenge -1) && (sakk(end,1) < sakkaden_laenge +1)
-                    vel = sqrt(sum(diff_ .* diff_, 2))/2;
+                if  (tmp > sakkaden_amplitude -0.25) && (tmp < sakkaden_amplitude +0.25)
+                    amp = sqrt(sum(diff_ .* diff_, 2));
+                    vel = amp/2;
                     if Sakkpx_Sakkgrad == 2
                         vel = vel *9.8/450 *1000;
+                        amp = amp*9.8/450;
                     end
-                    vel_c = [vel_c vel(1:end-1)];
-                    acc_c = [acc_c diff(vel)/2];
+                    for c = 2:size(amp)
+                        amp(c) = amp(c)+amp(c-1);
+                    end
+                    
+                    if time_c < sakk(end,1)
+                        time_c = sakk(2:end-1,1);
+                    end
+                    
+                    vel_c(1:size(vel(1:end-1,1)),counter) = vel(1:end-1);
+                    acc_c(1:size(diff(vel)/2,1),counter) = diff(vel)/2;
+                    amp_c(1:size(amp(1:end-1),1),counter) = amp(1:end-1);
+                    
+                    counter = counter +1;
                 end
             end
         end
     end
     
-    time_p = (0:2:(sakkaden_laenge-4))';
-    vel_p = zeros((sakkaden_laenge-2)/2,1);
-    acc_p = zeros((sakkaden_laenge-2)/2,1);
-    tmp = a;
+
+    time_p = 1;
+    counter = 1;
+    count = a;
+    
     for a = 1:size(sakkade_patient,2) % alle Bilder aller Patienten durchlaufen     - Patienten
-my_message(cat(2,'Evaluate Data ', num2str(tmp+a), '/', num2str(size(sakkade_control,2)+size(sakkade_patient,2))),2)
+my_message(cat(2,'Evaluate Data ', num2str(count+a), '/', num2str(size(sakkade_control,2)+size(sakkade_patient,2))),2)
         for b = 1:size(sakkade_patient,1) % Alle Sakkaden in einem Bild durchlaufen - Patienten
             clearvars sakk diff_ vel
             sakk = sakkade_patient(b,a);
@@ -253,23 +261,32 @@ my_message(cat(2,'Evaluate Data ', num2str(tmp+a), '/', num2str(size(sakkade_con
             else
                 sakk(:,1) = sakk(:,1) - sakk(1,1);
                 diff_ = (sakk(1:end-1,[2 3]) - sakk(2:end,[2 3])); 
+                tmp = norm(sakk(end,2:3)-sakk(1,2:3))*9.8/450;
                 
-                if  (sakk(end,1) > sakkaden_laenge -1) && (sakk(end,1) < sakkaden_laenge +1)
-                    vel = sqrt(sum(diff_ .* diff_, 2))/2;
+                if  (tmp > sakkaden_amplitude -0.25) && (tmp < sakkaden_amplitude +0.25)
+                    amp = sqrt(sum(diff_ .* diff_, 2));
+                    vel = amp/2;
                     if Sakkpx_Sakkgrad == 2
                         vel = vel *9.8/450 *1000;
+                        amp = amp*9.8/450;
                     end
-                    vel_p = [vel_p vel(1:end-1)];
-                    acc_p = [acc_p diff(vel)/2];
+                    for c = 2:size(amp)
+                        amp(c) = amp(c)+amp(c-1);
+                    end
+                    
+                    if time_p < sakk(end,1)
+                        time_p = sakk(2:end-1,1);
+                    end
+                    
+                    vel_p(1:size(vel(1:end-1,1)),counter) = vel(1:end-1);
+                    acc_p(1:size(diff(vel)/2,1),counter) = diff(vel)/2;
+                    amp_p(1:size(amp(1:end-1),1),counter) = amp(1:end-1);
+                    
+                    counter = counter +1;
                 end
             end
         end
     end
-    
-    vel_c(:,1) = [];
-    acc_c(:,1) = [];
-    vel_p(:,1) = [];
-    acc_p(:,1) = [];
     
     vel_c = mean(vel_c,2);
     acc_c = mean(acc_c,2);
