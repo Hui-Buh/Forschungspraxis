@@ -151,7 +151,11 @@ my_message(cat(2,'Extract patient data ', num2str(b), '/', num2str(size(patient_
         number(1) = number(1) + size(buf,1);
         buf(:,2) = -1 * buf(:,2) + 460;
         subplot(1,2,1)
+        try
         image = imread(cat(2, image_path, '/', cat(2,image_list{a+1}, '_AOI.jpg') ));
+        catch
+            continue;
+        end
         imshow(image);
         image = double(image);
         hold on;
@@ -182,7 +186,11 @@ my_message(cat(2,'Extract patient data ', num2str(b), '/', num2str(size(patient_
         number(2) = number(2) + size(buf,1);
         buf(:,2) = -1 * buf(:,2) + 460;
         subplot(1,2,2)
-        image = imread(cat(2, image_path, '/', cat(2,image_list{a+1}, '_AOI.jpg') ));
+        try
+            image = imread(cat(2, image_path, '/', cat(2,image_list{a+1}, '_AOI.jpg') ));
+        catch
+            continue;
+        end
         imshow(image);
         image = double(image);
         hold on;

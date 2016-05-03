@@ -54,7 +54,7 @@ my_message(cat(2,'Evaluate data 1: ', num2str(a), '/', num2str(size(salmap,1))),
     
     for ti = 1 : Nt  
         T = t(ti); 
-        tmp = saliency_map_patient >= T;    
+        tmp = saliency_map_patient >= T;  
         TPm = mask{a,2} .* tmp;
         TP(ti) = TP(ti) + sum( TPm(:) );
         tmp = saliency_map_cotrol >= T; 

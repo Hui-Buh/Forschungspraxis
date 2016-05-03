@@ -249,7 +249,7 @@ elseif get(handles.checkbox13, 'Value') == 1
         params.channels = cat(2, params.channels, 'S');
     end
     if get(handles.checkbox22, 'Value') == 1
-        params.fastWeight = saliency(12);
+        params.briskWeight = saliency(12);
         params.channels = cat(2, params.channels, 'B');
     end
     if strcmp(params.channels , '') == 1; 

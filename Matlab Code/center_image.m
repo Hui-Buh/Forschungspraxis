@@ -4,10 +4,9 @@
 
 
 function Sakk_pos = center_image(x_pos, y_pos, param1, param2, param3, param4, x_image, y_image)
-    % Mean free saccades
-    mean_x = mean(x_pos);
-    mean_y = mean(y_pos);
-    Sakk_pos = [(x_pos - mean_x) (y_pos - mean_y) ];
+
+    % Center gaze data
+    Sakk_pos = [(x_pos - 640) (y_pos - 512) ];
     
     % Add optional parameters 
     if strcmp(param1, '-') == 0; Sakk_pos = [Sakk_pos param1]; end; 
@@ -27,5 +26,6 @@ function Sakk_pos = center_image(x_pos, y_pos, param1, param2, param3, param4, x
     Sakk_pos(:,2) = Sakk_pos(:,2) + y_image/2;
     
     % Round to get pixel
-    Sakk_pos(:,1:2) = round(Sakk_pos(:,1:2));
+    Sakk_pos(:,1:2) = floor(Sakk_pos(:,1:2));
+    Sakk_pos(Sakk_pos==0) = 1;
 end
