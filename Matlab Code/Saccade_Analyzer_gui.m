@@ -22,7 +22,7 @@ function varargout = Saccade_Analyzer_gui(varargin)
 
 % Edit the above text to modify the response to help test_gui
 
-% Last Modified by GUIDE v2.5 02-May-2016 13:27:24
+% Last Modified by GUIDE v2.5 04-May-2016 09:16:13
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -115,7 +115,7 @@ global bilder durchlauf kontroll_kennung patient_kennung data_path image_path Sa
 % handles    structure with handles and user data (see GUIDATA)
 my_message('',1)
 get_parameters(hObject, eventdata, handles)
-if closeall == 1; try close Figure 1; close Figure 2; close Figure 3; close Figure 4; catch; end; end;
+if closeall == 1; try close([1 2 3 4 5]); catch; end; end;
 Compute_ecdf( bilder, durchlauf, Sakka_Sakkd_Fix, kontroll_kennung, patient_kennung, data_path, image_path)
 my_message('Finished creating ECDFs',0)
 
@@ -128,7 +128,7 @@ global bilder durchlauf kontroll_kennung patient_kennung data_path image_path cl
 % handles    structure with handles and user data (see GUIDATA)
 my_message('',1)
 get_parameters(hObject, eventdata, handles)
-if closeall == 1; try close Figure 1; close Figure 2; close Figure 3; close Figure 4; catch; end; end;
+if closeall == 1; try close([1 2 3 4 5]); catch; end; end;
 local_Sakk_distribution(bilder, durchlauf, 0 , kontroll_kennung, patient_kennung, data_path, image_path)
 my_message('Finished creating fixation maps',0)
 
@@ -140,7 +140,7 @@ global bilder durchlauf kontroll_kennung patient_kennung data_path image_path Sa
 % handles    structure with handles and user data (see GUIDATA)
 my_message('',1)
 get_parameters(hObject, eventdata, handles)
-if closeall == 1; try close Figure 1; close Figure 2; close Figure 3; close Figure 4; catch; end; end;
+if closeall == 1; try close([1 2 3 4 5]); catch; end; end;
 compare_Sakk(bilder, durchlauf, Sakk_p_Sakk_grad_mean_max , kontroll_kennung, patient_kennung, data_path, image_path)
 my_message('Finished comparing saccades',0)
 
@@ -152,7 +152,7 @@ global bilder durchlauf kontroll_kennung patient_kennung data_path image_path Sa
 % handles    structure with handles and user data (see GUIDATA)
 my_message('',1)
 get_parameters(hObject, eventdata, handles)
-if closeall == 1; try close Figure 1; close Figure 2; close Figure 3; close Figure 4; catch; end; end;
+if closeall == 1; try close([1 2 3 4 5]); catch; end; end;
 create_Sakk_profile( bilder, durchlauf, Sakkpx_Sakkgrad, vel_acc, kontroll_kennung, patient_kennung, data_path, image_path, sakkaden_laenge )
 my_message('Finished creating saccade profiles',0)
 
@@ -165,7 +165,7 @@ global bilder durchlauf kontroll_kennung patient_kennung data_path image_path cl
 % handles    structure with handles and user data (see GUIDATA)
 my_message('',1)
 get_parameters(hObject, eventdata, handles)
-if closeall == 1; try close Figure 1; close Figure 2; close Figure 3; close Figure 4; catch; end; end;
+if closeall == 1; try close([1 2 3 4 5]); catch; end; end;
 Sakk_directions(bilder, durchlauf, '' , kontroll_kennung, patient_kennung, data_path, image_path)
 my_message('Finished evaluating saccade directions',0)
 
@@ -178,7 +178,7 @@ global bilder durchlauf kontroll_kennung patient_kennung data_path image_path cl
 % handles    structure with handles and user data (see GUIDATA)
 my_message('',1)
 get_parameters(hObject, eventdata, handles)
-if closeall == 1; try close Figure 1; close Figure 2; close Figure 3; close Figure 4; catch; end; end;
+if closeall == 1; try close([1 2 3 4 5]); catch; end; end;
 set(handles.checkbox4, 'Value', 0);
 Noh_AOI( bilder, durchlauf, '' , kontroll_kennung, patient_kennung, data_path, image_path)
 my_message('Finished interpreting AOI regions',0)
@@ -191,7 +191,7 @@ global bilder durchlauf kontroll_kennung patient_kennung data_path image_path cl
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 my_message('',1)
-if closeall == 1; try close Figure 1; close Figure 2; close Figure 3; close Figure 4; catch; end; end;
+if closeall == 1; try close([1 2 3 4 5]); catch; end; end;
 get_parameters(hObject, eventdata, handles)
 run('./my_gbvs/gbvs_install.m');
 params =  makeGBVSParams;
@@ -204,7 +204,8 @@ if get(handles.checkbox12, 'Value') == 1
         params.useIttiKochInsteadOfGBVS = 0;
     end
     if get(handles.radiobutton9, 'Value') == 1
-        local_Sakk_distribution(bilder, durchlauf, 1 , kontroll_kennung, patient_kennung, data_path, image_path)
+        evaluate_saliency( bilder, durchlauf, params , kontroll_kennung, patient_kennung, data_path, image_path,1)
+%         local_Sakk_distribution(bilder, durchlauf, 1 , kontroll_kennung, patient_kennung, data_path, image_path)
         my_message('Finished evaluating saliencies',0)
         return;
     end
@@ -258,7 +259,7 @@ elseif get(handles.checkbox13, 'Value') == 1
         return; 
     end;
 end
-evaluate_saliency( bilder, durchlauf, params , kontroll_kennung, patient_kennung, data_path, image_path)
+evaluate_saliency( bilder, durchlauf, params , kontroll_kennung, patient_kennung, data_path, image_path,0)
 my_message('Finished evaluating saliencies',0)
 
 
@@ -799,3 +800,13 @@ Listbox = hObject;
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+
+
+% --- Executes when user attempts to close figure1.
+function figure1_CloseRequestFcn(hObject, eventdata, handles)
+% hObject    handle to figure1 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: delete(hObject) closes the figure
+delete(hObject);
