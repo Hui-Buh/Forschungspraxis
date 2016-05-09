@@ -186,7 +186,7 @@ my_message(cat(2,'Extract patient data ', num2str(b), '/', num2str(size(patient_
     map( all(cellfun(@isempty,map(:,1)),2), : ) = [];
     mask( all(cellfun(@isempty,map(:,2)),2), : ) = [];
     map( all(cellfun(@isempty,map(:,2)),2), : ) = [];
-    
+
     
 %     [p, area] = rocSal_mod(map, mask);
 %     figure(1)
@@ -275,7 +275,7 @@ my_message(cat(2,'Evaluate data 2: ', num2str(a+c), '/', num2str(size(mask,1)+10
         saliency_value_c = [ saliency_value_c; tmp];
         tmp = map{a,2}.*mask{a,2};
         tmp = tmp(tmp~=0);
-        saliency_value_p = [ saliency_value_p; tmp];;
+        saliency_value_p = [ saliency_value_p; tmp];
     end
     saliency_value_c(1) =[];
     saliency_value_p(1) =[];
@@ -312,6 +312,7 @@ my_message(cat(2,'Evaluate data 2: ', num2str(a+c), '/', num2str(size(mask,1)+10
             for c = size(leave_one_out,2)-1:-1:2
                 leave_one_out{2,c} = leave_one_out{2,c+1} + leave_one_out{1,c} - leave_one_out{1,c-1};
             end
+            % Normieren + Normalisieren
             leave_one_out(:,1) = []; 
             for d = 1:size(leave_one_out,2)
                 leave_one_out{2,d} = leave_one_out{2,d}./sum(trapz(leave_one_out{2,d}));
@@ -322,9 +323,26 @@ my_message(cat(2,'Evaluate data 2: ', num2str(a+c), '/', num2str(size(mask,1)+10
                 buf = leave_one_out{2,e}(:).*mask_NSS{a,e}(:);
                 buf2 = find(mask_NSS{a,e}(:));
                 buf = buf(buf2);
-                norm_scanpath_saliency_control(a,e) = mean(buf);
+                norm_scanpath_saliency_control(a*size(leave_one_out,2)-size(leave_one_out,2)+e) = mean(buf);
+                
+            % NSS für a-tes Bild gegen einen patient
+                buf = leave_one_out{2,e}(:).*mask_NSS{a,e+size(control_listing,1)-1}(:);
+                buf2 = find(mask_NSS{a,e+size(control_listing,1)-1}(:));
+                buf = buf(buf2);
+                norm_scanpath_saliency_control_vs_patient(a*size(leave_one_out,2)-size(leave_one_out,2)+e) = mean(buf);
             end
             
+%             % NSS für a-tes Bild gegen einen patient
+%             for e = 1:size(leave_one_out,2)
+%                 mask_patient = zeros(size(mask_NSS{a,1}));
+%                 for f = size(control_listing,1):size(mask_NSS,2)
+%                     mask_patient = mask_patient + mask_NSS{a,f};
+%                 end
+%                 buf = leave_one_out{2,e}(:).*mask_patient(:);
+%                 buf2 = find(mask_patient(:));
+%                 buf = buf(buf2);
+%                 norm_scanpath_saliency_control_vs_patient(a*size(leave_one_out,2)-size(leave_one_out,2)+e) = mean(buf);
+%             end
             
             % Leave one out für a-tes Bild patients
             leave_one_out = map_NSS(a,size(control_listing,1):end);
@@ -336,6 +354,7 @@ my_message(cat(2,'Evaluate data 2: ', num2str(a+c), '/', num2str(size(mask,1)+10
             for c = size(leave_one_out,2)-1:-1:2
                 leave_one_out{2,c} = leave_one_out{2,c+1} + leave_one_out{1,c} - leave_one_out{1,c-1};
             end
+            % Normieren + Normalisieren
             leave_one_out(:,1) = []; 
             for d = 1:size(leave_one_out,2)
                 leave_one_out{2,d} = leave_one_out{2,d}./sum(trapz(leave_one_out{2,d}));
@@ -344,25 +363,40 @@ my_message(cat(2,'Evaluate data 2: ', num2str(a+c), '/', num2str(size(mask,1)+10
             % NSS für a-tes Bild patients
             for e = 1:size(leave_one_out,2)
                 buf = leave_one_out{2,e}(:).*mask_NSS{a,e+size(control_listing,1)-1}(:);
+                buf2 = find(mask_NSS{a,e+size(control_listing,1)-1}(:));
+                buf = buf(buf2);
+                norm_scanpath_saliency_patient(a*size(leave_one_out,2)-size(leave_one_out,2)+e) = mean(buf);
+                
+            % NSS für a-tes Bild gegen einen control
+                buf = leave_one_out{2,e}(:).*mask_NSS{a,e}(:);
                 buf2 = find(mask_NSS{a,e}(:));
                 buf = buf(buf2);
-                norm_scanpath_saliency_patient(a,e) = mean(buf);
+                norm_scanpath_saliency_patient_vs_control(a*size(leave_one_out,2)-size(leave_one_out,2)+e) = mean(buf);
             end
-            
+%             % NSS für a-tes Bild gegen alle controls
+%             for e = 1:size(leave_one_out,2)
+%                 mask_control = zeros(size(mask_NSS{a,1}));
+%                 for f = 1:size(control_listing,1)-1
+%                     mask_control = mask_control + mask_NSS{a,f};
+%                 end
+%                 buf = leave_one_out{2,e}(:).*mask_control(:);
+%                 buf2 = find(mask_control(:));
+%                 buf = buf(buf2);
+%                 norm_scanpath_saliency_patient_vs_control(a*size(leave_one_out,2)-size(leave_one_out,2)+e) = mean(buf);
+%             end
+
         end
 
         figure(5)
         hold on; grid on; box on;
         set(gca,'FontWeight','bold');
-        subplot(2,1,1)
-        hold on; grid on; box on;
-        set(gca,'FontWeight','bold');
         ylabel('NSS');
-        boxplot(norm_scanpath_saliency_control');%, 'labels', {'n-1 controls vs. 1 control', 'n-1 controls vs. m patients'});
-        subplot(2,1,2)
-        hold on; grid on; box on;
-        set(gca,'FontWeight','bold');
-        boxplot(norm_scanpath_saliency_patient');%, 'labels', {'m-1 patients vs. 1 patients', 'm-1 patients vs. n controls'});
-        ylabel('NSS');
+        boxplot([norm_scanpath_saliency_control', norm_scanpath_saliency_control_vs_patient', norm_scanpath_saliency_patient', norm_scanpath_saliency_patient_vs_control']...
+        , 'labels', {'n-1 controls vs. 1 control', 'n-1 controls vs. m patients','m-1 patients vs. 1 patients', 'm-1 patients vs. n controls'});
+       
+        
+    
+    
+
     end
 end
