@@ -222,7 +222,7 @@ my_message(cat(2,'Evaluate Data ', num2str(a), '/', num2str(size(sakkade_control
                 diff_ = (sakk(1:end-1,[2 3]) - sakk(2:end,[2 3])); 
                 tmp = norm(sakk(end,2:3)-sakk(1,2:3))*9.8/450;
                 
-                if  (tmp > sakkaden_amplitude -0.2) && (tmp < sakkaden_amplitude +0.2) && sakk(end,1) < 80 && sakk(end,1) > 20
+                if  (tmp > sakkaden_amplitude -0.1) && (tmp < sakkaden_amplitude +0.1) && sakk(end,1) < 80 && sakk(end,1) > 20
                     amp = sqrt(sum(diff_ .* diff_, 2));
                     vel = amp/2;
                     if Sakkpx_Sakkgrad == 2
@@ -239,9 +239,9 @@ my_message(cat(2,'Evaluate Data ', num2str(a), '/', num2str(size(sakkade_control
                     
                     vel_c(1:size(vel(1:end-1,1)),counter) = vel(1:end-1);
                     vel_c(1:size(vel(1:end-1,1)),counter) = medfilt1(vel_c(1:size(vel(1:end-1,1)),counter),5);
-                    acc_c(1:size(diff(vel)/2,1),counter) = diff(vel)/2;
-                    acc_c(1:size(diff(vel)/2,1),counter) = medfilt1(acc_c(1:size(diff(vel)/2,1),counter),5);
-                    amp_c(1:size(amp(1:end-1),1),counter) = amp(1:end-1);
+%                     acc_c(1:size(diff(vel)/2,1),counter) = diff(vel)/2;
+%                     acc_c(1:size(diff(vel)/2,1),counter) = medfilt1(acc_c(1:size(diff(vel)/2,1),counter),5);
+%                     amp_c(1:size(amp(1:end-1),1),counter) = amp(1:end-1);
                     
                     counter = counter +1;
                 end
@@ -268,7 +268,7 @@ my_message(cat(2,'Evaluate Data ', num2str(count+a), '/', num2str(size(sakkade_c
                 diff_ = (sakk(1:end-1,[2 3]) - sakk(2:end,[2 3])); 
                 tmp = norm(sakk(end,2:3)-sakk(1,2:3))*9.8/450;
                 
-                if  (tmp > sakkaden_amplitude -0.2) && (tmp < sakkaden_amplitude +0.2) && sakk(end,1) < 80 && sakk(end,1) > 20
+                if  (tmp > sakkaden_amplitude -0.1) && (tmp < sakkaden_amplitude +0.1) && sakk(end,1) < 80 && sakk(end,1) > 20
                     amp = sqrt(sum(diff_ .* diff_, 2));
                     vel = amp/2;
                     if Sakkpx_Sakkgrad == 2
@@ -285,9 +285,9 @@ my_message(cat(2,'Evaluate Data ', num2str(count+a), '/', num2str(size(sakkade_c
                     
                     vel_p(1:size(vel(1:end-1,1)),counter) = vel(1:end-1);
                     vel_p(1:size(vel(1:end-1,1)),counter) = medfilt1(vel_p(1:size(vel(1:end-1,1)),counter),5);
-                    acc_p(1:size(diff(vel)/2,1),counter) = diff(vel)/2;
-                    acc_p(1:size(diff(vel)/2,1),counter) = medfilt1(acc_p(1:size(diff(vel)/2,1),counter),5);
-                    amp_p(1:size(amp(1:end-1),1),counter) = amp(1:end-1);
+%                     acc_p(1:size(diff(vel)/2,1),counter) = diff(vel)/2;
+%                     acc_p(1:size(diff(vel)/2,1),counter) = medfilt1(acc_p(1:size(diff(vel)/2,1),counter),5);
+%                     amp_p(1:size(amp(1:end-1),1),counter) = amp(1:end-1);
                     
                     counter = counter +1;
                 end
@@ -305,93 +305,28 @@ my_message('Ended badly',0)
     [~, test2] = bootstrp(boot_nr,'mean',vel_p');
     anz(1) = size(vel_c,2);
     anz(2) = size(vel_p,2);
-
-    vel_c=vel_c(:,test(:));
-    max_c = max(vel_c,[],2);
-    min_c = min(vel_c,[],2);
-    p95_c(:,1:2) = prctile(vel_c,[5 95],2);
-    vel_c = mean(vel_c,2);
-%     p95_c(:,2) = vel_c + (max_c-vel_c)*0.95;
-%     p95_c(:,1) = vel_c + (min_c-vel_c)*0.95;
-    acc_c=acc_c(:,test(:));
-    acc_c = mean(acc_c,2);
-    amp_c=amp_c(:,test(:));
-    amp_c = mean(amp_c,2);
-    
-    
-    vel_p=vel_p(:,test2(:));
-    max_p = max(vel_p,[],2);
-    min_p = min(vel_p,[],2);
-    p95_p(:,1:2) = prctile(vel_p,[5 95],2);
-    vel_p = mean(vel_p,2);
-%     p95_p(:,2) = vel_p + (max_p-vel_p)*0.95;
-%     p95_p(:,1) = vel_p + (min_p-vel_p)*0.95;
-    acc_p=acc_p(:,test2(:));
-    acc_p = mean(acc_p,2);
-    amp_p=amp_p(:,test2(:));
-    amp_p = mean(amp_p,2);
-    
-    
+    vel_c_mean = zeros(size(vel_c,1),boot_nr);
+    vel_p_mean = zeros(size(vel_p,1),boot_nr);
+    for a = 1:boot_nr
+        vel_c_mean(:,a)=mean(vel_c(:,test(:,a)),2);
+        vel_p_mean(:,a)=mean(vel_p(:,test2(:,a)),2);
+    end
+    percentile_c(:,1:2) = prctile(vel_c_mean,[5 95],2);
+    percentile_p(:,1:2) = prctile(vel_p_mean,[5 95],2);
+    vel_p_mean=mean(vel_p_mean,2);
+    vel_c_mean=mean(vel_c_mean,2);
+    percentile_c(:,1:2) = percentile_c(:,1:2) - [vel_c_mean vel_c_mean];
+    percentile_p(:,1:2) = percentile_p(:,1:2) - [vel_p_mean vel_p_mean];
     
     h=figure(1);
     hold on; grid on; box on;
     set(gca,'FontWeight','bold');
     h.Position = [200 200 900 450];
-    
-    subplot(1,2,1)
-    hold on; grid on; box on;
-    set(gca,'FontWeight','bold');
-    title(cat(2,'Control ', num2str(sakkaden_amplitude), '°'), 'FontSize', 12);
-    if vel_acc == 1 
-        errorbar(time_c, vel_c, p95_c(:,1), p95_c(:,2),'b');
-        xlabel('Time (ms)');
-        ylabel('Velocity (px/ms)');
-        if Sakkpx_Sakkgrad == 2; ylabel('velocity (°/s)'); end;
-        legend(cat(2,'Velocity Control (', num2str(anz(1)),' saccades)'))
-    elseif vel_acc == 2
-        plot(time_c, acc_c, 'r');
-        xlabel('Time (ms)');
-        ylabel('Acceleration (px/ms^2)');
-        if Sakkpx_Sakkgrad == 2; ylabel('acceleration (°/s^2)'); end;
-        legend(cat(2,'Acceleration Control (', num2str(anz(1)),' saccades)'))
-    elseif vel_acc == 3
-        [x,y,z] = plotyy(time_c, vel_c, time_c, acc_c);
-        set(x, 'FontWeight','bold');
-        xlabel('Time (ms)');
-        ylabel(x(1), 'Velocity (px/ms)');
-        ylabel(x(2), 'Acceleration (px/ms^2)');
-        if Sakkpx_Sakkgrad == 2
-            ylabel(x(1), 'Velocity (°/s)');
-            ylabel(x(2), 'Acceleration (°/s^2)');
-        end
-        legend(cat(2,'Velocity Control (', num2str(anz(1)),' saccades)'), 'Acceleration Control')
-    end
-    subplot(1,2,2)
-    hold on; grid on; box on;
-    set(gca,'FontWeight','bold');
-    title(cat(2,'Patient ', num2str(sakkaden_amplitude), '°'), 'FontSize', 12);
-    if vel_acc == 1 
-        errorbar(time_p, vel_p, p95_p(:,1), p95_p(:,2), 'b');
-        xlabel('Time (ms)');
-        ylabel('Velocity (px/ms)');
-        if Sakkpx_Sakkgrad == 2; ylabel('velocity (°/s)'); end;
-        legend(cat(2,'Velocity Patient (', num2str(anz(2)),' saccades)'))
-    elseif vel_acc == 2
-        plot(time_p, acc_p, 'r');
-        xlabel('Time (ms)');
-        ylabel('Acceleration (px/ms^2)');
-        if Sakkpx_Sakkgrad == 2; ylabel(x(2), 'Acceleration (°/s^2)'); end;
-        legend(cat(2,'Acceleration Patient (', num2str(anz(2)),' saccades)'))
-    elseif vel_acc == 3
-        [x,y,z] = plotyy(time_p, vel_p, time_p, acc_p);
-        set(x, 'FontWeight','bold');
-        xlabel('Time (ms)');
-        ylabel(x(1), 'Velocity (px/ms)');
-        ylabel(x(2), 'Acceleration (px/ms^2)');
-        if Sakkpx_Sakkgrad == 2
-            ylabel(x(1), 'Velocity (°/s)');
-            ylabel(x(2), 'Acceleration (°/s^2)');
-        end
-        legend(cat(2,'Velocity Patient (', num2str(anz(2)),' saccades)'), 'Acceleration Patient')
-    end
+    errorbar(time_c, vel_c_mean, percentile_c(:,1), percentile_c(:,2),'-xb', 'LineWidth', 1);
+    errorbar(time_p, vel_p_mean, percentile_p(:,1), percentile_p(:,2), ':or', 'LineWidth', 1);
+    xlabel('Time (ms)');
+    ylabel('Velocity (px/ms)');
+    if Sakkpx_Sakkgrad == 2; ylabel('velocity (�/s)'); end;
+    legend(cat(2,'Velocity Control (', num2str(anz(1)),' saccades)'), cat(2,'Velocity Patient (', num2str(anz(2)),' saccades)'));
+       
 end

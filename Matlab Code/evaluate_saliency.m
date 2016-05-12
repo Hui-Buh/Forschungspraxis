@@ -188,17 +188,17 @@ my_message(cat(2,'Extract patient data ', num2str(b), '/', num2str(size(patient_
     map( all(cellfun(@isempty,map(:,2)),2), : ) = [];
 
     
-%     [p, area] = rocSal_mod(map, mask);
-%     figure(1)
-%     hold on; grid on; box on;
-%     set(gca,'FontWeight','bold');
-%     plot(p(:,2), p(:,1));
-%     plot([0 1], [0 1],'k')
-%     text(0.6, 0.3, cat(2, 'Area under ROC: ', num2str(area) ));
-%     legend('ROC-curve');
-%     title('Classification of patients and controls');
-%     xlabel('False Positive Rate (%)');
-%     ylabel('True Positive Rate (%)');
+    [p, area] = rocSal_mod(map, mask);
+    figure(1)
+    hold on; grid on; box on;
+    set(gca,'FontWeight','bold');
+    plot(p(:,2), p(:,1));
+    plot([0 1], [0 1],'k')
+    text(0.6, 0.3, cat(2, 'Area under ROC: ', num2str(area) ));
+    legend('ROC-curve');
+    title('Classification of patients and controls');
+    xlabel('False Positive Rate (%)');
+    ylabel('True Positive Rate (%)');
     
     
     h = figure(2);
@@ -302,7 +302,7 @@ my_message(cat(2,'Evaluate data 2: ', num2str(a+c), '/', num2str(size(mask,1)+10
     if NSS ==1
         
         for a = 1:size(map_NSS,1)
-            % Leave one out fÃ¼r a-tes Bild controls
+            % Leave one out für a-tes Bild controls
             leave_one_out = map_NSS(a,1:size(control_listing,1)-1);
             leave_one_out = [leave_one_out leave_one_out(1,1) ];
             leave_one_out{2,end} = zeros(size(map_NSS{a,1}));
@@ -325,14 +325,14 @@ my_message(cat(2,'Evaluate data 2: ', num2str(a+c), '/', num2str(size(mask,1)+10
                 buf = buf(buf2);
                 norm_scanpath_saliency_control(a*size(leave_one_out,2)-size(leave_one_out,2)+e) = mean(buf);
                 
-            % NSS fÃ¼r a-tes Bild gegen einen patient
+            % NSS für a-tes Bild gegen einen patient
                 buf = leave_one_out{2,e}(:).*mask_NSS{a,e+size(control_listing,1)-1}(:);
                 buf2 = find(mask_NSS{a,e+size(control_listing,1)-1}(:));
                 buf = buf(buf2);
                 norm_scanpath_saliency_control_vs_patient(a*size(leave_one_out,2)-size(leave_one_out,2)+e) = mean(buf);
             end
             
-%             % NSS fÃ¼r a-tes Bild gegen einen patient
+%             % NSS für a-tes Bild gegen einen patient
 %             for e = 1:size(leave_one_out,2)
 %                 mask_patient = zeros(size(mask_NSS{a,1}));
 %                 for f = size(control_listing,1):size(mask_NSS,2)
@@ -360,14 +360,14 @@ my_message(cat(2,'Evaluate data 2: ', num2str(a+c), '/', num2str(size(mask,1)+10
                 leave_one_out{2,d} = leave_one_out{2,d}./sum(trapz(leave_one_out{2,d}));
                 leave_one_out{2,d} = (leave_one_out{2,d} - mean(leave_one_out{2,d}(:)))/std(leave_one_out{2,d}(:));
             end
-            % NSS fÃ¼r a-tes Bild patients
+            % NSS für a-tes Bild patients
             for e = 1:size(leave_one_out,2)
                 buf = leave_one_out{2,e}(:).*mask_NSS{a,e+size(control_listing,1)-1}(:);
                 buf2 = find(mask_NSS{a,e+size(control_listing,1)-1}(:));
                 buf = buf(buf2);
                 norm_scanpath_saliency_patient(a*size(leave_one_out,2)-size(leave_one_out,2)+e) = mean(buf);
                 
-            % NSS fÃ¼r a-tes Bild gegen einen control
+            % NSS für a-tes Bild gegen einen control
                 buf = leave_one_out{2,e}(:).*mask_NSS{a,e}(:);
                 buf2 = find(mask_NSS{a,e}(:));
                 buf = buf(buf2);
@@ -386,17 +386,41 @@ my_message(cat(2,'Evaluate data 2: ', num2str(a+c), '/', num2str(size(mask,1)+10
 %             end
 
         end
+        
 
         figure(5)
+        subplot(2,1,1)
         hold on; grid on; box on;
         set(gca,'FontWeight','bold');
         ylabel('NSS');
         boxplot([norm_scanpath_saliency_control', norm_scanpath_saliency_control_vs_patient', norm_scanpath_saliency_patient', norm_scanpath_saliency_patient_vs_control']...
-        , 'labels', {'n-1 controls vs. 1 control', 'n-1 controls vs. m patients','m-1 patients vs. 1 patients', 'm-1 patients vs. n controls'});
-       
+        , 'labels', {'n-1 C vs. 1 C', 'n-1 C vs. m P','m-1 P vs. 1 P', 'm-1 P vs. n P'});
         
-    
-    
+        norm_scanpath_saliency_control(isnan(norm_scanpath_saliency_control)) = [];
+        norm_scanpath_saliency_control_vs_patient(isnan(norm_scanpath_saliency_control_vs_patient)) = [];
+        norm_scanpath_saliency_patient(isnan(norm_scanpath_saliency_patient)) = [];
+        norm_scanpath_saliency_patient_vs_control(isnan(norm_scanpath_saliency_patient_vs_control)) = [];
+        
+        [kstest_reject(1), p(1), ~] = kstest2(norm_scanpath_saliency_control, norm_scanpath_saliency_patient);
+        [kstest_reject(2), p(2), ~] = kstest2(norm_scanpath_saliency_control_vs_patient, norm_scanpath_saliency_patient_vs_control);
+        
+        data_mean(1) = mean(norm_scanpath_saliency_control);
+        data_mean(2) = mean(norm_scanpath_saliency_control_vs_patient);
+        data_mean(3) = mean(norm_scanpath_saliency_patient);
+        data_mean(4) = mean(norm_scanpath_saliency_patient_vs_control);
+        data_median(1) = median(norm_scanpath_saliency_control);
+        data_median(2) = median(norm_scanpath_saliency_control_vs_patient);
+        data_median(3) = median(norm_scanpath_saliency_patient);
+        data_median(4) = median(norm_scanpath_saliency_patient_vs_control);
+        
+        u = uitable('Data', [kstest_reject(1), kstest_reject(2), kstest_reject(1), kstest_reject(2) ; p(1),p(2),p(1),p(2) ; data_mean; data_median], ...
+        'RowName', {'reject h_0', 'p-value', 'Mean', 'Median'}, ...
+        'ColumnName', {'n-1 C vs 1 C','n-1 C vs 1 P', 'm-1 P vs 1 P', 'm-1 P vs 1 C'}, 'FontName', 'Arial', 'FontSize', 8);
 
+        u.Position(1) = 80;
+        u.Position(2) = 100;
+        u.Position(3) = 412;
+        u.Position(4) = 94;
+        
     end
 end

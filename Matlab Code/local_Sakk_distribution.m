@@ -175,7 +175,7 @@ my_message('Ended',0)
     Fixation_map_patient = Fixation_map_patient./sum(trapz(Fixation_map_patient));
         
     figure(1)
-    hold on; grid on; box on;
+    hold on; grid on; box on; axis equal, axis off;
     set(gca,'FontWeight','bold');
     if size(image_list,1) == 2
         surf(Fixation_map_control, 'LineStyle', 'none', 'FaceAlpha', 0.5);
@@ -194,7 +194,7 @@ my_message('Ended',0)
     end
 
     figure(2)
-    hold on; grid on; box on;
+    hold on; grid on; box on; axis equal, axis off;
     set(gca,'FontWeight','bold');
     if size(image_list,1) == 2
         surf(Fixation_map_patient, 'LineStyle', 'none', 'FaceAlpha', 0.5);
@@ -213,7 +213,7 @@ my_message('Ended',0)
     end
     
     figure(3);
-    hold on; grid on; box on;    
+    hold on; grid on; box on; axis equal, axis off;
     set(gca,'FontWeight','bold');
     difference = (Fixation_map_control - Fixation_map_patient);
     amplitude = max(difference(:)) - min(difference(:));
