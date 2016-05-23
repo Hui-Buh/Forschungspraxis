@@ -6,7 +6,7 @@ function Fix_map_NSS(data_path)
 
 %% variables
 %  Eyetracker resolution
-    video_size = [1280 1204]; % in px
+    video_size = [1024 1280]; % in px [y-size x_size]
     
 %% List of all data to use
 %  Usable with a single file or a data path containing multiple data files
@@ -45,6 +45,8 @@ function Fix_map_NSS(data_path)
         data = cell2mat(data);
         fclose(file);
         
+%         plot(data(:,4) , data(:,5))
+%         data(:,5) = data(:,5)*(-1)+video_size(2)+1;
         mask_NSS{1,a} = makeFixationMask( data(:,4) , data(:,5) , video_size );
         map_NSS{1,a} =  makeSaliencyMap( data(:,4) , data(:,5), video_size );
     end
@@ -203,7 +205,7 @@ end
 % Y = y coordinate oif Fixation oint
 % mask_size = size of mask to be generated as array of dimension sizes
 function mask = makeFixationMask( X , Y , mask_size )
-    mask = zeros( mask_size );
+    mask = zeros( mask_size);
     for i = 1 : length(X)
       mask( Y(i) , X(i) ) = mask( Y(i) , X(i) ) + 1;
     end
