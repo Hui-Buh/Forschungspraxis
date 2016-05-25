@@ -45,8 +45,7 @@ function Fix_map_NSS(data_path)
         data = cell2mat(data);
         fclose(file);
         
-%         plot(data(:,4) , data(:,5))
-%         data(:,5) = data(:,5)*(-1)+video_size(2)+1;
+        data(:,5) = data(:,5)*(-1)+video_size(2)+1;
         mask_NSS{1,a} = makeFixationMask( data(:,4) , data(:,5) , video_size );
         map_NSS{1,a} =  makeSaliencyMap( data(:,4) , data(:,5), video_size );
     end
@@ -71,7 +70,7 @@ function Fix_map_NSS(data_path)
     figure(1)
     hold on; grid on; box on; axis off
     set(gca,'FontWeight','bold');
-    surf(Fixation_map_pre', 'LineStyle', 'none');
+    surf(Fixation_map_pre, 'LineStyle', 'none');
     caxis([min(Fixation_map_pre(:))-.5*range(Fixation_map_pre(:)),max(Fixation_map_pre(:))]);
     legend('Fixation map - Pre')
     colorbar
@@ -79,7 +78,7 @@ function Fix_map_NSS(data_path)
     figure(2)
     hold on; grid on; box on; axis off
     set(gca,'FontWeight','bold');
-    surf(Fixation_map_post', 'LineStyle', 'none');
+    surf(Fixation_map_post, 'LineStyle', 'none');
     caxis([min(Fixation_map_post(:))-.5*range(Fixation_map_post(:)),max(Fixation_map_post(:))]);
     legend('Fixation map - Post')
     colorbar
@@ -87,7 +86,7 @@ function Fix_map_NSS(data_path)
     figure(3)
     hold on; grid on; box on; axis off
     set(gca,'FontWeight','bold');
-    surf(Fixation_map_expert', 'LineStyle', 'none');
+    surf(Fixation_map_expert, 'LineStyle', 'none');
     caxis([min(Fixation_map_expert(:))-.5*range(Fixation_map_expert(:)),max(Fixation_map_expert(:))]);
     legend('Fixation map - Expert')
     colorbar
