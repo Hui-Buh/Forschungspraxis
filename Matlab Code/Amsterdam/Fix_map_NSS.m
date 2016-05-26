@@ -68,7 +68,7 @@ function Fix_map_NSS(data_path)
     Fixation_map_expert = Fixation_map_expert./sum(trapz(Fixation_map_expert));
 
     figure(1)
-    hold on; grid on; box on; axis off
+    hold on; grid on; box on; axis off; axis equal
     set(gca,'FontWeight','bold');
     surf(Fixation_map_pre, 'LineStyle', 'none');
     caxis([min(Fixation_map_pre(:))-.5*range(Fixation_map_pre(:)),max(Fixation_map_pre(:))]);
@@ -76,7 +76,7 @@ function Fix_map_NSS(data_path)
     colorbar
     
     figure(2)
-    hold on; grid on; box on; axis off
+    hold on; grid on; box on; axis off; axis equal
     set(gca,'FontWeight','bold');
     surf(Fixation_map_post, 'LineStyle', 'none');
     caxis([min(Fixation_map_post(:))-.5*range(Fixation_map_post(:)),max(Fixation_map_post(:))]);
@@ -84,11 +84,38 @@ function Fix_map_NSS(data_path)
     colorbar
     
     figure(3)
-    hold on; grid on; box on; axis off
+    hold on; grid on; box on; axis off; axis equal
     set(gca,'FontWeight','bold');
     surf(Fixation_map_expert, 'LineStyle', 'none');
     caxis([min(Fixation_map_expert(:))-.5*range(Fixation_map_expert(:)),max(Fixation_map_expert(:))]);
     legend('Fixation map - Expert')
+    colorbar
+    
+    figure(4);
+    hold on; grid on; box on; axis equal, axis off;
+    set(gca,'FontWeight','bold');
+    difference = (Fixation_map_expert - Fixation_map_pre);
+    surf(difference, 'LineStyle', 'none');
+    caxis([min(difference(:))-.5*range(difference(:)),max(difference(:))]);
+    legend('Fixation map - (Expert - Pre)')
+    colorbar
+    
+    figure(5);
+    hold on; grid on; box on; axis equal, axis off;
+    set(gca,'FontWeight','bold');
+    difference = (Fixation_map_expert - Fixation_map_post);
+    surf(difference, 'LineStyle', 'none');
+    caxis([min(difference(:))-.5*range(difference(:)),max(difference(:))]);
+    legend('Fixation map - (Expert - Post)')
+    colorbar
+    
+    figure(6);
+    hold on; grid on; box on; axis equal, axis off;
+    set(gca,'FontWeight','bold');
+    difference = (Fixation_map_post - Fixation_map_pre);
+    surf(difference, 'LineStyle', 'none');
+    caxis([min(difference(:))-.5*range(difference(:)),max(difference(:))]);
+    legend('Fixation map - (Post - Pre)')
     colorbar
     
 %% Calculate Normalized Scanpath Saliency
@@ -122,7 +149,7 @@ function Fix_map_NSS(data_path)
                 norm_scanpath_saliency(e) = mean(buf);
             end
 
-            figure(4)
+            figure(7)
             hold on; grid on; box on;
             set(gca,'FontWeight','bold');
             ylabel('NSS');
@@ -156,7 +183,7 @@ function Fix_map_NSS(data_path)
                 norm_scanpath_saliency(e) = mean(buf);
             end
 
-            figure(5)
+            figure(8)
             hold on; grid on; box on;
             set(gca,'FontWeight','bold');
             ylabel('NSS');
@@ -190,7 +217,7 @@ function Fix_map_NSS(data_path)
                 norm_scanpath_saliency(e) = mean(buf);
             end
 
-            figure(6)
+            figure(9)
             hold on; grid on; box on;
             set(gca,'FontWeight','bold');
             ylabel('NSS');
