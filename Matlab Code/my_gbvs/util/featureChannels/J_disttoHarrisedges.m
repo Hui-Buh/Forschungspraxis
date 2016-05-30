@@ -11,7 +11,7 @@ else
     harris = detectHarrisFeatures(img);
     harris = harris.selectStrongest(100);
     harris = double(harris.Location);
-    [X1,X2] = meshgrid(1:size(img, 1),1:size(img, 2));
+    [X1,X2] = meshgrid(1:size(img, 2),1:size(img, 1));
     
     buf = mvnpdf([X1(:) X2(:)], harris(1,:), [10 2; 2 10]);
     F = reshape(buf,size(img, 1),size(img, 2));

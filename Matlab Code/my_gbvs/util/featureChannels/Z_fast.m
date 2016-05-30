@@ -11,7 +11,7 @@ else
     fast = detectFASTFeatures(img);
     fast = fast.selectStrongest(100);
     fast = double(fast.Location);
-    [X1,X2] = meshgrid(1:size(img, 1),1:size(img, 2));
+    [X1,X2] = meshgrid(1:size(img, 2),1:size(img, 1));
     if isempty(fast) == 1
         out.map = zeros(size(img, 1),size(img, 2));
         return;

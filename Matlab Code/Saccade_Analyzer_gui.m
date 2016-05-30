@@ -251,7 +251,7 @@ elseif get(handles.checkbox13, 'Value') == 1
     end
     if get(handles.checkbox22, 'Value') == 1
         params.briskWeight = saliency(12);
-        params.channels = cat(2, params.channels, 'B');
+        params.channels = cat(2, params.channels, 'K');
     end
     if strcmp(params.channels , '') == 1; 
         my_message('Please select some saliency channels',0); 

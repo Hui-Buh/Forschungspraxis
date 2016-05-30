@@ -45,6 +45,8 @@ my_message('Evaluate saliencies',0)
         saliency_params.imageSize = size(imread(cat(2, image_path, '/', image_list{z,1}, '.jpg')));
         if NSS == 0
             saliency_map(z) = gbvs(image, saliency_params);
+%             figure(8)
+%             imshow(saliency_map(z).master_map_resized);
 %             image_size(z,:) = size(saliency_map(z).master_map_resized);
         end
     end 
