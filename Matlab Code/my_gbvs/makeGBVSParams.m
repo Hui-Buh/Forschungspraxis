@@ -44,7 +44,7 @@ p.channels = 'DIO';               % feature channels to use encoded as a string
                                   %   S is for Saturation
                                   %   A is for AOI top-down channel
                                   %   K is for Itti % Koch saliency model
-                                  %   B Is for Distance to BRISK features
+                                  %   E Is for Distance to BRISK features
                                   %   D is for DKL Color (Derrington Krauskopf Lennie) ==
                                   %     much better than C channel
                                   % e.g., 'IR' would be only intensity and
