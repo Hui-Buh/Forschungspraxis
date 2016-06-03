@@ -1,0 +1,17 @@
+@BOOK{BOOK:1,
+AUTHOR="Michael Dorr, Thomas Martinetz, Karl R. Gegenfurtner, Erhardt Barth",
+TITLE="Variability of eye movements when viewing dynamic natural scenes",
+PUBLISHER="Journal of Vision",
+YEAR="2010",
+HOWPUBLISHED ="http://www.journalofvision.org/content/10/10/28",
+PAGES        = "1 -- 17"
+}
+@BOOK{BOOK:2,
+AUTHOR="Laurent Itti, Christof Koch",
+TITLE="COMPUTATIONAL MODELLING OF VISUAL ATTENTION",
+PUBLISHER="Journal of Vision",
+YEAR="2001",
+HOWPUBLISHED ="http://www.journalofvision.org/content/10/10/28",
+PAGES        = "1 -- 17"
+}
+
