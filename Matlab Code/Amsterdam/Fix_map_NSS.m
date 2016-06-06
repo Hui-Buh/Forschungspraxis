@@ -143,6 +143,7 @@ function Fix_map_NSS(data_path)
             % NSS
             norm_scanpath_saliency = zeros(size(leave_one_out,2),1);
             for e = 1:size(leave_one_out,2)
+                % Intra class NSS
                 buf = leave_one_out{2,e}(:).*mask_NSS{e}(:);
                 buf2 = find(mask_NSS{e}(:));
                 buf = buf(buf2);
@@ -153,7 +154,7 @@ function Fix_map_NSS(data_path)
             hold on; grid on; box on;
             set(gca,'FontWeight','bold');
             ylabel('NSS');
-            boxplot(norm_scanpath_saliency', 'labels', 'inter pre NSS');
+            boxplot(norm_scanpath_saliency', 'labels', 'intra pre NSS');
         end
 
 %% NNS for post
@@ -187,7 +188,7 @@ function Fix_map_NSS(data_path)
             hold on; grid on; box on;
             set(gca,'FontWeight','bold');
             ylabel('NSS');
-            boxplot(norm_scanpath_saliency', 'labels', 'inter post NSS');
+            boxplot(norm_scanpath_saliency', 'labels', 'intra post NSS');
         end
 
 %% NNS for expert
@@ -210,18 +211,52 @@ function Fix_map_NSS(data_path)
             end
             % NSS
             norm_scanpath_saliency = zeros(size(leave_one_out,2),1);
+            norm_scanpath_saliency_exp_vs_pre = 0;
+            norm_scanpath_saliency_exp_vs_post = 0;
             for e = 1:size(leave_one_out,2)
+                % Intra expert NSS
                 buf = leave_one_out{2,e}(:).*mask_NSS{e+pre_post_exp(1)+pre_post_exp(2)}(:);
                 buf2 = find(mask_NSS{e+pre_post_exp(1)+pre_post_exp(2)}(:));
                 buf = buf(buf2);
                 norm_scanpath_saliency(e) = mean(buf);
+                
+                % Inter class NSS - expert vs. pre
+                for f = 1:pre_post_exp(1)
+                    buf = leave_one_out{2,e}(:).*mask_NSS{f}(:);
+                    buf2 = find(mask_NSS{f}(:));
+                    buf = buf(buf2);
+                    norm_scanpath_saliency_exp_vs_pre(end+1) = mean(buf);
+                end
+                
+                % Inter class NSS - expert vs. post
+                for f = pre_post_exp(1)+1:pre_post_exp(1)+pre_post_exp(2)
+                    buf = leave_one_out{2,e}(:).*mask_NSS{f}(:);
+                    buf2 = find(mask_NSS{f}(:));
+                    buf = buf(buf2);
+                    norm_scanpath_saliency_exp_vs_post(end+1) = mean(buf);
+                end
             end
+            norm_scanpath_saliency_exp_vs_pre(1) = [];
+            norm_scanpath_saliency_exp_vs_post(1) = [];
+            if size(norm_scanpath_saliency_exp_vs_pre,2) < size(norm_scanpath_saliency_exp_vs_post,2)
+                norm_scanpath_saliency_exp_vs_pre(end+1:size(norm_scanpath_saliency_exp_vs_post,2)) = NaN;
+            elseif size(norm_scanpath_saliency_exp_vs_pre,2) > size(norm_scanpath_saliency_exp_vs_post,2)
+                norm_scanpath_saliency_exp_vs_post(end+1:size(norm_scanpath_saliency_exp_vs_pre,2)) = NaN;
+            end
+                
 
             figure(9)
             hold on; grid on; box on;
             set(gca,'FontWeight','bold');
             ylabel('NSS');
-            boxplot(norm_scanpath_saliency', 'labels', 'inter expert NSS');
+            boxplot(norm_scanpath_saliency', 'labels', 'intra expert NSS');
+            
+            figure(10)
+            hold on; grid on; box on;
+            set(gca,'FontWeight','bold');
+            ylabel('NSS');
+            boxplot([norm_scanpath_saliency_exp_vs_pre' norm_scanpath_saliency_exp_vs_post'], 'labels', {'n-1 experts vs. 1 pre', 'n-1 experts vs. 1 post'});
+            
         end
     end
 end
